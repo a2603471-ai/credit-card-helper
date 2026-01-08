@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>信用卡回饋查詢助手 2026</title>
+    <title>信用卡回饋查詢助手 2026 (完整版)</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -15,8 +15,7 @@
             --color-text-light: #666666;
             --color-border: #e0e0e0;
             --color-success: #32b862;
-            --color-best-bg: #e6fffa;
-            --color-best-text: #047857;
+            --color-danger: #e74c3c;
             --color-highlight: #e65100;
         }
         body {
@@ -25,10 +24,45 @@
             color: var(--color-text);
             padding: 20px;
             line-height: 1.6;
+            padding-top: 10px;
         }
         .container { max-width: 800px; margin: 0 auto; }
-        h1 { text-align: center; margin-bottom: 20px; color: var(--color-primary); font-size: 1.8em; }
+        h1 { text-align: center; margin-bottom: 15px; color: var(--color-primary); font-size: 1.6em; }
         
+        /* === 頂部導覽列 === */
+        .nav-tabs {
+            display: flex;
+            background: var(--color-surface);
+            padding: 5px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--color-text-light);
+            transition: all 0.3s;
+        }
+        .nav-item.active {
+            background-color: var(--color-primary);
+            color: white;
+            box-shadow: 0 2px 4px rgba(33, 128, 160, 0.3);
+        }
+        
+        /* 頁面切換控制 */
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* === 搜尋頁樣式 === */
         .form-section {
             background: var(--color-surface);
             padding: 20px;
@@ -67,7 +101,6 @@
             width: 24px; height: 24px; cursor: pointer; color: #666;
             display: none; align-items: center; justify-content: center;
         }
-
         .suggestion-dropdown {
             position: absolute; top: 100%; left: 0; right: 0;
             background: var(--color-surface);
@@ -80,7 +113,6 @@
         .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
         .suggestion-item:hover { background-color: #f5f9ff; }
         .highlight { color: var(--color-primary); font-weight: 700; }
-
         .category-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
         .category-tag {
             padding: 6px 12px; background: var(--color-surface);
@@ -89,7 +121,6 @@
             transition: all 0.2s; user-select: none;
         }
         .category-tag.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
-
         .merchant-list {
             background: var(--color-surface); padding: 16px;
             border-radius: 12px; margin-bottom: 12px;
@@ -112,13 +143,57 @@
             margin-top: 10px; padding-top: 8px; border-top: 1px solid #eee;
             font-size: 0.85em; color: var(--color-text-light); display: flex; align-items: center;
         }
-        .plan-hint {
-            color: var(--color-highlight);
-            font-weight: 700;
-            margin-left: 4px;
-            font-size: 0.9em;
-        }
+        .plan-hint { color: var(--color-highlight); font-weight: 700; margin-left: 4px; font-size: 0.9em; }
 
+        /* === 權益總覽頁樣式 (Accordion) === */
+        .card-accordion-item {
+            background: var(--color-surface);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+        }
+        .accordion-header {
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            transition: background 0.2s;
+        }
+        .accordion-header:hover { background: #f9f9f9; }
+        .card-title-row { display: flex; align-items: center; gap: 10px; }
+        .card-icon { font-size: 1.2em; }
+        .card-title-text { font-weight: 700; font-size: 1.1em; color: var(--color-text); }
+        .chevron { transition: transform 0.3s; color: #999; }
+        .accordion-header.active .chevron { transform: rotate(180deg); }
+        
+        .accordion-body {
+            display: none;
+            padding: 0;
+            background: #fff;
+            border-top: 1px solid #eee;
+        }
+        .accordion-body.open { display: block; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 500px; } }
+        
+        .benefit-row {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+        }
+        .benefit-row:last-child { border-bottom: none; }
+        .benefit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .benefit-name { font-weight: 600; font-size: 1em; color: #444; }
+        .benefit-rate { font-weight: 700; color: var(--color-primary); font-size: 1.1em; }
+        .benefit-rate.high { color: var(--color-danger); }
+        .benefit-desc { font-size: 0.85em; color: #666; margin-top: 2px; }
+        .benefit-note { font-size: 0.8em; color: #999; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+        
+        /* === 詳情彈窗 === */
         .detail-modal {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.6); z-index: 2000;
@@ -161,7 +236,7 @@
         }
         
         @media (max-width: 480px) {
-            body { padding: 15px; }
+            body { padding: 15px; padding-top: 10px; }
             h1 { font-size: 1.5em; }
         }
     </style>
@@ -170,29 +245,41 @@
     <div class="container">
         <h1>💳 信用卡回饋查詢助手 2026</h1>
 
-        <div class="form-section">
-            <div class="info-text">
-                🔍 <strong>2026年最新權益</strong>：更新 <strong>台新Richart(七大權益3.3%~3.8%)</strong>、國泰CUBE(四大權益+瘋大港)、玉山Unicard、永豐DAWHO。
-            </div>
-            
-            <div class="form-group">
-                <label for="searchMerchant">搜尋通路名稱</label>
-                <div class="input-wrapper">
-                    <input type="text" id="searchMerchant" placeholder="例如：知識衛星、Olive Young、錢櫃、Lululemon..." autocomplete="off">
-                    <button id="clearSearch" class="clear-btn" onclick="clearSearch()">✕</button>
-                    <div id="suggestionDropdown" class="suggestion-dropdown"></div>
+        <div class="nav-tabs">
+            <div class="nav-item active" onclick="switchTab('search')">🔍 通路搜尋</div>
+            <div class="nav-item" onclick="switchTab('overview')">📋 權益總覽</div>
+        </div>
+
+        <div id="tab-search" class="tab-content active">
+            <div class="form-section">
+                <div class="info-text">
+                    🔍 <strong>2026年最新權益</strong>：支援國泰CUBE(瘋大港)、台新Richart(七大分類)、玉山Unicard、永豐DAWHO、玉山UBear。
+                </div>
+                
+                <div class="form-group">
+                    <label for="searchMerchant">搜尋通路名稱</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="searchMerchant" placeholder="例如：Klook、高鐵、麥當勞..." autocomplete="off">
+                        <button id="clearSearch" class="clear-btn" onclick="clearSearch()">✕</button>
+                        <div id="suggestionDropdown" class="suggestion-dropdown"></div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 10px;">
+                    <label>快速分類</label>
+                    <div class="category-tags" id="categoryTags"></div>
                 </div>
             </div>
-            
-            <div style="margin-top: 10px;">
-                <label>快速分類</label>
-                <div class="category-tags" id="categoryTags"></div>
+
+            <div id="merchantResults" class="results-section">
+                <div id="merchantContainer"></div>
             </div>
         </div>
 
-        <div id="merchantResults" class="results-section">
-            <div id="merchantContainer"></div>
+        <div id="tab-overview" class="tab-content">
+            <div id="cardOverviewContainer"></div>
         </div>
+
     </div>
 
     <div id="detailModal" class="detail-modal" onclick="if(event.target === this) closeDetailModal()">
@@ -211,36 +298,88 @@
     <script>
         // === 卡片基本資料 ===
         const cardData = {
-            unicard: {
-                name: '玉山 Unicard',
-                plansDetails: [
-                    '簡單選：方案2.0% + 基本1% = 3%',
-                    '任意選：方案2.5% + 基本1% = 3.5%',
-                    'UP選：方案3.5% + 基本1% = 4.5%'
-                ],
-                maxRate: 0.045
+            richart: { name: '台新 Richart', baseRate: 0.003 },
+            cube: { name: '國泰 CUBE', baseRate: 0.003 },
+            unicard: { 
+                name: '玉山 Unicard', 
+                plansDetails: ['簡單選：2% + 基本1% = 3%', '任意選：2.5% + 基本1% = 3.5%', 'UP選：3.5% + 基本1% = 4.5%'], 
+                maxRate: 0.045 
             },
-            dawho: {
-                name: '永豐 DAWHO',
-                fixedRate: 0.035
-            },
-            ubear: {
-                name: '玉山 UBear',
-                baseRate: 0.01,
-            },
-            richart: {
-                name: '台新 Richart',
-                baseRate: 0.003
-            },
-            cube: {
-                name: '國泰 CUBE',
-                baseRate: 0.003
-            }
+            ubear: { name: '玉山 UBear', baseRate: 0.01 },
+            dawho: { name: '永豐 DAWHO', fixedRate: 0.035 }
         };
 
-        // === 擴充後的通路資料庫 (2026 Richart 完整版) ===
+        // === 權益總覽資料 (新增功能) ===
+        const cardBenefitsData = [
+            {
+                id: 'richart',
+                name: '台新 Richart',
+                icon: '🐶',
+                note: '需完成 Richart 任務 (如存款/消費) 始享加碼',
+                benefits: [
+                    { name: 'Pay著刷', rate: 0.038, desc: '四大超商 | 新光三越 | IKEA | 台灣大車隊', note: '需綁定台新Pay支付' },
+                    { name: '數趣刷', rate: 0.033, desc: '網購 (蝦皮/momo/酷澎) | 遊戲影音 | 線上課程 | AI服務', note: '上限 1000 元' },
+                    { name: '玩旅刷', rate: 0.033, desc: '海外消費 | 航空 | 訂房 (Agoda/Booking) | 旅行社', note: '上限 1000 元' },
+                    { name: '天天刷', rate: 0.033, desc: '超商 | 量販 | 交通 (高鐵/台鐵/Uber) | 藥局', note: '上限 1000 元' },
+                    { name: '大筆刷', rate: 0.033, desc: '百貨 (SOGO/遠百) | Outlet | 居家 (IKEA) | 服飾 (UNIQLO)', note: '上限 1000 元' },
+                    { name: '好饗刷', rate: 0.033, desc: '餐飲 | 外送 | 飯店 | 售票 | 加油 | KTV | 樂園', note: '上限 1000 元' },
+                    { name: 'LINE Pay', rate: 0.023, desc: '一般 LINE Pay 綁定支付', note: '無門檻' },
+                    { name: '假日刷', rate: 0.02, desc: '國內節假日不限通路', note: '基本回饋' }
+                ]
+            },
+            {
+                id: 'cube',
+                name: '國泰 CUBE',
+                icon: '⬜',
+                note: '需每日透過 CUBE App 切換至對應權益方案',
+                benefits: [
+                    { name: '瘋大港', rate: 0.035, desc: '高雄指定住宿 | Klook | 高鐵 | 台鐵', note: '期間限定' },
+                    { name: '玩數位', rate: 0.03, desc: '網購 (蝦皮/momo) | 影音串流 | AI工具 | 國際電商', note: '無上限' },
+                    { name: '樂響購', rate: 0.03, desc: '百貨公司 | 全球餐飲 | 外送 | 藥妝', note: '無上限' },
+                    { name: '趣旅行', rate: 0.03, desc: '海外實體 | 訂房 | 航空 | 旅行社 | 國內交通', note: '無上限' },
+                    { name: '集精選', rate: 0.02, desc: '超商 | 量販 (全聯/家樂福) | 加油 | IKEA', note: '無上限' }
+                ]
+            },
+            {
+                id: 'unicard',
+                name: '玉山 Unicard',
+                icon: '🦄',
+                note: '基本 1%，簡單選/任意選/UP選需符合對應任務',
+                benefits: [
+                    { name: 'UP選', rate: 0.045, desc: '百大特店 (行動支付/交通/百貨/餐飲/旅遊)', note: '需完成UP任務 (3000點或消費5萬)' },
+                    { name: '任意選', rate: 0.035, desc: '百大特店', note: '需透過 App 設定方案' },
+                    { name: '簡單選', rate: 0.03, desc: '百大特店', note: '預設方案' },
+                    { name: '一般消費', rate: 0.01, desc: '非指定通路', note: '無上限' }
+                ]
+            },
+            {
+                id: 'ubear',
+                name: '玉山 UBear',
+                icon: '🐻',
+                note: '指定娛樂與網購回饋合併計算上限',
+                benefits: [
+                    { name: '影音娛樂', rate: 0.10, desc: 'Netflix | Disney+ | Nintendo | PlayStation', note: '每期上限 100 元' },
+                    { name: '網購/Pay', rate: 0.03, desc: '國內外網購 | 行動支付', note: '每期上限 200 元' },
+                    { name: '一般消費', rate: 0.01, desc: '非網購之一般消費', note: '無上限' }
+                ]
+            },
+            {
+                id: 'dawho',
+                name: '永豐 DAWHO',
+                icon: '🦁',
+                note: '需達成大戶等級 (月均往來 10 萬元)',
+                benefits: [
+                    { name: '國內指定', rate: 0.035, desc: '全通路 (一般1% + 任務1% + 指定5% 上限300元)', note: '國內統一 3.5% (含上限)' },
+                    { name: '國外消費', rate: 0.035, desc: '國外實體或網購', note: '最高可達 7% (視活動)' }
+                ]
+            }
+        ];
+
+        // ... [保留原本的 merchantDatabase 和 categories 資料，確保搜尋功能正常] ...
+        // 為了節省篇幅，這裡使用您前一次確認過的完整資料庫 (含Richart七大權益、CUBE瘋大港等)
+        // 在實際檔案中，請保留下方完整的 merchantDatabase 變數
         const merchantDatabase = {
-            // === 1. 數趣刷 (Richart 3.3%) - 網購/遊戲/AI/課程 ===
+            // === 1. 數趣刷 (Richart 3.3%) ===
             '蝦皮購物': { category: 'shopping', type: '網購', aliases:['蝦皮'], cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
             'momo購物網': { category: 'shopping', type: '網購', aliases:['momo'], cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
             'Coupang': { category: 'shopping', type: '網購', aliases:['酷澎'], cards: { unicard: true, richart: 0.033, cube: 0.03, ubear: 0.03, dawho: true } },
@@ -276,7 +415,7 @@
             'Perplexity': { category: 'digital', type: 'AI工具', cards: { cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
             'Claude': { category: 'digital', type: 'AI工具', cards: { cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
 
-            // === 2. 玩旅刷 (Richart 3.3%) - 旅遊/航空/海外 ===
+            // === 2. 玩旅刷 (Richart 3.3%) ===
             'Klook': { category: 'travel', type: '旅遊', cards: { cube: 0.035, unicard: true, richart: 0.033, ubear: 0.03, dawho: true } },
             'KKday': { category: 'travel', type: '旅遊', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
             'Agoda': { category: 'travel', type: '訂房', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
@@ -324,9 +463,9 @@
             '越捷航空': { category: 'airline', type: '航空', cards: { cube: 0.03, richart: 0.033, dawho: true } },
             '海外消費': { category: 'overseas', type: '國外', cards: { cube: 0.03, richart: 0.033, ubear: 0.01, dawho: true } },
 
-            // === 3. 天天刷 (Richart 3.3%) - 超商/交通/藥妝 ===
-            '7-11': { category: 'supermarket', type: '超商', aliases: ['7-ELEVEN'], cards: { cube: 0.02, richart: 0.038, dawho: true } }, // Pay 3.8%
-            '全家': { category: 'supermarket', type: '超商', cards: { cube: 0.02, richart: 0.038, dawho: true } }, // Pay 3.8%
+            // === 3. 天天刷 (Richart 3.3%) ===
+            '7-11': { category: 'supermarket', type: '超商', aliases: ['7-ELEVEN'], cards: { cube: 0.02, richart: 0.038, dawho: true } },
+            '全家': { category: 'supermarket', type: '超商', cards: { cube: 0.02, richart: 0.038, dawho: true } },
             '家樂福': { category: 'supermarket', type: '量販', cards: { unicard: true, cube: 0.02, richart: 0.033, dawho: true } },
             '大買家': { category: 'supermarket', type: '量販', cards: { richart: 0.033, dawho: true } },
             '唐吉軻德': { category: 'supermarket', type: '超市', aliases:['Donki'], cards: { richart: 0.033, dawho: true } },
@@ -334,7 +473,7 @@
             // 交通
             '台鐵': { category: 'transport', type: '交通', aliases:['台灣鐵路'], cards: { cube: 0.035, unicard: true, richart: 0.033, ubear: 0.03, dawho: true } },
             '高鐵': { category: 'transport', type: '交通', aliases:['台灣高鐵'], cards: { cube: 0.035, unicard: true, richart: 0.033, ubear: 0.03, dawho: true } },
-            '台灣大車隊': { category: 'transport', type: '交通', aliases:['55688'], cards: { unicard: true, cube: 0.03, richart: 0.038, dawho: true } }, // Pay 3.8%
+            '台灣大車隊': { category: 'transport', type: '交通', aliases:['55688'], cards: { unicard: true, cube: 0.03, richart: 0.038, dawho: true } },
             'Yoxi': { category: 'transport', type: '交通', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
             'Uber': { category: 'transport', type: '交通', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
             // 停車租車
@@ -357,8 +496,8 @@
             '佑全': { category: 'drugstore', type: '藥局', aliases:['佑全保健'], cards: { richart: 0.033, dawho: true } },
             '健康人生': { category: 'drugstore', type: '藥局', cards: { richart: 0.033, dawho: true } },
 
-            // === 4. 大筆刷 (Richart 3.3%) - 百貨/Outlet/居家/時尚 ===
-            '新光三越': { category: 'department', type: '百貨', cards: { richart: 0.038, unicard: true, cube: 0.03, dawho: true } }, // Pay 3.8%
+            // === 4. 大筆刷 (Richart 3.3%) ===
+            '新光三越': { category: 'department', type: '百貨', cards: { richart: 0.038, unicard: true, cube: 0.03, dawho: true } },
             '遠東百貨': { category: 'department', type: '百貨', aliases:['大遠百'], cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
             'SOGO': { category: 'department', type: '百貨', aliases:['遠東SOGO'], cards: { richart: 0.033, cube: 0.03, dawho: true } },
             '漢神巨蛋': { category: 'department', type: '百貨', cards: { cube: 0.03, richart: 0.033, dawho: true } },
@@ -379,7 +518,7 @@
             '華泰名品城': { category: 'department', type: 'Outlet', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
             'SKM Park': { category: 'department', type: 'Outlet', cards: { cube: 0.03, richart: 0.033, dawho: true } },
             // 居家/時尚
-            'IKEA': { category: 'home', type: '居家', aliases:['宜家家居'], cards: { unicard: true, cube: 0.02, richart: 0.038, dawho: true } }, // Pay 3.8%
+            'IKEA': { category: 'home', type: '居家', aliases:['宜家家居'], cards: { unicard: true, cube: 0.02, richart: 0.038, dawho: true } },
             '特力屋': { category: 'home', type: '居家', cards: { unicard: true, richart: 0.033, dawho: true } },
             'HOLA': { category: 'home', type: '居家', cards: { unicard: true, richart: 0.033, dawho: true } },
             '宜得利': { category: 'home', type: '居家', cards: { richart: 0.033, dawho: true } },
@@ -390,7 +529,7 @@
             'NET': { category: 'fashion', type: '服飾', cards: { unicard: true, richart: 0.033, dawho: true } },
             'lululemon': { category: 'fashion', type: '服飾', cards: { richart: 0.033, dawho: true } },
 
-            // === 5. 好饗刷 (Richart 3.3%) - 餐飲/外送/加油/娛樂 ===
+            // === 5. 好饗刷 (Richart 3.3%) ===
             '國內餐飲': { category: 'food', type: '餐飲', cards: { cube: 0.03, richart: 0.033, dawho: true } },
             '王品瘋Pay': { category: 'food', type: '餐飲', cards: { unicard: true, richart: 0.033, dawho: true } },
             'Uber Eats': { category: 'food', type: '外送', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
@@ -400,7 +539,6 @@
             '全國加油': { category: 'gas', type: '加油', cards: { richart: 0.033, dawho: true } },
             'EVOASIS': { category: 'car', type: '充電', cards: { cube: 0.02, richart: 0.033, dawho: true } },
             'EVALUE': { category: 'car', type: '充電', cards: { cube: 0.02, richart: 0.033, dawho: true } },
-            // 展演/KTV/樂園
             '拓元': { category: 'entertainment', type: '售票', aliases:['拓元售票'], cards: { ubear: 0.03, richart: 0.033, dawho: true } },
             'KKTIX': { category: 'entertainment', type: '售票', cards: { richart: 0.033, dawho: true } },
             '年代售票': { category: 'entertainment', type: '售票', cards: { richart: 0.033, dawho: true } },
@@ -421,7 +559,6 @@
             '海生館': { category: 'entertainment', type: '樂園', aliases:['海洋生物博物館'], cards: { richart: 0.033, dawho: true } },
             '遠雄海洋公園': { category: 'entertainment', type: '樂園', cards: { richart: 0.033, dawho: true } },
             '小人國': { category: 'entertainment', type: '樂園', cards: { richart: 0.033, dawho: true } },
-            // 指定飯店
             '晶華': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
             '雲朗': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
             '萬豪': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
@@ -435,6 +572,18 @@
 
             // === 6. 其他 (LINE Pay) ===
             'LINE Pay': { category: 'payment', type: '行動支付', cards: { unicard: true, richart: 0.023, cube: 0.02, ubear: 0.03, dawho: true } },
+            '街口支付': { category: 'payment', type: '行動支付', cards: { unicard: true, cube: 0.02, dawho: true } },
+            // 高雄住宿 (CUBE 3.5%)
+            '城市商旅': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
+            '和逸飯店': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
+            '旅居文旅': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
+            '秝芯旅店': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
+            '夏優旅居': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
+            '華園大飯店': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
+            '捷絲旅': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
+            '麗尊酒店': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
+            '帕可麗酒店': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
+            '鈞怡大飯店': { category: 'hotel-ks', type: '高雄住宿', cards: { cube: 0.035, richart: 0.033, dawho: true } },
         };
 
         const categories = [
@@ -451,34 +600,111 @@
         ];
 
         let currentCategory = 'all';
+        let currentTab = 'search';
 
-        // === 智能方案建議邏輯 (2026 Richart 強化版) ===
-        function getPlanSuggestion(cardKey, category, merchantName, type) {
+        // === 程式初始化 ===
+        function init() {
+            renderCategories();
+            renderCardOverview(); // 新增: 渲染權益總覽
+
+            const input = document.getElementById('searchMerchant');
+            input.addEventListener('input', handleSearch); 
+            input.addEventListener('focus', handleSearch); 
             
-            // 1. 台新 Richart 方案判斷 (2026年七大分類)
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.input-wrapper')) {
+                    document.getElementById('suggestionDropdown').style.display = 'none';
+                }
+            });
+            filterByCategory('all');
+        }
+
+        // === 分頁切換邏輯 ===
+        function switchTab(tabId) {
+            currentTab = tabId;
+            // 更新按鈕狀態
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.nav-item[onclick="switchTab('${tabId}')"]`).classList.add('active');
+
+            // 更新內容顯示
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // === 渲染權益總覽 (Accordion) ===
+        function renderCardOverview() {
+            const container = document.getElementById('cardOverviewContainer');
+            const html = cardBenefitsData.map(card => `
+                <div class="card-accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="card-title-row">
+                            <span class="card-icon">${card.icon}</span>
+                            <span class="card-title-text">${card.name}</span>
+                        </div>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="benefit-row" style="background:#fffcec; border-bottom:1px dashed #e0e0e0;">
+                            <div class="benefit-name" style="font-size:0.9em; color:#666;">ℹ️ 卡片備註</div>
+                            <div class="benefit-desc">${card.note}</div>
+                        </div>
+                        ${card.benefits.map(b => `
+                            <div class="benefit-row">
+                                <div class="benefit-header">
+                                    <span class="benefit-name">${b.name}</span>
+                                    <span class="benefit-rate ${b.rate >= 0.035 ? 'high' : ''}">${(b.rate * 100).toFixed(1)}%</span>
+                                </div>
+                                <div class="benefit-desc">${b.desc}</div>
+                                <div class="benefit-note">💡 ${b.note}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            container.innerHTML = html;
+        }
+
+        function toggleAccordion(header) {
+            const body = header.nextElementSibling;
+            const isOpen = body.classList.contains('open');
+            
+            // 關閉其他已展開的 (如果想要手風琴效果)
+            // document.querySelectorAll('.accordion-body').forEach(el => {
+            //     el.classList.remove('open');
+            //     el.previousElementSibling.classList.remove('active');
+            // });
+
+            if (!isOpen) {
+                body.classList.add('open');
+                header.classList.add('active');
+            } else {
+                body.classList.remove('open');
+                header.classList.remove('active');
+            }
+        }
+
+        // ... [保留原本的 getPlanSuggestion, calculateCardMetrics, renderCategories, filterByCategory, handleSearch 等核心函數] ...
+        // (為了版面整潔，這些函數與上一版相同，請確保在完整檔案中包含它們)
+        
+        // [此處插入原有的 getPlanSuggestion 函數]
+        function getPlanSuggestion(cardKey, category, merchantName, type) {
             if (cardKey === 'richart') {
                 if (merchantName.includes('LINE Pay')) return 'LINE Pay (2.3%)';
-
-                // 優先判定 Pay著刷 (3.8%) - 需使用台新Pay
                 const payList = ['7-11', '全家', 'IKEA', '新光三越', '台灣大車隊', '大潤發'];
                 if (payList.some(k => merchantName.includes(k))) return '綁定台新Pay (Pay著刷)';
-
-                // 衝突處理：Uber
                 if (merchantName === 'Uber') return '國內:天天刷 / 國外:玩旅刷';
-
-                // 七大分類對應
                 if (category === 'digital' || type === '網購' || type === 'AI工具' || type === '影音' || type === '遊戲' || category === 'course') return '切換：數趣刷';
-                if (category === 'travel' || category === 'airline' || category === 'overseas' || type === '海外交通') return '切換：玩旅刷';
-                if (type === '訂房') return '切換：玩旅刷';
+                if (category === 'travel' || category === 'airline' || category === 'overseas' || type === '海外交通' || type === '訂房') return '切換：玩旅刷';
                 if (category === 'supermarket' || merchantName.includes('台鐵') || merchantName.includes('高鐵') || type === '交通' || type === '租車' || type === '藥妝' || type === '藥局' || category === 'car') return '切換：天天刷';
                 if (category === 'department' || type === '服飾' || type === '居家' || type === 'Outlet') return '切換：大筆刷';
                 if (category === 'food' || category === 'gas' || type === '樂園' || type === 'KTV' || type === '售票') return '切換：好饗刷';
                 if (merchantName.includes('Uber Eats') || merchantName.includes('foodpanda')) return '切換：好饗刷';
-                
                 return '請確認APP權益';
             }
-
-            // 2. 國泰 CUBE 方案判斷
             if (cardKey === 'cube') {
                 const crazyList = ['高鐵', '台鐵', '台灣高鐵', '台灣鐵路', 'Klook'];
                 if (category === 'hotel-ks' || crazyList.some(k => merchantName.includes(k))) return '切換：瘋大港 (3.5%)';
@@ -489,11 +715,10 @@
                 if (category === 'travel' || category === 'airline' || type === '交通' || category === 'overseas' || category === 'hotel') return '切換：趣旅行';
                 return '請確認APP權益';
             }
-
             return null;
         }
 
-        // === 核心運算 ===
+        // [此處插入原有的 calculateCardMetrics 函數]
         function calculateCardMetrics(cardKey, dbValue, category, merchantName, type) {
             const cardInfo = cardData[cardKey];
             let displayRate = 0;
@@ -501,7 +726,6 @@
             let planName = null;
 
             if (cardKey === 'richart') {
-                // 特殊 Pay著刷 3.8%
                 if (['7-11', '全家', 'IKEA', '新光三越', '台灣大車隊'].some(k => merchantName.includes(k)) && dbValue !== 0.023) {
                      displayRate = 0.038;
                 } else if (typeof dbValue === 'number') {
@@ -509,7 +733,6 @@
                 } else {
                      displayRate = 0.003;
                 }
-                
                 planName = getPlanSuggestion(cardKey, category, merchantName, type);
                 if (planName) details.push(`<span class="plan-alert">⚠️ ${planName}</span>`);
             }
@@ -543,21 +766,6 @@
                 details: details,
                 planName: planName
             };
-        }
-
-        // === UI 邏輯 ===
-        function init() {
-            renderCategories();
-            const input = document.getElementById('searchMerchant');
-            input.addEventListener('input', handleSearch); 
-            input.addEventListener('focus', handleSearch); 
-            
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.input-wrapper')) {
-                    document.getElementById('suggestionDropdown').style.display = 'none';
-                }
-            });
-            filterByCategory('all');
         }
 
         function renderCategories() {
