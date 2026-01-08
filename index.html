@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>信用卡回饋查詢助手 2026 (Unicard百大特店版)</title>
+    <title>信用卡回饋查詢助手 2026</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -172,13 +172,13 @@
 
         <div class="form-section">
             <div class="info-text">
-                🔍 <strong>2026年最新權益</strong>：已更新 <strong>玉山Unicard 百大指定通路</strong> (最高4.5%)，支援國泰CUBE、台新Richart、永豐DAWHO、玉山UBear等比較。
+                🔍 <strong>2026年最新權益</strong>：更新 <strong>台新Richart(七大權益3.3%~3.8%)</strong>、國泰CUBE(四大權益+瘋大港)、玉山Unicard、永豐DAWHO。
             </div>
             
             <div class="form-group">
                 <label for="searchMerchant">搜尋通路名稱</label>
                 <div class="input-wrapper">
-                    <input type="text" id="searchMerchant" placeholder="例如：瓦城、特斯拉、東京..." autocomplete="off">
+                    <input type="text" id="searchMerchant" placeholder="例如：知識衛星、Olive Young、錢櫃、Lululemon..." autocomplete="off">
                     <button id="clearSearch" class="clear-btn" onclick="clearSearch()">✕</button>
                     <div id="suggestionDropdown" class="suggestion-dropdown"></div>
                 </div>
@@ -238,122 +238,208 @@
             }
         };
 
-        // === 擴充後的通路資料庫 (2026/2027) ===
+        // === 擴充後的通路資料庫 (2026 Richart 完整版) ===
         const merchantDatabase = {
-            // === 1. 行動支付 (Unicard 指定) ===
-            '玉山Wallet': { category: 'payment', type: '行動支付', cards: { unicard: true } },
-            'LINE Pay': { category: 'payment', type: '行動支付', cards: { unicard: true, richart: 0.023, cube: 0.02, ubear: 0.03, dawho: true } },
-            '全支付': { category: 'payment', type: '行動支付', cards: { unicard: true, dawho: true } },
-            '街口支付': { category: 'payment', type: '行動支付', cards: { unicard: true, cube: 0.02, dawho: true } },
-            '悠遊付': { category: 'payment', type: '行動支付', cards: { unicard: true, dawho: true } },
-            '全盈+PAY': { category: 'payment', type: '行動支付', cards: { unicard: true, cube: 0.02, dawho: true } },
-            'iPASS MONEY': { category: 'payment', type: '行動支付', cards: { unicard: true } },
-            'icash Pay': { category: 'payment', type: '行動支付', cards: { unicard: true } },
+            // === 1. 數趣刷 (Richart 3.3%) - 網購/遊戲/AI/課程 ===
+            '蝦皮購物': { category: 'shopping', type: '網購', aliases:['蝦皮'], cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'momo購物網': { category: 'shopping', type: '網購', aliases:['momo'], cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Coupang': { category: 'shopping', type: '網購', aliases:['酷澎'], cards: { unicard: true, richart: 0.033, cube: 0.03, ubear: 0.03, dawho: true } },
+            'PChome': { category: 'shopping', type: '網購', aliases:['PChome 24h'], cards: { cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            '淘寶': { category: 'shopping', type: '網購', aliases:['Taobao','天貓'], cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Amazon': { category: 'shopping', type: '網購', cards: { richart: 0.033, ubear: 0.03, dawho: true } },
+            '東森購物': { category: 'shopping', type: '網購', cards: { richart: 0.033, ubear: 0.03, dawho: true } },
+            '博客來': { category: 'shopping', type: '網購', cards: { richart: 0.033, ubear: 0.03, dawho: true } },
+            'Richart Mart': { category: 'shopping', type: '網購', cards: { richart: 0.033 } },
+            'PayEasy': { category: 'shopping', type: '網購', cards: { richart: 0.033 } },
+            'iHerb': { category: 'shopping', type: '網購', cards: { richart: 0.033, ubear: 0.01, dawho: true } },
+            'SHEIN': { category: 'shopping', type: '網購', cards: { richart: 0.033, ubear: 0.01, dawho: true } },
+            'Farfetch': { category: 'shopping', type: '網購', cards: { richart: 0.033, ubear: 0.01, dawho: true } },
+            'Olive Young': { category: 'shopping', type: '網購', cards: { richart: 0.033, ubear: 0.01, dawho: true } },
+            // 線上課程
+            '知識衛星': { category: 'course', type: '線上課程', cards: { richart: 0.033, dawho: true } },
+            'Amazing Talker': { category: 'course', type: '線上課程', cards: { richart: 0.033, dawho: true } },
+            'Tutor ABC': { category: 'course', type: '線上課程', cards: { richart: 0.033, dawho: true } },
+            'Hahow': { category: 'course', type: '線上課程', cards: { richart: 0.033, dawho: true } },
+            'PressPlay': { category: 'course', type: '線上課程', cards: { richart: 0.033, dawho: true } },
+            // 遊戲/影音
+            'MyCard': { category: 'entertainment', type: '遊戲', cards: { richart: 0.033, dawho: true } },
+            '遊戲橘子': { category: 'entertainment', type: '遊戲', aliases:['Gamania'], cards: { richart: 0.033, dawho: true } },
+            'Steam': { category: 'entertainment', type: '遊戲', cards: { richart: 0.033, ubear: 0.03, dawho: true } },
+            'PlayStation': { category: 'entertainment', type: '遊戲', cards: { ubear: 0.10, richart: 0.033, dawho: true } },
+            'Nintendo': { category: 'entertainment', type: '遊戲', aliases:['任天堂'], cards: { ubear: 0.10, richart: 0.033, dawho: true } },
+            'Netflix': { category: 'entertainment', type: '影音', cards: { ubear: 0.10, cube: 0.03, richart: 0.033, dawho: true } },
+            'Disney+': { category: 'entertainment', type: '影音', cards: { ubear: 0.10, cube: 0.03, richart: 0.033, dawho: true } },
+            // AI
+            'ChatGPT': { category: 'digital', type: 'AI工具', cards: { cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Notion': { category: 'digital', type: 'AI工具', cards: { cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Canva': { category: 'digital', type: 'AI工具', cards: { cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Perplexity': { category: 'digital', type: 'AI工具', cards: { cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Claude': { category: 'digital', type: 'AI工具', cards: { cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
 
-            // === 2. 加油交通 (Unicard 指定) ===
-            '中油': { category: 'gas', type: '加油', aliases:['台灣中油'], cards: { unicard: true, cube: 0.02, richart: 0.033, dawho: true } },
-            '台灣大車隊': { category: 'transport', type: '交通', aliases:['55688'], cards: { unicard: true, cube: 0.03, richart: 0.038, dawho: true } }, // Richart Pay 3.8%
-            '台鐵': { category: 'transport', type: '交通', aliases:['台灣鐵路'], cards: { unicard: true, cube: 0.035, richart: 0.033, ubear: 0.03, dawho: true } },
-            '高鐵': { category: 'transport', type: '交通', aliases:['台灣高鐵'], cards: { unicard: true, cube: 0.035, richart: 0.033, ubear: 0.03, dawho: true } },
-            'Uber': { category: 'transport', type: '交通', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
-            'Yoxi': { category: 'transport', type: '交通', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            'Gogoro': { category: 'transport', type: '電池資費', cards: { unicard: true, cube: 0.02, dawho: true } }, // Unicard ESG
-            'Tesla': { category: 'transport', type: '充電', aliases:['特斯拉'], cards: { unicard: true, cube: 0.02, dawho: true } }, // Unicard ESG
-            'YouBike': { category: 'transport', type: '交通', cards: { unicard: true, dawho: true } }, // Unicard ESG
-
-            // === 3. 國內百貨 (Unicard 指定) ===
-            '新光三越': { category: 'department', type: '百貨', cards: { richart: 0.038, unicard: true, cube: 0.03, dawho: true } },
-            '遠東百貨': { category: 'department', type: '百貨', aliases:['大遠百'], cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '漢神百貨': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } }, // 註: 不含巨蛋
-            '微風': { category: 'department', type: '百貨', aliases:['微風廣場'], cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '台北101': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '華泰名品城': { category: 'department', type: 'Outlet', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '三井OUTLET': { category: 'department', type: 'Outlet', aliases:['Mitsui'], cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '京站': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '美麗華': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, dawho: true } },
-            '誠品生活': { category: 'department', type: '百貨', aliases:['誠品書店','誠品線上'], cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '秀泰生活': { category: 'department', type: '商場', cards: { unicard: true, cube: 0.03, dawho: true } },
-            'LaLaport': { category: 'department', type: '商場', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '統領廣場': { category: 'department', type: '百貨', cards: { unicard: true, dawho: true } },
-            '統一時代': { category: 'department', type: '百貨', aliases:['統一時代台北'], cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '昇恆昌': { category: 'department', type: '免稅店', cards: { unicard: true, dawho: true } },
-            '采盟': { category: 'department', type: '免稅店', cards: { unicard: true, dawho: true } },
-            'SOGO': { category: 'department', type: '百貨', aliases:['遠東SOGO'], cards: { richart: 0.033, cube: 0.03, dawho: true } }, // SOGO 沒在 Unicard 列表
-
-            // === 4. 餐飲美食 (Unicard 指定) ===
-            'Uber Eats': { category: 'food', type: '外送', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
-            'foodpanda': { category: 'food', type: '外送', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
-            'EZTABLE': { category: 'food', type: '餐飲訂位', cards: { unicard: true, ubear: 0.03, dawho: true } },
-            '王品瘋Pay': { category: 'food', type: '餐飲', cards: { unicard: true, richart: 0.033, dawho: true } },
-            '饗賓': { category: 'food', type: '餐飲', aliases:['饗食天堂','饗饗'], cards: { unicard: true, richart: 0.033, dawho: true } },
-            '瓦城': { category: 'food', type: '餐飲', cards: { unicard: true, richart: 0.033, dawho: true } },
-            '乾杯': { category: 'food', type: '餐飲', cards: { unicard: true, richart: 0.033, dawho: true } },
-            '漢來美食': { category: 'food', type: '餐飲', aliases:['漢來海港'], cards: { unicard: true, richart: 0.033, dawho: true } },
-            '鼎王': { category: 'food', type: '餐飲', cards: { unicard: true, richart: 0.033, dawho: true } },
-            '爭鮮': { category: 'food', type: '餐飲', cards: { unicard: true, richart: 0.033, dawho: true } },
-            '麥當勞': { category: 'food', type: '餐飲', cards: { cube: 0.03, richart: 0.033, dawho: true } }, // 沒在Unicard
-
-            // === 5. 航空旅遊 (Unicard 指定) ===
+            // === 2. 玩旅刷 (Richart 3.3%) - 旅遊/航空/海外 ===
+            'Klook': { category: 'travel', type: '旅遊', cards: { cube: 0.035, unicard: true, richart: 0.033, ubear: 0.03, dawho: true } },
+            'KKday': { category: 'travel', type: '旅遊', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Agoda': { category: 'travel', type: '訂房', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Booking.com': { category: 'travel', type: '訂房', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Trip.com': { category: 'travel', type: '訂房', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            'Airbnb': { category: 'travel', type: '訂房', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'Hotels.com': { category: 'travel', type: '訂房', cards: { unicard: true, richart: 0.033, dawho: true } },
+            'Expedia': { category: 'travel', type: '訂房', cards: { unicard: true, richart: 0.033, dawho: true } },
+            // 海外交通
+            'Grab': { category: 'transport', type: '海外交通', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            'SUICA': { category: 'transport', type: '海外交通', aliases:['西瓜卡'], cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            'ICOCA': { category: 'transport', type: '海外交通', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            'PASMO': { category: 'transport', type: '海外交通', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            'WOWPASS': { category: 'transport', type: '海外交通', cards: { richart: 0.033, dawho: true } },
+            'AIRSIM': { category: 'transport', type: '網卡', cards: { richart: 0.033, dawho: true } },
+            // 旅行社
+            '雄獅旅遊': { category: 'travel', type: '旅行社', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '易遊網': { category: 'travel', type: '旅行社', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '東南旅遊': { category: 'travel', type: '旅行社', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '可樂旅遊': { category: 'travel', type: '旅行社', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '長汎假期': { category: 'travel', type: '旅行社', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '五福旅遊': { category: 'travel', type: '旅行社', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '喜鴻假期': { category: 'travel', type: '旅行社', cards: { richart: 0.033, dawho: true } },
+            '易飛網': { category: 'travel', type: '旅行社', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '燦星旅遊': { category: 'travel', type: '旅行社', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '加利利': { category: 'travel', type: '旅行社', aliases:['加利利旅行社'], cards: { richart: 0.033, dawho: true } },
+            '鳳凰旅遊': { category: 'travel', type: '旅行社', aliases:['鳳凰國際'], cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '山富旅遊': { category: 'travel', type: '旅行社', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '行健旅遊': { category: 'travel', type: '旅行社', cards: { richart: 0.033, dawho: true } },
+            // 航空
             '中華航空': { category: 'airline', type: '航空', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
             '長榮航空': { category: 'airline', type: '航空', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
-            '日本航空': { category: 'airline', type: '航空', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '星宇航空': { category: 'airline', type: '航空', cards: { cube: 0.03, richart: 0.033, dawho: true } },
             '台灣虎航': { category: 'airline', type: '航空', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            '國泰航空': { category: 'airline', type: '航空', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '華信航空': { category: 'airline', type: '航空', cards: { richart: 0.033, dawho: true } },
+            '立榮航空': { category: 'airline', type: '航空', cards: { richart: 0.033, dawho: true } },
             '樂桃航空': { category: 'airline', type: '航空', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '阿聯酋航空': { category: 'airline', type: '航空', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '亞洲航空': { category: 'airline', type: '航空', cards: { cube: 0.03, richart: 0.033, dawho: true } },
             '酷航': { category: 'airline', type: '航空', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '星宇航空': { category: 'airline', type: '航空', cards: { cube: 0.03, richart: 0.033, dawho: true } }, // 沒在Unicard
-            'Trip.com': { category: 'travel', type: '旅遊', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            'Booking.com': { category: 'travel', type: '訂房', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
-            'Hotels.com': { category: 'travel', type: '訂房', cards: { unicard: true, richart: 0.033, dawho: true } },
-            'Agoda': { category: 'travel', type: '訂房', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
-            'AsiaYo': { category: 'travel', type: '訂房', cards: { unicard: true, dawho: true } },
-            'Expedia': { category: 'travel', type: '訂房', cards: { unicard: true, richart: 0.033, dawho: true } },
-            'KKday': { category: 'travel', type: '旅遊', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
-            'Klook': { category: 'travel', type: '旅遊', cards: { unicard: true, cube: 0.035, richart: 0.033, ubear: 0.03, dawho: true } },
-            '雄獅旅遊': { category: 'travel', type: '旅行社', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '可樂旅遊': { category: 'travel', type: '旅行社', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
-            '東南旅遊': { category: 'travel', type: '旅行社', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '捷星航空': { category: 'airline', type: '航空', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '新加坡航空': { category: 'airline', type: '航空', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '日本航空': { category: 'airline', type: '航空', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '越捷航空': { category: 'airline', type: '航空', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '海外消費': { category: 'overseas', type: '國外', cards: { cube: 0.03, richart: 0.033, ubear: 0.01, dawho: true } },
 
-            // === 6. 精選商家 & 生活採買 & 3C (Unicard 指定) ===
-            'Apple': { category: 'shopping', type: '3C', aliases:['Apple直營店'], cards: { unicard: true, dawho: true } },
-            '小米': { category: 'shopping', type: '3C', aliases:['小米台灣'], cards: { unicard: true, dawho: true } },
-            '全國電子': { category: 'shopping', type: '3C', cards: { unicard: true, dawho: true } },
-            '燦坤': { category: 'shopping', type: '3C', cards: { unicard: true, dawho: true } },
-            '迪卡儂': { category: 'shopping', type: '運動', cards: { unicard: true, dawho: true } },
+            // === 3. 天天刷 (Richart 3.3%) - 超商/交通/藥妝 ===
+            '7-11': { category: 'supermarket', type: '超商', aliases: ['7-ELEVEN'], cards: { cube: 0.02, richart: 0.038, dawho: true } }, // Pay 3.8%
+            '全家': { category: 'supermarket', type: '超商', cards: { cube: 0.02, richart: 0.038, dawho: true } }, // Pay 3.8%
             '家樂福': { category: 'supermarket', type: '量販', cards: { unicard: true, cube: 0.02, richart: 0.033, dawho: true } },
-            '屈臣氏': { category: 'drugstore', type: '藥妝', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            '大買家': { category: 'supermarket', type: '量販', cards: { richart: 0.033, dawho: true } },
+            '唐吉軻德': { category: 'supermarket', type: '超市', aliases:['Donki'], cards: { richart: 0.033, dawho: true } },
+            'LOPIA': { category: 'supermarket', type: '超市', cards: { cube: 0.02, richart: 0.033, dawho: true } },
+            // 交通
+            '台鐵': { category: 'transport', type: '交通', aliases:['台灣鐵路'], cards: { cube: 0.035, unicard: true, richart: 0.033, ubear: 0.03, dawho: true } },
+            '高鐵': { category: 'transport', type: '交通', aliases:['台灣高鐵'], cards: { cube: 0.035, unicard: true, richart: 0.033, ubear: 0.03, dawho: true } },
+            '台灣大車隊': { category: 'transport', type: '交通', aliases:['55688'], cards: { unicard: true, cube: 0.03, richart: 0.038, dawho: true } }, // Pay 3.8%
+            'Yoxi': { category: 'transport', type: '交通', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            'Uber': { category: 'transport', type: '交通', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            // 停車租車
+            '嘟嘟房': { category: 'car', type: '停車', cards: { richart: 0.033, dawho: true } },
+            '車麻吉': { category: 'car', type: '停車/充電', aliases:['Autopass'], cards: { cube: 0.02, richart: 0.033, dawho: true } },
+            '城市車旅': { category: 'car', type: '停車', cards: { richart: 0.033, dawho: true } },
+            'ViViPark': { category: 'car', type: '停車', cards: { richart: 0.033, dawho: true } },
+            'USPACE': { category: 'car', type: '停車', cards: { richart: 0.033, dawho: true } },
+            'UDRIVE': { category: 'car', type: '租車', cards: { richart: 0.033, dawho: true } },
+            'iRent': { category: 'transport', type: '租車', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '和運租車': { category: 'transport', type: '租車', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '格上租車': { category: 'transport', type: '租車', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            // 藥妝
+            '寶雅': { category: 'drugstore', type: '藥妝', cards: { richart: 0.033, dawho: true } },
             '康是美': { category: 'drugstore', type: '藥妝', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            '屈臣氏': { category: 'drugstore', type: '藥妝', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            '杏一': { category: 'drugstore', type: '藥局', aliases:['杏一醫療'], cards: { richart: 0.033, dawho: true } },
+            '大樹藥局': { category: 'drugstore', type: '藥局', cards: { unicard: true, richart: 0.033, dawho: true } },
+            '丁丁藥局': { category: 'drugstore', type: '藥局', cards: { unicard: true, richart: 0.033, dawho: true } },
+            '佑全': { category: 'drugstore', type: '藥局', aliases:['佑全保健'], cards: { richart: 0.033, dawho: true } },
+            '健康人生': { category: 'drugstore', type: '藥局', cards: { richart: 0.033, dawho: true } },
+
+            // === 4. 大筆刷 (Richart 3.3%) - 百貨/Outlet/居家/時尚 ===
+            '新光三越': { category: 'department', type: '百貨', cards: { richart: 0.038, unicard: true, cube: 0.03, dawho: true } }, // Pay 3.8%
+            '遠東百貨': { category: 'department', type: '百貨', aliases:['大遠百'], cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            'SOGO': { category: 'department', type: '百貨', aliases:['遠東SOGO'], cards: { richart: 0.033, cube: 0.03, dawho: true } },
+            '漢神巨蛋': { category: 'department', type: '百貨', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '漢神百貨': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '微風': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '台北101': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            'Big City': { category: 'department', type: '商場', aliases:['遠東巨城'], cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '廣三SOGO': { category: 'department', type: '百貨', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '南紡': { category: 'department', type: '商場', aliases:['南紡購物中心'], cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '誠品生活': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '京站': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '三創': { category: 'department', type: '商場', aliases:['三創生活'], cards: { richart: 0.033, dawho: true } },
+            '夢時代': { category: 'department', type: '商場', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '統一時代': { category: 'department', type: '百貨', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '中友百貨': { category: 'department', type: '百貨', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            'LaLaport': { category: 'department', type: '商場', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            'MITSUI OUTLET': { category: 'department', type: 'Outlet', aliases:['三井'], cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            '華泰名品城': { category: 'department', type: 'Outlet', cards: { unicard: true, cube: 0.03, richart: 0.033, dawho: true } },
+            'SKM Park': { category: 'department', type: 'Outlet', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            // 居家/時尚
+            'IKEA': { category: 'home', type: '居家', aliases:['宜家家居'], cards: { unicard: true, cube: 0.02, richart: 0.038, dawho: true } }, // Pay 3.8%
             '特力屋': { category: 'home', type: '居家', cards: { unicard: true, richart: 0.033, dawho: true } },
             'HOLA': { category: 'home', type: '居家', cards: { unicard: true, richart: 0.033, dawho: true } },
-            'hoi': { category: 'home', type: '居家', aliases:['好好生活'], cards: { unicard: true, dawho: true } },
+            '宜得利': { category: 'home', type: '居家', cards: { richart: 0.033, dawho: true } },
+            '瑪黑家居': { category: 'home', type: '居家', cards: { richart: 0.033, dawho: true } },
             'UNIQLO': { category: 'fashion', type: '服飾', cards: { unicard: true, richart: 0.033, dawho: true, cube: 0.003 } },
+            'GU': { category: 'fashion', type: '服飾', cards: { ubear: 0.03, richart: 0.033, dawho: true } },
+            'ZARA': { category: 'fashion', type: '服飾', cards: { ubear: 0.03, richart: 0.033, dawho: true } },
             'NET': { category: 'fashion', type: '服飾', cards: { unicard: true, richart: 0.033, dawho: true } },
-            '大樹藥局': { category: 'drugstore', type: '藥妝', cards: { unicard: true, richart: 0.033, dawho: true } },
-            '丁丁藥局': { category: 'drugstore', type: '藥妝', aliases:['丁丁藥妝'], cards: { unicard: true, richart: 0.033, dawho: true } },
-            
-            // === 7. 電商平台 (Unicard 指定) ===
-            'momo購物網': { category: 'shopping', type: '網購', aliases:['momo'], cards: { unicard: true, richart: 0.033, cube: 0.03, ubear: 0.03, dawho: true } },
-            '蝦皮購物': { category: 'shopping', type: '網購', aliases:['蝦皮'], cards: { unicard: true, richart: 0.033, cube: 0.03, ubear: 0.03, dawho: true } },
-            '淘寶': { category: 'shopping', type: '網購', aliases:['Taobao'], cards: { unicard: true, richart: 0.033, cube: 0.03, ubear: 0.03, dawho: true } },
-            'Coupang': { category: 'shopping', type: '網購', aliases:['酷澎'], cards: { unicard: true, richart: 0.033, cube: 0.03, ubear: 0.03, dawho: true } },
-            'PChome': { category: 'shopping', type: '網購', aliases:['PChome 24h'], cards: { richart: 0.033, ubear: 0.03, cube: 0.03, dawho: true } }, // 沒在Unicard
+            'lululemon': { category: 'fashion', type: '服飾', cards: { richart: 0.033, dawho: true } },
 
-            // === 8. 國外實體 (通用) ===
-            '日本實體': { category: 'overseas', type: '國外消費', aliases:['日本'], cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.01, dawho: true } },
-            '韓國實體': { category: 'overseas', type: '國外消費', aliases:['韓國'], cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.01, dawho: true } },
-            
-            // === 其他既有資料 (AI/影音) ===
-            'ChatGPT': { category: 'digital', type: 'AI工具', cards: { cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
-            'Netflix': { category: 'entertainment', type: '影音', cards: { ubear: 0.10, cube: 0.03, richart: 0.033, dawho: true } },
-            'Spotify': { category: 'entertainment', type: '影音', cards: { cube: 0.03, ubear: 0.03, dawho: true } },
-            '7-11': { category: 'supermarket', type: '超商', aliases: ['7-ELEVEN'], cards: { cube: 0.02, richart: 0.038, dawho: true } }, // Unicard無，僅LINE Pay/街口綁定有
-            '全家': { category: 'supermarket', type: '超商', cards: { cube: 0.02, richart: 0.038, dawho: true } },
-            '全聯': { category: 'supermarket', type: '超市', aliases:['全聯福利中心'], cards: { cube: 0.02, richart: 0.033, ubear: 0.01, dawho: true } },
-            'IKEA': { category: 'home', type: '居家', aliases:['宜家家居'], cards: { cube: 0.02, richart: 0.038, dawho: true } }, // Unicard無列出(但可能含在百貨內，保守不列)
+            // === 5. 好饗刷 (Richart 3.3%) - 餐飲/外送/加油/娛樂 ===
+            '國內餐飲': { category: 'food', type: '餐飲', cards: { cube: 0.03, richart: 0.033, dawho: true } },
+            '王品瘋Pay': { category: 'food', type: '餐飲', cards: { unicard: true, richart: 0.033, dawho: true } },
+            'Uber Eats': { category: 'food', type: '外送', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            'foodpanda': { category: 'food', type: '外送', cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
+            '中油': { category: 'gas', type: '加油', aliases:['台灣中油'], cards: { unicard: true, cube: 0.02, richart: 0.033, dawho: true } },
+            '台亞': { category: 'gas', type: '加油', cards: { richart: 0.033, dawho: true } },
+            '全國加油': { category: 'gas', type: '加油', cards: { richart: 0.033, dawho: true } },
+            'EVOASIS': { category: 'car', type: '充電', cards: { cube: 0.02, richart: 0.033, dawho: true } },
+            'EVALUE': { category: 'car', type: '充電', cards: { cube: 0.02, richart: 0.033, dawho: true } },
+            // 展演/KTV/樂園
+            '拓元': { category: 'entertainment', type: '售票', aliases:['拓元售票'], cards: { ubear: 0.03, richart: 0.033, dawho: true } },
+            'KKTIX': { category: 'entertainment', type: '售票', cards: { richart: 0.033, dawho: true } },
+            '年代售票': { category: 'entertainment', type: '售票', cards: { richart: 0.033, dawho: true } },
+            '寬宏售票': { category: 'entertainment', type: '售票', cards: { richart: 0.033, dawho: true } },
+            'OPENTIX': { category: 'entertainment', type: '售票', cards: { richart: 0.033, dawho: true } },
+            'FunNow': { category: 'entertainment', type: '預訂', cards: { ubear: 0.01, richart: 0.033, dawho: true } },
+            '錢櫃': { category: 'entertainment', type: 'KTV', cards: { richart: 0.033, dawho: true } },
+            '好樂迪': { category: 'entertainment', type: 'KTV', cards: { richart: 0.033, dawho: true } },
+            'ONCOR': { category: 'entertainment', type: 'KTV', cards: { richart: 0.033, dawho: true } },
+            'sing!go': { category: 'entertainment', type: 'KTV', cards: { richart: 0.033, dawho: true } },
+            '享溫馨': { category: 'entertainment', type: 'KTV', cards: { richart: 0.033, dawho: true } },
+            '義大': { category: 'entertainment', type: '樂園', aliases:['義大遊樂世界'], cards: { richart: 0.033, dawho: true } },
+            '麗寶': { category: 'entertainment', type: '樂園', aliases:['麗寶樂園'], cards: { richart: 0.033, dawho: true } },
+            '六福村': { category: 'entertainment', type: '樂園', cards: { richart: 0.033, dawho: true } },
+            '九族': { category: 'entertainment', type: '樂園', aliases:['九族文化村'], cards: { richart: 0.033, dawho: true } },
+            '劍湖山': { category: 'entertainment', type: '樂園', cards: { richart: 0.033, dawho: true } },
+            'X-Park': { category: 'entertainment', type: '樂園', cards: { richart: 0.033, dawho: true } },
+            '海生館': { category: 'entertainment', type: '樂園', aliases:['海洋生物博物館'], cards: { richart: 0.033, dawho: true } },
+            '遠雄海洋公園': { category: 'entertainment', type: '樂園', cards: { richart: 0.033, dawho: true } },
+            '小人國': { category: 'entertainment', type: '樂園', cards: { richart: 0.033, dawho: true } },
+            // 指定飯店
+            '晶華': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+            '雲朗': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+            '萬豪': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+            '煙波': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+            '老爺': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+            '福華': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+            '漢來': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+            '君悅': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+            '洲際': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+            '寒沐': { category: 'hotel', type: '住宿', cards: { richart: 0.033, dawho: true } },
+
+            // === 6. 其他 (LINE Pay) ===
+            'LINE Pay': { category: 'payment', type: '行動支付', cards: { unicard: true, richart: 0.023, cube: 0.02, ubear: 0.03, dawho: true } },
         };
 
         const categories = [
             { id: 'all', name: '全部', emoji: '🏪' },
-            { id: 'payment', name: '行動支付', emoji: '💳' },
+            { id: 'digital', name: 'AI/數位', emoji: '🤖' },
             { id: 'shopping', name: '網購/3C', emoji: '🛍️' },
             { id: 'department', name: '百貨/藥妝', emoji: '🏬' },
             { id: 'food', name: '餐飲外送', emoji: '🍔' },
@@ -361,37 +447,49 @@
             { id: 'transport', name: '交通加油', emoji: '🚕' },
             { id: 'supermarket', name: '超商量販', emoji: '🛒' },
             { id: 'entertainment', name: '影音娛樂', emoji: '🎮' },
-            { id: 'overseas', name: '國外實體', emoji: '🌏' }
+            { id: 'course', name: '線上課程', emoji: '📚' }
         ];
 
         let currentCategory = 'all';
 
-        // === 智能方案建議邏輯 (2026版) ===
+        // === 智能方案建議邏輯 (2026 Richart 強化版) ===
         function getPlanSuggestion(cardKey, category, merchantName, type) {
             
-            // 1. 國泰 CUBE 方案判斷
-            if (cardKey === 'cube') {
-                if (['高鐵', '台鐵', '台灣高鐵', '台灣鐵路', 'Klook'].includes(merchantName)) return '切換：瘋大港(3.5%) 或 趣旅行(3%)';
-                if (category === 'hotel-ks') return '切換：瘋大港';
-                if (['IKEA', '全聯', '家樂福', '7-11', '全家', '中油'].some(k => merchantName.includes(k))) return '切換：集精選';
-                if (category === 'digital' || type === 'AI工具' || type === '網購') return '切換：玩數位';
-                if (type === '影音') return '切換：玩數位';
-                if (category === 'department' || category === 'drugstore' || category === 'food') return '切換：樂響購';
-                if (merchantName.includes('Uber Eats') || merchantName.includes('foodpanda')) return '切換：樂響購';
-                if (category === 'travel' || category === 'airline' || type === '交通' || category === 'overseas') return '切換：趣旅行';
+            // 1. 台新 Richart 方案判斷 (2026年七大分類)
+            if (cardKey === 'richart') {
+                if (merchantName.includes('LINE Pay')) return 'LINE Pay (2.3%)';
+
+                // 優先判定 Pay著刷 (3.8%) - 需使用台新Pay
+                const payList = ['7-11', '全家', 'IKEA', '新光三越', '台灣大車隊', '大潤發'];
+                if (payList.some(k => merchantName.includes(k))) return '綁定台新Pay (Pay著刷)';
+
+                // 衝突處理：Uber
+                if (merchantName === 'Uber') return '國內:天天刷 / 國外:玩旅刷';
+
+                // 七大分類對應
+                if (category === 'digital' || type === '網購' || type === 'AI工具' || type === '影音' || type === '遊戲' || category === 'course') return '切換：數趣刷';
+                if (category === 'travel' || category === 'airline' || category === 'overseas' || type === '海外交通') return '切換：玩旅刷';
+                if (type === '訂房') return '切換：玩旅刷';
+                if (category === 'supermarket' || merchantName.includes('台鐵') || merchantName.includes('高鐵') || type === '交通' || type === '租車' || type === '藥妝' || type === '藥局' || category === 'car') return '切換：天天刷';
+                if (category === 'department' || type === '服飾' || type === '居家' || type === 'Outlet') return '切換：大筆刷';
+                if (category === 'food' || category === 'gas' || type === '樂園' || type === 'KTV' || type === '售票') return '切換：好饗刷';
+                if (merchantName.includes('Uber Eats') || merchantName.includes('foodpanda')) return '切換：好饗刷';
+                
                 return '請確認APP權益';
             }
 
-            // 2. 台新 Richart 方案判斷
-            if (cardKey === 'richart') {
-                if (['7-11', '全家', 'IKEA', '新光三越', '台灣大車隊'].some(k => merchantName.includes(k))) return '綁定台新Pay (Pay著刷)';
-                if (category === 'digital' || type === '網購' || type === 'AI工具' || type === '影音' || type === '遊戲') return '切換：數趣刷';
-                if (category === 'travel' || category === 'airline' || category === 'overseas' || merchantName.includes('Uber') || merchantName.includes('高鐵')) return '切換：玩旅刷';
-                if (category === 'supermarket' || merchantName.includes('台鐵') || merchantName.includes('yoxi')) return '切換：天天刷';
-                if (category === 'department' || type === '服飾' || merchantName.includes('IKEA')) return '切換：大筆刷';
-                if (category === 'food' || category === 'gas' || type === '樂園' || type === 'KTV') return '切換：好饗刷';
+            // 2. 國泰 CUBE 方案判斷
+            if (cardKey === 'cube') {
+                const crazyList = ['高鐵', '台鐵', '台灣高鐵', '台灣鐵路', 'Klook'];
+                if (category === 'hotel-ks' || crazyList.some(k => merchantName.includes(k))) return '切換：瘋大港 (3.5%)';
+                const essentialList = ['IKEA', '全聯', '家樂福', '7-11', '全家', '中油', 'LOPIA', '車麻吉', 'U-POWER', 'EVOASIS'];
+                if (essentialList.some(k => merchantName.includes(k))) return '切換：集精選';
+                if (category === 'digital' || type === 'AI工具' || type === '網購' || type === '影音') return '切換：玩數位';
+                if (category === 'department' || category === 'drugstore' || category === 'food' || merchantName.includes('麥當勞')) return '切換：樂響購';
+                if (category === 'travel' || category === 'airline' || type === '交通' || category === 'overseas' || category === 'hotel') return '切換：趣旅行';
                 return '請確認APP權益';
             }
+
             return null;
         }
 
@@ -402,7 +500,20 @@
             let details = [];
             let planName = null;
 
-            if (cardKey === 'unicard') {
+            if (cardKey === 'richart') {
+                // 特殊 Pay著刷 3.8%
+                if (['7-11', '全家', 'IKEA', '新光三越', '台灣大車隊'].some(k => merchantName.includes(k)) && dbValue !== 0.023) {
+                     displayRate = 0.038;
+                } else if (typeof dbValue === 'number') {
+                     displayRate = dbValue;
+                } else {
+                     displayRate = 0.003;
+                }
+                
+                planName = getPlanSuggestion(cardKey, category, merchantName, type);
+                if (planName) details.push(`<span class="plan-alert">⚠️ ${planName}</span>`);
+            }
+            else if (cardKey === 'unicard') {
                 if (dbValue === true) {
                     displayRate = 0.045; 
                     details = cardInfo.plansDetails;
@@ -419,10 +530,9 @@
                 if (dbValue) displayRate = dbValue; else displayRate = 0.01;
                 if (displayRate === 0.10) details.push('指定娛樂 10%');
                 if (displayRate === 0.03) details.push('網購/行動支付 3%');
-                if (displayRate === 0.01) details.push('一般消費 1%');
             }
-            else {
-                if (typeof dbValue === 'number') displayRate = dbValue; else displayRate = cardInfo.baseRate || 0.003;
+            else if (cardKey === 'cube') {
+                if (typeof dbValue === 'number') displayRate = dbValue; else displayRate = 0.003;
                 planName = getPlanSuggestion(cardKey, category, merchantName, type);
                 if (planName) details.push(`<span class="plan-alert">⚠️ ${planName}</span>`);
             }
@@ -435,7 +545,7 @@
             };
         }
 
-        // === UI 邏輯 (手機秒搜修正) ===
+        // === UI 邏輯 ===
         function init() {
             renderCategories();
             const input = document.getElementById('searchMerchant');
@@ -465,7 +575,7 @@
             });
             const results = [];
             Object.entries(merchantDatabase).forEach(([name, info]) => {
-                if (catId === 'all' || info.category === catId) {
+                if (catId === 'all' || info.category === catId || (catId === 'hotel-ks' && info.category === 'hotel-ks') || (catId === 'course' && info.category === 'course')) {
                     results.push({ name, ...info });
                 }
             });
