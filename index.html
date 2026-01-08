@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>信用卡回饋查詢助手 2026 (完整版)</title>
+    <title>信用卡回饋查詢助手 2026 </title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -193,6 +193,16 @@
         .benefit-desc { font-size: 0.85em; color: #666; margin-top: 2px; }
         .benefit-note { font-size: 0.8em; color: #999; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
         
+        /* 醒目提示樣式 */
+        .urgent-tag {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            border: 1px solid #ffcdd2;
+        }
+
         /* === 詳情彈窗 === */
         .detail-modal {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -253,7 +263,7 @@
         <div id="tab-search" class="tab-content active">
             <div class="form-section">
                 <div class="info-text">
-                    🔍 <strong>2026年最新權益</strong>：支援國泰CUBE(瘋大港)、台新Richart(七大分類)、玉山Unicard、永豐DAWHO、玉山UBear。
+                    🔍 <strong>2026年最新權益</strong>：支援國泰CUBE(瘋大港3.5%至3/23)、台新Richart(七大權益)、玉山Unicard、永豐DAWHO、玉山UBear。
                 </div>
                 
                 <div class="form-group">
@@ -309,13 +319,13 @@
             dawho: { name: '永豐 DAWHO', fixedRate: 0.035 }
         };
 
-        // === 權益總覽資料 (新增功能) ===
+        // === 權益總覽資料 (使用者指定更新) ===
         const cardBenefitsData = [
             {
                 id: 'richart',
                 name: '台新 Richart',
                 icon: '🐶',
-                note: '需完成 Richart 任務 (如存款/消費) 始享加碼',
+                note: '需每日透過 Richart App 切換至對應權益方案',
                 benefits: [
                     { name: 'Pay著刷', rate: 0.038, desc: '四大超商 | 新光三越 | IKEA | 台灣大車隊', note: '需綁定台新Pay支付' },
                     { name: '數趣刷', rate: 0.033, desc: '網購 (蝦皮/momo/酷澎) | 遊戲影音 | 線上課程 | AI服務', note: '上限 1000 元' },
@@ -330,10 +340,10 @@
             {
                 id: 'cube',
                 name: '國泰 CUBE',
-                icon: '⬜',
+                icon: '⚪️',
                 note: '需每日透過 CUBE App 切換至對應權益方案',
                 benefits: [
-                    { name: '瘋大港', rate: 0.035, desc: '高雄指定住宿 | Klook | 高鐵 | 台鐵', note: '期間限定' },
+                    { name: '瘋大港', rate: 0.035, desc: '高雄指定住宿 | Klook | 高鐵 | 台鐵', note: '<span class="urgent-tag">活動至 2026/3/23 截止</span>' },
                     { name: '玩數位', rate: 0.03, desc: '網購 (蝦皮/momo) | 影音串流 | AI工具 | 國際電商', note: '無上限' },
                     { name: '樂響購', rate: 0.03, desc: '百貨公司 | 全球餐飲 | 外送 | 藥妝', note: '無上限' },
                     { name: '趣旅行', rate: 0.03, desc: '海外實體 | 訂房 | 航空 | 旅行社 | 國內交通', note: '無上限' },
@@ -343,10 +353,10 @@
             {
                 id: 'unicard',
                 name: '玉山 Unicard',
-                icon: '🦄',
+                icon: '⛰️',
                 note: '基本 1%，簡單選/任意選/UP選需符合對應任務',
                 benefits: [
-                    { name: 'UP選', rate: 0.045, desc: '百大特店 (行動支付/交通/百貨/餐飲/旅遊)', note: '需完成UP任務 (3000點或消費5萬)' },
+                    { name: 'UP選', rate: 0.045, desc: '百大特店 (行動支付/交通/百貨/餐飲/旅遊)', note: '需完成UP任務 (訂閱149點)' },
                     { name: '任意選', rate: 0.035, desc: '百大特店', note: '需透過 App 設定方案' },
                     { name: '簡單選', rate: 0.03, desc: '百大特店', note: '預設方案' },
                     { name: '一般消費', rate: 0.01, desc: '非指定通路', note: '無上限' }
@@ -366,18 +376,16 @@
             {
                 id: 'dawho',
                 name: '永豐 DAWHO',
-                icon: '🦁',
+                icon: '⚫️',
                 note: '需達成大戶等級 (月均往來 10 萬元)',
                 benefits: [
-                    { name: '國內指定', rate: 0.035, desc: '全通路 (一般1% + 任務1% + 指定5% 上限300元)', note: '國內統一 3.5% (含上限)' },
+                    { name: '國內指定', rate: 0.035, desc: '全通路 (一般1% + 加碼2.5% 上限400元)', note: '國內統一 3.5% (含上限)' },
                     { name: '國外消費', rate: 0.035, desc: '國外實體或網購', note: '最高可達 7% (視活動)' }
                 ]
             }
         ];
 
-        // ... [保留原本的 merchantDatabase 和 categories 資料，確保搜尋功能正常] ...
-        // 為了節省篇幅，這裡使用您前一次確認過的完整資料庫 (含Richart七大權益、CUBE瘋大港等)
-        // 在實際檔案中，請保留下方完整的 merchantDatabase 變數
+        // === 以下維持完整的搜尋資料庫 ===
         const merchantDatabase = {
             // === 1. 數趣刷 (Richart 3.3%) ===
             '蝦皮購物': { category: 'shopping', type: '網購', aliases:['蝦皮'], cards: { unicard: true, cube: 0.03, richart: 0.033, ubear: 0.03, dawho: true } },
@@ -605,7 +613,7 @@
         // === 程式初始化 ===
         function init() {
             renderCategories();
-            renderCardOverview(); // 新增: 渲染權益總覽
+            renderCardOverview();
 
             const input = document.getElementById('searchMerchant');
             input.addEventListener('input', handleSearch); 
@@ -622,13 +630,11 @@
         // === 分頁切換邏輯 ===
         function switchTab(tabId) {
             currentTab = tabId;
-            // 更新按鈕狀態
             document.querySelectorAll('.nav-item').forEach(el => {
                 el.classList.remove('active');
             });
             document.querySelector(`.nav-item[onclick="switchTab('${tabId}')"]`).classList.add('active');
 
-            // 更新內容顯示
             document.querySelectorAll('.tab-content').forEach(el => {
                 el.classList.remove('active');
             });
@@ -671,13 +677,6 @@
         function toggleAccordion(header) {
             const body = header.nextElementSibling;
             const isOpen = body.classList.contains('open');
-            
-            // 關閉其他已展開的 (如果想要手風琴效果)
-            // document.querySelectorAll('.accordion-body').forEach(el => {
-            //     el.classList.remove('open');
-            //     el.previousElementSibling.classList.remove('active');
-            // });
-
             if (!isOpen) {
                 body.classList.add('open');
                 header.classList.add('active');
@@ -687,10 +686,7 @@
             }
         }
 
-        // ... [保留原本的 getPlanSuggestion, calculateCardMetrics, renderCategories, filterByCategory, handleSearch 等核心函數] ...
-        // (為了版面整潔，這些函數與上一版相同，請確保在完整檔案中包含它們)
-        
-        // [此處插入原有的 getPlanSuggestion 函數]
+        // === 核心運算 ===
         function getPlanSuggestion(cardKey, category, merchantName, type) {
             if (cardKey === 'richart') {
                 if (merchantName.includes('LINE Pay')) return 'LINE Pay (2.3%)';
@@ -718,7 +714,6 @@
             return null;
         }
 
-        // [此處插入原有的 calculateCardMetrics 函數]
         function calculateCardMetrics(cardKey, dbValue, category, merchantName, type) {
             const cardInfo = cardData[cardKey];
             let displayRate = 0;
