@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>信用卡回饋查詢助手 2026 </title>
+    <title>信用卡回饋查詢助手 2026</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -56,8 +56,6 @@
             color: white;
             box-shadow: 0 2px 4px rgba(33, 128, 160, 0.3);
         }
-        
-        /* 頁面切換控制 */
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -141,27 +139,18 @@
         }
         .best-tip {
             margin-top: 10px; padding-top: 8px; border-top: 1px solid #eee;
-            font-size: 0.85em; color: var(--color-text-light); display: flex; align-items: center;
+            font-size: 0.85em; color: var(--color-text-light); display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
         }
-        .plan-hint { color: var(--color-highlight); font-weight: 700; margin-left: 4px; font-size: 0.9em; }
+        .warning-text { color: #d35400; font-weight: 600; font-size: 0.9em; }
 
-        /* === 權益總覽頁樣式 (Accordion) === */
+        /* === 權益總覽樣式 === */
         .card-accordion-item {
-            background: var(--color-surface);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            overflow: hidden;
-            border: 1px solid var(--color-border);
+            background: var(--color-surface); border-radius: 12px; margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid var(--color-border);
         }
         .accordion-header {
-            padding: 16px 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            transition: background 0.2s;
+            padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            background: white; transition: background 0.2s;
         }
         .accordion-header:hover { background: #f9f9f9; }
         .card-title-row { display: flex; align-items: center; gap: 10px; }
@@ -169,22 +158,10 @@
         .card-title-text { font-weight: 700; font-size: 1.1em; color: var(--color-text); }
         .chevron { transition: transform 0.3s; color: #999; }
         .accordion-header.active .chevron { transform: rotate(180deg); }
-        
-        .accordion-body {
-            display: none;
-            padding: 0;
-            background: #fff;
-            border-top: 1px solid #eee;
-        }
+        .accordion-body { display: none; padding: 0; background: #fff; border-top: 1px solid #eee; }
         .accordion-body.open { display: block; animation: slideDown 0.3s ease-out; }
         @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 500px; } }
-        
-        .benefit-row {
-            padding: 12px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            flex-direction: column;
-        }
+        .benefit-row { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; flex-direction: column; }
         .benefit-row:last-child { border-bottom: none; }
         .benefit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
         .benefit-name { font-weight: 600; font-size: 1em; color: #444; }
@@ -192,16 +169,7 @@
         .benefit-rate.high { color: var(--color-danger); }
         .benefit-desc { font-size: 0.85em; color: #666; margin-top: 2px; }
         .benefit-note { font-size: 0.8em; color: #999; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
-        
-        /* 醒目提示樣式 */
-        .urgent-tag {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-            border: 1px solid #ffcdd2;
-        }
+        .urgent-tag { background-color: #ffebee; color: #c62828; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ffcdd2; }
 
         /* === 詳情彈窗 === */
         .detail-modal {
@@ -217,24 +185,16 @@
             display: flex; flex-direction: column;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
-        .detail-header {
-            padding: 20px; border-bottom: 1px solid #eee;
-            display: flex; justify-content: space-between; align-items: flex-start;
-        }
+        .detail-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: flex-start; }
         .detail-title h2 { font-size: 1.5em; color: var(--color-primary); margin: 0; }
         .detail-close {
             background: #f0f0f0; border: none; width: 32px; height: 32px;
             border-radius: 50%; font-size: 20px; cursor: pointer; color: #666;
         }
         .detail-body { padding: 20px; overflow-y: auto; }
-        .detail-card-item {
-            margin-bottom: 16px; border: 1px solid #eee; border-radius: 8px; overflow: hidden;
-        }
+        .detail-card-item { margin-bottom: 16px; border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
         .detail-card-item.best-card { border: 2px solid var(--color-success); background-color: #f6ffed; }
-        .detail-card-header {
-            padding: 10px 15px; background: #f9f9f9; font-weight: 600;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .detail-card-header { padding: 10px 15px; background: #f9f9f9; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
         .detail-card-item.best-card .detail-card-header { background: #d9f7be; color: #237804; }
         .detail-card-body { padding: 12px 15px; }
         .rate-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -242,7 +202,7 @@
         .detail-plan-info { font-size: 0.85em; color: #666; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ddd; }
         .plan-alert {
             color: #d35400; background: #fff7e6; padding: 4px 8px; border-radius: 4px;
-            margin-top: 6px; display: inline-block; font-weight: 600; font-size: 0.9em;
+            margin-top: 6px; display: block; font-weight: 600; font-size: 0.9em;
         }
         
         @media (max-width: 480px) {
@@ -319,7 +279,7 @@
             dawho: { name: '永豐 DAWHO', fixedRate: 0.035 }
         };
 
-        // === 權益總覽資料 (使用者指定更新) ===
+        // === 權益總覽資料 (更新) ===
         const cardBenefitsData = [
             {
                 id: 'richart',
@@ -610,11 +570,9 @@
         let currentCategory = 'all';
         let currentTab = 'search';
 
-        // === 程式初始化 ===
         function init() {
             renderCategories();
             renderCardOverview();
-
             const input = document.getElementById('searchMerchant');
             input.addEventListener('input', handleSearch); 
             input.addEventListener('focus', handleSearch); 
@@ -627,21 +585,14 @@
             filterByCategory('all');
         }
 
-        // === 分頁切換邏輯 ===
         function switchTab(tabId) {
             currentTab = tabId;
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('active');
-            });
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.querySelector(`.nav-item[onclick="switchTab('${tabId}')"]`).classList.add('active');
-
-            document.querySelectorAll('.tab-content').forEach(el => {
-                el.classList.remove('active');
-            });
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
         }
 
-        // === 渲染權益總覽 (Accordion) ===
         function renderCardOverview() {
             const container = document.getElementById('cardOverviewContainer');
             const html = cardBenefitsData.map(card => `
@@ -686,29 +637,28 @@
             }
         }
 
-        // === 核心運算 ===
         function getPlanSuggestion(cardKey, category, merchantName, type) {
             if (cardKey === 'richart') {
                 if (merchantName.includes('LINE Pay')) return 'LINE Pay (2.3%)';
                 const payList = ['7-11', '全家', 'IKEA', '新光三越', '台灣大車隊', '大潤發'];
                 if (payList.some(k => merchantName.includes(k))) return '綁定台新Pay (Pay著刷)';
                 if (merchantName === 'Uber') return '國內:天天刷 / 國外:玩旅刷';
-                if (category === 'digital' || type === '網購' || type === 'AI工具' || type === '影音' || type === '遊戲' || category === 'course') return '切換：數趣刷';
-                if (category === 'travel' || category === 'airline' || category === 'overseas' || type === '海外交通' || type === '訂房') return '切換：玩旅刷';
-                if (category === 'supermarket' || merchantName.includes('台鐵') || merchantName.includes('高鐵') || type === '交通' || type === '租車' || type === '藥妝' || type === '藥局' || category === 'car') return '切換：天天刷';
-                if (category === 'department' || type === '服飾' || type === '居家' || type === 'Outlet') return '切換：大筆刷';
-                if (category === 'food' || category === 'gas' || type === '樂園' || type === 'KTV' || type === '售票') return '切換：好饗刷';
-                if (merchantName.includes('Uber Eats') || merchantName.includes('foodpanda')) return '切換：好饗刷';
+                if (category === 'digital' || type === '網購' || type === 'AI工具' || type === '影音' || type === '遊戲' || category === 'course') return '天天刷';
+                if (category === 'travel' || category === 'airline' || category === 'overseas' || type === '海外交通' || type === '訂房') return '玩旅刷';
+                if (category === 'supermarket' || merchantName.includes('台鐵') || merchantName.includes('高鐵') || type === '交通' || type === '租車' || type === '藥妝' || type === '藥局' || category === 'car') return '天天刷';
+                if (category === 'department' || type === '服飾' || type === '居家' || type === 'Outlet') return '大筆刷';
+                if (category === 'food' || category === 'gas' || type === '樂園' || type === 'KTV' || type === '售票') return '好饗刷';
+                if (merchantName.includes('Uber Eats') || merchantName.includes('foodpanda')) return '好饗刷';
                 return '請確認APP權益';
             }
             if (cardKey === 'cube') {
                 const crazyList = ['高鐵', '台鐵', '台灣高鐵', '台灣鐵路', 'Klook'];
-                if (category === 'hotel-ks' || crazyList.some(k => merchantName.includes(k))) return '切換：瘋大港 (3.5%)';
+                if (category === 'hotel-ks' || crazyList.some(k => merchantName.includes(k))) return '瘋大港 (3.5%)';
                 const essentialList = ['IKEA', '全聯', '家樂福', '7-11', '全家', '中油', 'LOPIA', '車麻吉', 'U-POWER', 'EVOASIS'];
-                if (essentialList.some(k => merchantName.includes(k))) return '切換：集精選';
-                if (category === 'digital' || type === 'AI工具' || type === '網購' || type === '影音') return '切換：玩數位';
-                if (category === 'department' || category === 'drugstore' || category === 'food' || merchantName.includes('麥當勞')) return '切換：樂響購';
-                if (category === 'travel' || category === 'airline' || type === '交通' || category === 'overseas' || category === 'hotel') return '切換：趣旅行';
+                if (essentialList.some(k => merchantName.includes(k))) return '集精選';
+                if (category === 'digital' || type === 'AI工具' || type === '網購' || type === '影音') return '玩數位';
+                if (category === 'department' || category === 'drugstore' || category === 'food' || merchantName.includes('麥當勞')) return '樂響購';
+                if (category === 'travel' || category === 'airline' || type === '交通' || category === 'overseas' || category === 'hotel') return '趣旅行';
                 return '請確認APP權益';
             }
             return null;
@@ -718,7 +668,7 @@
             const cardInfo = cardData[cardKey];
             let displayRate = 0;
             let details = [];
-            let planName = null;
+            let combinedName = cardInfo.name;
 
             if (cardKey === 'richart') {
                 if (['7-11', '全家', 'IKEA', '新光三越', '台灣大車隊'].some(k => merchantName.includes(k)) && dbValue !== 0.023) {
@@ -728,8 +678,23 @@
                 } else {
                      displayRate = 0.003;
                 }
-                planName = getPlanSuggestion(cardKey, category, merchantName, type);
-                if (planName) details.push(`<span class="plan-alert">⚠️ ${planName}</span>`);
+                const planName = getPlanSuggestion(cardKey, category, merchantName, type);
+                if (planName) {
+                    if(!planName.includes('綁定') && !planName.includes('LINE')) {
+                        combinedName = `${cardInfo.name} ${planName.replace(' (3.5%)', '')}`;
+                        details.push(`⚠️ 記得當天23:59前切換方案`);
+                    } else {
+                        details.push(`⚠️ ${planName}`);
+                    }
+                }
+            }
+            else if (cardKey === 'cube') {
+                if (typeof dbValue === 'number') displayRate = dbValue; else displayRate = 0.003;
+                const planName = getPlanSuggestion(cardKey, category, merchantName, type);
+                if (planName) {
+                    combinedName = `${cardInfo.name} ${planName.replace(' (3.5%)', '')}`;
+                    details.push(`⚠️ 記得當天23:59前切換方案`);
+                }
             }
             else if (cardKey === 'unicard') {
                 if (dbValue === true) {
@@ -749,17 +714,11 @@
                 if (displayRate === 0.10) details.push('指定娛樂 10%');
                 if (displayRate === 0.03) details.push('網購/行動支付 3%');
             }
-            else if (cardKey === 'cube') {
-                if (typeof dbValue === 'number') displayRate = dbValue; else displayRate = 0.003;
-                planName = getPlanSuggestion(cardKey, category, merchantName, type);
-                if (planName) details.push(`<span class="plan-alert">⚠️ ${planName}</span>`);
-            }
 
             return {
                 rate: displayRate,
-                name: cardInfo.name,
-                details: details,
-                planName: planName
+                name: combinedName,
+                details: details
             };
         }
 
@@ -857,10 +816,8 @@
                         </div>
                         <div class="card-badges-row">${badgeHTML}</div>
                         <div class="best-tip">
-                            💡 最高：${bestCard.name} 
-                            ${bestCard.planName ? `<span class="plan-hint">(${bestCard.planName.split('：')[1] || bestCard.planName})</span>` : ''} 
-                            ${(bestCard.rate * 100).toFixed(1)}%
-                            <span style="margin-left:auto; color:#2180a0;">查看詳情 →</span>
+                            💡 最高：${bestCard.name} ${(bestCard.rate * 100).toFixed(1)}% 
+                            ${bestCard.details[0] ? `<span class="warning-text">• ${bestCard.details[0]}</span>` : ''}
                         </div>
                     </div>
                 `;
