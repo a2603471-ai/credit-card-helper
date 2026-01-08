@@ -101,14 +101,18 @@
             width: 24px; height: 24px; cursor: pointer; color: #666;
             display: none; align-items: center; justify-content: center;
         }
-        .category-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
-        .category-tag {
-            padding: 6px 12px; background: var(--color-surface);
-            border: 1px solid var(--color-border); border-radius: 20px;
-            cursor: pointer; font-size: 0.85em; color: var(--color-text-light);
-            transition: all 0.2s; user-select: none;
+        .suggestion-dropdown {
+            position: absolute; top: 100%; left: 0; right: 0;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 0 0 8px 8px;
+            max-height: 250px; overflow-y: auto; z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
         }
-        .category-tag.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+        .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+        .suggestion-item:hover { background-color: #f5f9ff; }
+        .highlight { color: var(--color-primary); font-weight: 700; }
         
         /* 搜尋結果列表 */
         .merchant-list {
@@ -116,11 +120,14 @@
             border-radius: 12px; margin-bottom: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             transition: transform 0.2s; cursor: pointer;
+            border: 1px solid transparent;
         }
-        .merchant-list:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .merchant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .merchant-name { font-size: 1.1em; font-weight: 700; color: var(--color-text); }
-        
+        .merchant-list:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: var(--color-primary); }
+        .merchant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .merchant-name { font-size: 1.2em; font-weight: 700; color: var(--color-text); }
+        .merchant-type { font-size: 0.9em; color: #888; background: #eee; padding: 2px 8px; border-radius: 12px; }
+        .merchant-best-card { color: var(--color-success); font-weight: 600; font-size: 0.95em; margin-top: 5px; }
+
         /* 膠囊標籤樣式 (Badge) */
         .scheme-badge {
             display: inline-block;
@@ -135,17 +142,6 @@
         }
         .scheme-badge.crazy { background-color: #ffebee; color: #c62828; border-color: #ffcdd2; }
         .scheme-badge.new-user { background-color: #fff3e0; color: #e65100; border-color: #ffe0b2; }
-
-        .card-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 0.95em;
-        }
-        .card-row:last-child { border-bottom: none; }
-        .card-info { display: flex; align-items: center; flex: 1; }
-        .card-rate { font-weight: 700; color: var(--color-primary); margin-left: 10px; min-width: 50px; text-align: right; }
-        .card-rate.high { color: var(--color-success); font-size: 1.1em; }
-        .card-note { font-size: 0.8em; color: #999; margin-left: 10px; display: block; width: 100%; margin-top: 2px;}
-        .card-row-content { flex: 1; }
 
         /* === 權益總覽樣式 === */
         .card-accordion-item {
@@ -212,6 +208,14 @@
         .scheme-list-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .scheme-list-item { background: #f5f5f5; padding: 6px 12px; border-radius: 6px; font-size: 0.9em; color: #333; }
         
+        /* 彈窗內排名列表 */
+        .ranking-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #eee; }
+        .ranking-row:last-child { border-bottom: none; }
+        .ranking-card { font-weight: 700; color: #333; }
+        .ranking-rate { font-weight: 700; color: var(--color-primary); }
+        .ranking-rate.top { color: var(--color-success); font-size: 1.2em; }
+        .ranking-note { font-size: 0.8em; color: #888; display: block; margin-top: 2px; }
+
         @media (max-width: 480px) {
             body { padding: 15px; padding-top: 10px; }
             h1 { font-size: 1.5em; }
@@ -230,26 +234,15 @@
         <div id="tab-search" class="tab-content active">
             <div class="form-section">
                 <div class="info-text">
-                    🔍 <strong>2026年最新權益</strong>：國泰CUBE(瘋大港3.5%至3/23)、台新Richart、玉山Unicard(新戶7.5%)、UBear(新戶10%)、永豐DAWHO。
+                    🔍 <strong>2026年最新權益</strong>：國泰CUBE(瘋大港3.5%)、台新Richart(七大權益)、玉山Unicard(新戶7.5%)、UBear、永豐DAWHO。
                 </div>
                 
                 <div class="form-group">
                     <label for="searchMerchant">搜尋通路名稱</label>
                     <div class="input-wrapper">
-                        <input type="text" id="searchMerchant" placeholder="例如：Klook、高鐵、麥當勞..." autocomplete="off">
+                        <input type="text" id="searchMerchant" placeholder="例如：全家、高鐵、蝦皮..." autocomplete="off">
                         <button id="clearSearch" class="clear-btn" onclick="clearSearch()">✕</button>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 10px;">
-                    <label>快速範例</label>
-                    <div class="category-tags">
-                        <div class="category-tag" onclick="quickSearch('高鐵')">🚅 高鐵</div>
-                        <div class="category-tag" onclick="quickSearch('蝦皮')">🛍️ 蝦皮</div>
-                        <div class="category-tag" onclick="quickSearch('麥當勞')">🍔 麥當勞</div>
-                        <div class="category-tag" onclick="quickSearch('日本')">🇯🇵 日本</div>
-                        <div class="category-tag" onclick="quickSearch('Uber')">🚗 Uber</div>
-                        <div class="category-tag" onclick="quickSearch('全聯')">🛒 全聯</div>
+                        <div id="suggestionDropdown" class="suggestion-dropdown"></div>
                     </div>
                 </div>
             </div>
@@ -278,105 +271,58 @@
     </div>
 
     <script>
-        // === 權益總覽資料 (Single Source of Truth) ===
+        // === 核心資料：權益總覽 (Single Source of Truth) ===
         const cardBenefitsData = [
+            {
+                id: 'richart',
+                name: '台新 Richart',
+                icon: '🐶',
+                note: '需每日透過 Richart App 切換至對應權益方案',
+                benefits: [
+                    { name: 'Pay著刷', rate: 0.038, desc: '四大超商 | 新光三越 | IKEA | 台灣大車隊', note: '需綁定台新Pay支付', tag: 'pay', list: ['7-11', '全家便利商店', '新光三越', 'IKEA', '台灣大車隊', '大潤發'] },
+                    { name: '數趣刷', rate: 0.033, desc: '網購 (蝦皮/momo/酷澎) | 遊戲影音 | 線上課程 | AI服務', note: '上限 1000 元', tag: 'digital', list: ['蝦皮購物', 'momo購物網', '酷澎', 'Coupang', 'PChome', '淘寶', 'Amazon', '東森購物', '博客來', 'Richart Mart', 'PayEasy', 'iHerb', 'SHEIN', 'Farfetch', 'Olive Young', '知識衛星', 'Amazing Talker', 'Tutor ABC', 'Hahow', 'PressPlay', 'MyCard', '遊戲橘子', 'Steam', 'PlayStation', 'Nintendo', 'Netfilx', 'Disney+', 'ChatGPT', 'Notion', 'Canva', 'Perplexity', 'Claude'] },
+                    { name: '玩旅刷', rate: 0.033, desc: '海外消費 | 航空 | 訂房 (Agoda/Booking) | 旅行社', note: '上限 1000 元', tag: 'travel', list: ['海外消費', 'Klook', 'KKday', 'Agoda', 'Booking.com', 'Trip.com', 'Airbnb', 'Hotels.com', 'Expedia', 'Uber', 'Grab', 'SUICA', 'ICOCA', 'PASMO', 'WOWPASS', 'AIRSIM', '雄獅旅遊', '易遊網', '東南旅遊', '可樂旅遊', '長汎假期', '五福旅遊', '喜鴻假期', '易飛網', '燦星旅遊', '加利利旅行社', '鳳凰國際旅行社', '山富旅遊', '行健旅遊', '中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '華信航空', '立榮航空', '樂桃航空', '阿聯酋航空', '亞洲航空', '酷航', '捷星航空', '新加坡航空', '日本航空', '越捷航空'] },
+                    { name: '天天刷', rate: 0.033, desc: '超商 | 量販 | 交通 (高鐵/台鐵/Uber) | 藥局', note: '上限 1000 元', tag: 'daily', list: ['7-ELEVEN', '全家便利商店', '家樂福', '大買家', '唐吉軻德', 'LOPIA', '台灣鐵路', '台灣高鐵', '台灣大車隊', 'Yoxi', 'Uber', '嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車', '寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'] },
+                    { name: '大筆刷', rate: 0.033, desc: '百貨 (SOGO/遠百) | Outlet | 居家 (IKEA) | 服飾 (UNIQLO)', note: '上限 1000 元', tag: 'big', list: ['新光三越', '遠東百貨', '遠東SOGO', '漢神巨蛋', '漢神百貨', '微風', '台北101', '遠東巨城', '廣三SOGO', '南紡購物中心', '誠品生活', '京站', '三創生活', '夢時代', '統一時代', '中友百貨', 'LaLaport', 'MITSUI OUTLET PARK', '華泰名品城', 'SKM Park', 'IKEA', '特力屋', 'HOLA', '宜得利', '瑪黑家居', 'UNIQLO', 'GU', 'ZARA', 'NET', 'lululemon'] },
+                    { name: '好饗刷', rate: 0.033, desc: '餐飲 | 外送 | 飯店 | 售票 | 加油 | KTV | 樂園', note: '上限 1000 元', tag: 'fun', list: ['國內餐飲', '王品瘋Pay', 'Uber Eats', 'foodpanda', '台灣中油-直營站', '台亞直營', '全國加油', 'EVOASIS', 'EVALUE', '拓元售票', 'KKTIX', '年代售票', '寬宏售票', 'OPENTIX', 'FunNow', '錢櫃', '好樂迪', 'ONCOR', 'sing!go', '享溫馨', '義大遊樂世界', '麗寶樂園', '六福村', '九族文化村', '劍湖山', 'X-Park', '國立海洋生物博物館', '遠雄海洋公園', '小人國', '晶華', '雲朗', '萬豪', '煙波', '老爺', '福華', '漢來', '君悅', '洲際', '寒沐'] },
+                    { name: 'LINE Pay', rate: 0.023, desc: '一般 LINE Pay 綁定支付', note: '無門檻', tag: 'line', list: ['LINE Pay'] },
+                    { name: '假日刷', rate: 0.02, desc: '國內節假日不限通路', note: '基本回饋', list: [] }
+                ]
+            },
             {
                 id: 'cube',
                 name: '國泰 CUBE',
                 icon: '⚪️',
                 note: '需每日透過 CUBE App 切換至對應權益方案',
                 benefits: [
-                    { 
-                        name: '瘋大港', rate: 0.035, tag: 'crazy',
-                        desc: '指定高雄住宿 | Klook | 台灣高鐵 | 台灣鐵路局', 
-                        list: ['城市商旅', '和逸飯店', '旅居文旅', '秝芯旅店', '夏優旅居', '華園大飯店', '捷絲旅', '麗尊酒店', '帕可麗酒店', '鈞怡大飯店', 'Klook', '台灣高鐵', '台灣鐵路局'],
-                        note: '<span class="urgent-text">2026/3/23 截止</span> ⚠️ 記得切換方案'
-                    },
-                    { 
-                        name: '集精選', rate: 0.02, tag: 'base',
-                        desc: '超商 | 量販 | 加油 | IKEA | 充電停車', 
-                        list: ['7-ELEVEN', '全家便利商店', '家樂福', '全聯福利中心', 'LOPIA台灣', '台灣中油-直營站', 'IKEA', 'U-POWER', 'EVOASIS', 'EVALUE', 'TAIL', 'iCharging', '車麻吉', 'uTagGo'],
-                        note: '⚠️ 記得切換方案'
-                    },
-                    { 
-                        name: '玩數位', rate: 0.03, tag: 'digital',
-                        desc: '網購 | 影音 | AI | 國際電商', 
-                        list: ['蝦皮購物', 'momo購物網', 'PChome 24h購物', '小樹購', '淘寶', '天貓', 'Coupang 酷澎', 'Apple 媒體服務', 'Google Play', 'Disney+', 'Netflix', 'Spotify', 'YouTube Premium', 'Max', 'ChatGPT', 'Canva', 'Claude', 'Cursor', 'Duolingo', 'Gamma', 'Gemini', 'Notion', 'Perplexity', 'Speak'],
-                        note: '⚠️ 記得切換方案'
-                    },
-                    { 
-                        name: '樂響購', rate: 0.03, tag: 'fun',
-                        desc: '百貨 | 餐飲 | 外送 | 藥妝', 
-                        list: ['遠東SOGO', '新光三越', '遠東百貨', '台北101', '微風廣場', '誠品生活', '京站', '美麗華', 'LaLaport', '漢神百貨', '漢神巨蛋', '統一時代', 'MITSUI OUTLET PARK', '華泰名品城', '遠東Garden City', 'BELLAVITA', 'NOKE忠泰樂生活', '大葉高島屋', '宏匯廣場', '台茂', '大江', 'Big City', '中友', '廣三SOGO', '南紡', '夢時代', 'SKM Park', '國內餐飲', '麥當勞', 'Uber Eats', 'foodpanda', '屈臣氏', '康是美'],
-                        note: '⚠️ 記得切換方案'
-                    },
-                    { 
-                        name: '趣旅行', rate: 0.03, tag: 'travel',
-                        desc: '海外實體 | 訂房 | 航空 | 旅行社 | 國內交通', 
-                        list: ['海外消費', 'Uber', 'Grab', 'SUICA', 'PASMO', 'ICOCA', 'Klook', 'KKday', 'Agoda', 'Airbnb', 'Booking.com', 'Trip.com', '雄獅旅遊', '易遊網', '可樂旅遊', '東南旅遊', '五福旅遊', '燦星旅遊', '山富旅遊', '長汎假期', '鳳凰旅遊', '易飛網', '台灣高鐵', '台灣大車隊', 'yoxi', 'iRent', '和運租車', '格上租車', '中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '樂桃航空', '阿聯酋航空', '酷航', '捷星航空', '日本航空', '亞洲航空', '聯合航空', '新加坡航空', '全日空', '越捷航空', '大韓航空', '達美航空', '土耳其航空', '法國航空', '國內飯店', '星野集團', '迪士尼飯店', '東橫INN', '東京迪士尼', '環球影城', '哈利波特影城'],
-                        note: '⚠️ 記得切換方案 (Klook/高鐵優先選瘋大港)'
-                    }
-                ]
-            },
-            {
-                id: 'richart',
-                name: '台新 Richart',
-                icon: '🐶',
-                note: '需每日透過 Richart App 切換方案 (Pay著刷需綁台新Pay)',
-                benefits: [
-                    { 
-                        name: 'Pay著刷', rate: 0.038, tag: 'pay',
-                        desc: '超商 | 百貨 | IKEA | 計程車 (需綁台新Pay)', 
-                        list: ['7-11', '全家', '新光三越', 'IKEA', '台灣大車隊', '台新Pay'],
-                        note: '⚠️ 需綁定台新Pay'
-                    },
-                    { 
-                        name: '數趣刷', rate: 0.033, tag: 'digital',
-                        desc: '網購 | 遊戲影音 | 課程 | AI', 
-                        list: ['蝦皮', 'momo', '酷澎', 'PChome', '淘寶', 'Amazon', '東森', '博客來', 'Richart Mart', 'PayEasy', 'iHerb', 'SHEIN', 'Farfetch', 'Olive Young', '知識衛星', 'Amazing Talker', 'Tutor ABC', 'Hahow', 'PressPlay', 'MyCard', '遊戲橘子', 'Steam', 'PlayStation', 'Nintendo', 'Netfilx', 'Disney+', 'ChatGPT', 'Notion', 'Canva', 'Perplexity', 'Claude'],
-                        note: '⚠️ 記得當天23:59前切換方案'
-                    },
-                    { 
-                        name: '玩旅刷', rate: 0.033, tag: 'travel',
-                        desc: '海外 | 航空 | 訂房 | 旅行社', 
-                        list: ['海外消費', 'Klook', 'KKday', 'Agoda', 'Booking.com', 'Trip.com', 'Airbnb', 'Hotels.com', 'Expedia', 'Uber', 'Grab', 'SUICA', 'ICOCA', 'PASMO', 'WOWPASS', 'AIRSIM', '雄獅旅遊', '易遊網', '東南旅遊', '可樂旅遊', '長汎假期', '五福旅遊', '喜鴻假期', '易飛旅遊', '燦星旅遊', '加利利', '鳳凰國際', '山富旅遊', '行健旅遊', '中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '華信航空', '立榮航空', '樂桃航空', '阿聯酋航空', '亞洲航空', '酷航', '捷星航空', '新加坡航空', '日本航空', '越捷航空'],
-                        note: '⚠️ 記得當天23:59前切換方案'
-                    },
-                    { 
-                        name: '天天刷', rate: 0.033, tag: 'daily',
-                        desc: '超商量販(Pay) | 交通 | 停車 | 藥局', 
-                        list: ['7-11(台新Pay)', '全家(台新Pay)', '家樂福', '大買家', '唐吉軻德', 'LOPIA', '台鐵', '高鐵', '台灣大車隊', 'Yoxi', 'Uber', '嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車', '寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'],
-                        note: '⚠️ 記得當天23:59前切換方案 (超商需台新Pay)'
-                    },
-                    { 
-                        name: '大筆刷', rate: 0.033, tag: 'big',
-                        desc: '百貨 | Outlet | 居家 | 時尚', 
-                        list: ['新光三越', '遠東百貨', '遠東SOGO', '漢神巨蛋', '漢神百貨', '微風', '台北101', '遠東巨城', '廣三SOGO', '南紡購物中心', '誠品生活', '京站', '三創生活', '夢時代', '統一時代', '中友百貨', 'LaLaport', 'MITSUI OUTLET PARK', '華泰名品城', 'SKM Park', 'IKEA', '特力屋', 'HOLA', '宜得利', '瑪黑家居', 'UNIQLO', 'GU', 'ZARA', 'NET', 'lululemon'],
-                        note: '⚠️ 記得當天23:59前切換方案'
-                    },
-                    { 
-                        name: '好饗刷', rate: 0.033, tag: 'fun',
-                        desc: '餐飲 | 外送 | 加油 | 娛樂', 
-                        list: ['國內餐飲', '王品瘋Pay', 'Uber Eats', 'Foodpanda', '中油直營', '台亞直營', '全國加油', 'EVOASIS', 'EVALUE', '拓元售票', 'KKTIX', '年代售票', '寬宏售票', 'OPENTIX', 'FunNow', '錢櫃', '好樂迪', 'ONCOR', 'sing!go', '享溫馨', '義大遊樂世界', '麗寶樂園', '六福村', '九族文化村', '劍湖山', 'X-Park', '海生館', '遠雄海洋公園', '小人國', '晶華', '雲朗', '萬豪', '煙波', '老爺', '福華', '漢來', '君悅', '洲際', '寒沐'],
-                        note: '⚠️ 記得當天23:59前切換方案'
-                    },
-                    { name: 'LINE Pay', rate: 0.023, desc: '一般 LINE Pay 綁定支付', list: ['LINE Pay'], note: '無門檻' },
-                    { name: '假日刷', rate: 0.02, desc: '國內節假日不限通路', list: [], note: '基本回饋' }
+                    { name: '瘋大港', rate: 0.035, desc: '指定高雄住宿 | Klook | 高鐵 | 台鐵', note: '<span class="urgent-text">2026/3/23 截止</span>', tag: 'crazy', list: ['城市商旅', '和逸飯店', '旅居文旅', '秝芯旅店', '夏優旅居', '華園大飯店', '捷絲旅', '麗尊酒店', '帕可麗酒店', '鈞怡大飯店', 'Klook', '台灣高鐵', '台灣鐵路'] },
+                    { name: '玩數位', rate: 0.03, desc: '網購 (蝦皮/momo) | 影音串流 | AI工具 | 國際電商', note: '無上限', tag: 'digital', list: ['ChatGPT', 'Canva', 'Claude', 'Cursor', 'Duolingo', 'Gamma', 'Gemini', 'Notion', 'Perplexity', 'Speak', '淘寶', '天貓', 'Coupang 酷澎', '蝦皮購物', 'momo購物網', 'PChome 24h購物', '小樹購', 'Apple 媒體服務', 'Google Play', 'Disney+', 'Netflix', 'Spotify', 'YouTube Premium', 'Max'] },
+                    { name: '樂響購', rate: 0.03, desc: '百貨公司 | 全球餐飲 | 外送 | 藥妝', note: '無上限', tag: 'fun', list: ['遠東SOGO', '遠東Garden City', '新光三越', '遠東百貨', '台北101', 'BELLAVITA', '微風廣場', '統一時代', '誠品生活', 'ATT 4 FUN', '京站', '美麗華', 'NOKE忠泰樂生活', '大葉高島屋', 'LaLaport', '宏匯廣場', '台茂購物中心', '大江國際購物中心', '遠東巨城', '中友百貨', '廣三SOGO', '南紡購物中心', '耐斯廣場', '夢時代', '漢神百貨', '漢神巨蛋', '新月廣場', 'CITYLINK', '秀泰生活', '環球購物中心', '太平洋百貨', '華泰名品城', 'SKM Park', 'MITSUI OUTLET PARK', '國內餐飲', '麥當勞', 'Uber Eats', 'foodpanda', '屈臣氏', '康是美'] },
+                    { name: '趣旅行', rate: 0.03, desc: '海外實體 | 訂房 | 航空 | 旅行社 | 國內交通', note: '無上限', tag: 'travel', list: ['海外消費', 'SUICA', 'PASMO', 'ICOCA', 'Uber', 'Grab', '東京迪士尼', '哈利波特影城', '環球影城', 'Klook', 'KKday', 'Agoda', 'Airbnb', 'Booking.com', 'Trip.com', '易遊網', '雄獅', '可樂', '東南', '五福', '燦星', '山富', '長汎假期', '鳳凰', '易飛網', '理想旅遊', '永利', '三賀', '台灣高鐵', '台灣大車隊', 'yoxi', 'iRent', '和運租車', '格上租車', '中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '樂桃航空', '阿聯酋航空', '酷航', '捷星航空', '日本航空', '亞洲航空', '聯合航空', '新加坡航空', 'ANA全日空', '越捷航空', '大韓航空', '達美航空', '土耳其航空', '法國航空', '卡達航空', '國內飯店', '星野集團', '迪士尼飯店', '東橫INN'] },
+                    { name: '集精選', rate: 0.02, desc: '超商 | 量販 (全聯/家樂福) | 加油 | IKEA', note: '無上限', tag: 'base', list: ['U-POWER', 'EVOASIS', 'EVALUE', 'TAIL', 'iCharging', '車麻吉', 'uTagGo', 'IKEA', '家樂福', '全聯福利中心', 'LOPIA台灣', '台灣中油-直營站', '7-ELEVEN', '全家便利商店'] }
                 ]
             },
             {
                 id: 'unicard',
                 name: '玉山 Unicard',
                 icon: '⛰️',
-                note: '簡單選 3% / 任意選 3.5% / UP選 4.5% (新戶指定通路 +3%)',
+                note: '簡單選 3% / 任意選 3.5% / UP選 4.5% (需149點訂閱)',
                 benefits: [
                     { 
-                        name: 'UP選', rate: 0.045, tag: 'unicard_all',
-                        desc: '百大特店 (需149點訂閱)', 
-                        list: ['玉山Wallet', 'LINE Pay', '全支付', '街口支付', '悠遊付', '全盈+PAY', 'iPASS MONEY', 'icash Pay', '台灣中油', '55688', '台鐵', '高鐵', 'Uber', 'Yoxi', '新光三越', '遠東百貨', '漢神百貨', '微風', '台北101', '華泰名品城', '三井OUTLET', '京站', '美麗華', '誠品', '秀泰', 'LaLaport', '統領', '統一時代', '昇恆昌', '采盟', 'Uber Eats', 'foodpanda', 'EZTABLE', '王品瘋Pay', '饗賓', '瓦城', '乾杯', '漢來美食', '鼎王', '爭鮮', '中華航空', '長榮航空', '日本航空', '台灣虎航', '樂桃航空', '酷航', 'Trip.com', 'Booking.com', 'Hotels.com', 'AsiaYo', 'Expedia', 'KKday', 'Klook', '雄獅', '可樂', '東南', 'Agoda', 'Apple直營店', '小米台灣', '全國電子', '燦坤', '迪卡儂', '家樂福', '屈臣氏', '康是美', '特力屋', 'HOLA', 'hoi', 'UNIQLO', 'NET', '大樹藥局', '丁丁藥妝', 'momo購物網', '蝦皮購物', '淘寶', 'Coupang酷澎', '日本實體', '韓國實體', '泰國實體', '越南實體', '新加坡實體', '特斯拉', 'Gogoro', 'YouBike'],
-                        note: '<span class="urgent-text">新戶+3% (最高7.5%)</span>'
+                        name: '百大特店名單', rate: 0, tag: 'list', type: 'modal',
+                        desc: '點擊查看完整百大特店', 
+                        list: ['玉山Wallet', 'LINE Pay', '全支付', '街口支付', '悠遊付', '全盈+PAY', 'iPASS MONEY', 'icash Pay', '台灣中油', '55688', '台鐵', '高鐵', 'Uber', 'Yoxi', '新光三越', '遠東百貨', '漢神百貨', '微風', '台北101', '華泰名品城', '三井OUTLET', '京站', '美麗華', '誠品', '秀泰', 'LaLaport', '統領', '統一時代', '昇恆昌', '采盟', 'Uber Eats', 'foodpanda', 'EZTABLE', '王品瘋Pay', '饗賓', '瓦城', '乾杯', '漢來美食', '鼎王', '爭鮮', '中華航空', '長榮航空', '日本航空', '台灣虎航', '樂桃航空', '酷航', 'Trip.com', 'Booking.com', 'Hotels.com', 'AsiaYo', 'Expedia', 'KKday', 'Klook', '雄獅', '可樂', '東南', 'Agoda', 'Apple直營店', '小米台灣', '全國電子', '燦坤', '迪卡儂', '家樂福', '屈臣氏', '康是美', '特力屋', 'HOLA', 'hoi', 'UNIQLO', 'NET', '大樹藥局', '丁丁藥妝', 'momo購物網', '蝦皮購物', '淘寶', 'Coupang酷澎', '日本實體', '韓國實體', '泰國實體', '越南實體', '新加坡實體', '馬來西亞實體', '菲律賓實體', '中國實體', '香港實體', '澳門實體', '美國實體', '加拿大實體', '英國實體', '法國實體', '德國實體', '義大利實體', '澳洲實體', '特斯拉', 'Gogoro', 'YouBike'],
+                        note: '點擊查看詳情'
                     },
-                    { name: '一般消費', rate: 0.01, desc: '非指定通路', list: [], note: '無上限' }
+                    { name: 'UP選', rate: 0.045, desc: '百大特店 (需149點訂閱)', type: 'text', note: '需完成UP任務' },
+                    { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '需透過 App 設定' },
+                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '核卡即享' },
+                    { 
+                        name: '新戶回饋', rate: 0.03, tag: 'new', type: 'modal',
+                        desc: '五大指定通路 +3%', 
+                        list: ['LINE Pay', 'Uber Eats', '家樂福', '韓國', '全盈+PAY'],
+                        note: '<span class="urgent-text">新戶+3% (最高7.5%)</span>' 
+                    }
                 ]
             },
             {
@@ -385,18 +331,8 @@
                 icon: '🐻',
                 note: '指定娛樂 10% / 網購 3% (新戶網購 +7% = 10%)',
                 benefits: [
-                    { 
-                        name: '影音娛樂', rate: 0.10, tag: 'ent',
-                        desc: 'Netflix | Disney+ | Nintendo | PlayStation', 
-                        list: ['Netflix', 'Disney+', 'Nintendo', 'PlayStation'],
-                        note: '每期上限 100 元' 
-                    },
-                    { 
-                        name: '網購/Pay', rate: 0.03, tag: 'net',
-                        desc: '網購 | 行動支付 | 交通訂房', 
-                        list: ['LINE Pay', '街口支付', '悠遊付', '全盈+PAY', '全支付', 'momo購物網', '蝦皮購物', 'PChome', 'Coupang', '淘寶', 'Uber Eats', 'foodpanda', '高鐵', '台鐵', 'Agoda', 'Booking.com'],
-                        note: '<span class="urgent-text">新戶+7% (最高10%)</span>' 
-                    }
+                    { name: '影音娛樂', rate: 0.10, desc: 'Netflix | Disney+ | Nintendo | PlayStation', tag: 'ent', list: ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes'], note: '每期上限 100 元' },
+                    { name: '網購/Pay', rate: 0.03, desc: '網購 | 行動支付 | 交通訂房', tag: 'net', list: ['LINE Pay', '街口支付', '悠遊付', '全盈+PAY', '全支付', 'momo購物網', '蝦皮購物', 'PChome', 'Coupang', '淘寶', 'Uber Eats', 'foodpanda', '高鐵', '台鐵', 'Agoda', 'Booking.com', 'Klook', 'KKday', '中華航空', '長榮航空', '台灣虎航'], note: '<span class="urgent-text">新戶+7% (最高10%)</span>' }
                 ]
             },
             {
@@ -405,75 +341,232 @@
                 icon: '⚫️',
                 note: '國內 3.5% / 國外 4.5% (需大戶等級)',
                 benefits: [
-                    { 
-                        name: '國內全通路', rate: 0.035, tag: 'all',
-                        desc: '全通路無腦刷 (含任務)', 
-                        list: ['所有一般消費'],
-                        note: '上限顯示 3.5%' 
-                    },
-                    {
-                        name: '悠遊卡', rate: 0.03, tag: 'easy',
-                        desc: '悠遊卡自動加值', list: ['悠遊卡自動加值'], note: '上限100元'
-                    }
+                    { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷 (含任務)', tag: 'all', list: [], note: '上限顯示 3.5%' },
+                    { name: '悠遊卡', rate: 0.03, desc: '悠遊卡自動加值', tag: 'easy', list: ['悠遊卡自動加值'], note: '上限100元' }
                 ]
             }
         ];
 
-        // === 別名對照表 (Alias Map) ===
+        // === 別名辭典 (Alias Map) ===
         const aliasMap = {
-            '高鐵': '台灣高鐵',
-            '台鐵': '台灣鐵路',
-            '711': '7-ELEVEN',
-            '小七': '7-ELEVEN',
-            '麥當勞': '麥當勞', 
-            '肯德基': '國內餐飲',
-            '星巴克': '國內餐飲',
-            '中油': '台灣中油',
-            'line': 'LINE Pay',
-            'uber': 'Uber',
-            'ubereats': 'Uber Eats',
-            'foodpanda': 'foodpanda',
-            '熊貓': 'foodpanda',
-            '全聯': '全聯福利中心',
-            '家樂福': '家樂福',
-            'momo': 'momo購物網',
-            '蝦皮': '蝦皮購物',
-            'pchome': 'PChome',
-            '日本': '日本實體',
-            '韓國': '韓國實體',
-            'klook': 'Klook',
-            'kkday': 'KKday'
+            '高鐵': '台灣高鐵', '台鐵': '台灣鐵路', '711': '7-ELEVEN', '小七': '7-ELEVEN',
+            '麥當勞': '麥當勞', '星巴克': '國內餐飲', '肯德基': '國內餐飲',
+            '中油': '台灣中油-直營站', 'line': 'LINE Pay', 'uber': 'Uber', 'ubereats': 'Uber Eats',
+            'foodpanda': 'foodpanda', '熊貓': 'foodpanda', '全聯': '全聯福利中心', '家樂福': '家樂福',
+            'momo': 'momo購物網', '蝦皮': '蝦皮購物', 'pchome': 'PChome 24h購物', '日本': '日本', '韓國': '韓國',
+            'klook': 'Klook', 'kkday': 'KKday', 'agoda': 'Agoda', 'booking': 'Booking.com',
+            'uniqlo': 'UNIQLO', 'ikea': 'IKEA'
         };
 
-        let currentTab = 'search';
+        // === 變數 ===
+        let globalMerchantDB = {}; // 自動生成的商家資料庫
 
+        // === 初始化 ===
         function init() {
+            generateMerchantDB();
             renderCardOverview();
+            
             const input = document.getElementById('searchMerchant');
-            input.addEventListener('input', handleSearch); 
-            input.addEventListener('focus', handleSearch); 
+            input.addEventListener('input', handleSearchInput); 
+            input.addEventListener('focus', handleSearchInput); 
+            
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.input-wrapper')) {
+                    document.getElementById('suggestionDropdown').style.display = 'none';
+                }
+            });
         }
 
-        function switchTab(tabId) {
-            currentTab = tabId;
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.querySelector(`.nav-item[onclick="switchTab('${tabId}')"]`).classList.add('active');
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
+        // === 1. 自動生成商家資料庫 (Reverse Indexing) ===
+        function generateMerchantDB() {
+            globalMerchantDB = {};
+            
+            cardBenefitsData.forEach(card => {
+                card.benefits.forEach(benefit => {
+                    if (benefit.list && benefit.list.length > 0) {
+                        benefit.list.forEach(merchant => {
+                            const key = merchant.toLowerCase();
+                            if (!globalMerchantDB[key]) {
+                                globalMerchantDB[key] = {
+                                    name: merchant,
+                                    cards: []
+                                };
+                            }
+                            
+                            // 計算該卡片對該商家的回饋
+                            let rate = benefit.rate;
+                            let note = benefit.note;
+                            let scheme = benefit.name;
+
+                            // 玉山 Unicard 新戶加碼邏輯 (3% + 4.5% = 7.5%)
+                            if (card.id === 'unicard') {
+                                if (benefit.name === '百大特店名單') {
+                                    rate = 0.045; // 預設 UP選
+                                    scheme = 'UP選';
+                                    // 檢查是否在新戶名單內
+                                    const newBonusBenefit = card.benefits.find(b => b.tag === 'new');
+                                    if (newBonusBenefit && newBonusBenefit.list.some(nm => merchant.includes(nm))) {
+                                        rate = 0.075;
+                                        note = '含新戶加碼';
+                                        scheme = 'UP選+新戶';
+                                    }
+                                }
+                            }
+                            // 玉山 UBear 新戶邏輯
+                            if (card.id === 'ubear' && benefit.tag === 'net') {
+                                // 這裡簡單處理，標註含新戶
+                                rate = 0.10; 
+                                note = '含新戶加碼';
+                            }
+
+                            // 國泰 CUBE 瘋大港邏輯
+                            if (card.id === 'cube' && benefit.tag === 'crazy') {
+                                // 維持 3.5%
+                            }
+
+                            globalMerchantDB[key].cards.push({
+                                cardName: card.name,
+                                rate: rate,
+                                scheme: scheme,
+                                note: note,
+                                tag: benefit.tag
+                            });
+                        });
+                    } else if (card.id === 'dawho' && benefit.tag === 'all') {
+                        // 永豐全通路 (特殊的處理，這裡不展開所有商家，而是在搜尋時補底)
+                    }
+                });
+            });
         }
 
-        function toggleAccordion(header) {
-            const body = header.nextElementSibling;
-            const isOpen = body.classList.contains('open');
-            if (!isOpen) {
-                body.classList.add('open');
-                header.classList.add('active');
+        // === 2. 搜尋邏輯 (聚合模式) ===
+        function handleSearchInput(e) {
+            const val = e.target.value.trim().toLowerCase();
+            const dropdown = document.getElementById('suggestionDropdown');
+            const clearBtn = document.getElementById('clearSearch');
+            
+            clearBtn.style.display = val ? 'flex' : 'none';
+
+            if (!val) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            // 搜尋匹配 (包含別名)
+            let matches = new Set();
+            
+            // 檢查別名
+            for (const [alias, realName] of Object.entries(aliasMap)) {
+                if (alias.includes(val)) {
+                    matches.add(realName);
+                }
+            }
+
+            // 檢查 DB
+            Object.keys(globalMerchantDB).forEach(key => {
+                if (key.includes(val)) {
+                    matches.add(globalMerchantDB[key].name);
+                }
+            });
+
+            // 顯示下拉選單
+            const results = Array.from(matches).slice(0, 10); // 最多顯示10筆
+            if (results.length > 0) {
+                dropdown.innerHTML = results.map(name => 
+                    `<div class="suggestion-item" onclick="selectMerchant('${name}')">${name}</div>`
+                ).join('');
+                dropdown.style.display = 'block';
             } else {
-                body.classList.remove('open');
-                header.classList.remove('active');
+                dropdown.innerHTML = '<div class="suggestion-item" style="cursor:default; color:#999;">無相關通路，試試看 DAWHO (3.5%)</div>';
+                dropdown.style.display = 'block';
             }
         }
 
+        function clearSearch() {
+            document.getElementById('searchMerchant').value = '';
+            document.getElementById('merchantContainer').innerHTML = '';
+            document.getElementById('clearSearch').style.display = 'none';
+            document.getElementById('suggestionDropdown').style.display = 'none';
+        }
+
+        function selectMerchant(name) {
+            document.getElementById('searchMerchant').value = name;
+            document.getElementById('suggestionDropdown').style.display = 'none';
+            renderMerchantResult(name);
+        }
+
+        function quickSearch(name) {
+            selectMerchant(name);
+        }
+
+        // === 3. 顯示搜尋結果 (單一卡片) ===
+        function renderMerchantResult(name) {
+            const container = document.getElementById('merchantContainer');
+            const key = name.toLowerCase();
+            let data = globalMerchantDB[key];
+
+            // 如果找不到完全匹配，嘗試模糊匹配
+            if (!data) {
+                const fuzzyKey = Object.keys(globalMerchantDB).find(k => k.includes(key) || key.includes(k));
+                if (fuzzyKey) data = globalMerchantDB[fuzzyKey];
+            }
+
+            // 補上 DAWHO 3.5% (全通路)
+            let cards = data ? [...data.cards] : [];
+            const dawho = { cardName: '永豐 DAWHO', rate: 0.035, scheme: '國內全通路', note: '無腦刷', tag: 'all' };
+            
+            // 檢查是否已有 DAWHO (雖然 DB 裡沒有 all，但為了保險)
+            if (!cards.find(c => c.cardName === '永豐 DAWHO')) {
+                cards.push(dawho);
+            }
+
+            // 排序
+            cards.sort((a, b) => b.rate - a.rate);
+            const bestCard = cards[0];
+
+            container.innerHTML = `
+                <div class="merchant-list" onclick='openRankingModal(${JSON.stringify(cards)}, "${name}")'>
+                    <div class="merchant-header">
+                        <span class="merchant-name">${name}</span>
+                        <span class="merchant-type">點擊查看排名</span>
+                    </div>
+                    <div class="merchant-best-card">
+                        🏆 ${bestCard.cardName} ${(bestCard.rate * 100).toFixed(1)}%
+                    </div>
+                    <div style="font-size:0.85em; color:#666; margin-top:4px;">
+                        ${bestCard.scheme} • ${bestCard.note.replace(/<[^>]*>/g, '')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // === 4. 排名彈窗 ===
+        function openRankingModal(cards, merchantName) {
+            const body = document.getElementById('detailBody');
+            document.getElementById('modalTitle').innerText = `${merchantName} 回饋排名`;
+            
+            const html = cards.map((c, idx) => {
+                let badgeClass = 'scheme-badge';
+                if (c.tag === 'crazy') badgeClass += ' crazy';
+                if (c.rate >= 0.07) badgeClass += ' new-user';
+
+                return `
+                    <div class="ranking-row">
+                        <div style="flex:1;">
+                            <div class="ranking-card">${idx + 1}. ${c.cardName}</div>
+                            <span class="${badgeClass}">${c.scheme}</span>
+                            <span class="ranking-note">${c.note}</span>
+                        </div>
+                        <div class="ranking-rate ${idx === 0 ? 'top' : ''}">${(c.rate * 100).toFixed(1)}%</div>
+                    </div>
+                `;
+            }).join('');
+
+            body.innerHTML = html;
+            document.getElementById('detailModal').classList.add('show');
+        }
+
+        // === 5. 權益總覽 (Accordion & Unicard Special) ===
         function renderCardOverview() {
             const container = document.getElementById('cardOverviewContainer');
             const html = cardBenefitsData.map((card, cardIndex) => `
@@ -490,181 +583,79 @@
                             <div class="benefit-name" style="font-size:0.9em; color:#666;">ℹ️ 卡片備註</div>
                             <div class="benefit-desc">${card.note}</div>
                         </div>
-                        ${card.benefits.map((b, bIndex) => `
-                            <div class="benefit-row ${b.list && b.list.length > 0 ? '' : 'no-action'}" 
-                                 onclick="${b.list && b.list.length > 0 ? `openDetail(${cardIndex}, ${bIndex})` : ''}">
-                                <div class="benefit-header">
-                                    <span class="benefit-name">${b.name}</span>
-                                    <span class="benefit-rate ${b.rate >= 0.035 ? 'high' : ''}">${(b.rate * 100).toFixed(1)}%</span>
-                                </div>
-                                <div class="benefit-desc">${b.desc}</div>
-                                <div class="benefit-note">💡 ${b.note}</div>
-                            </div>
-                        `).join('')}
+                        ${renderBenefits(card, cardIndex)}
                     </div>
                 </div>
             `).join('');
             container.innerHTML = html;
         }
 
-        function openDetail(cardIndex, benefitIndex) {
+        function renderBenefits(card, cardIndex) {
+            return card.benefits.map((b, bIndex) => {
+                // 玉山 Unicard 特殊處理
+                if (card.id === 'unicard' && b.type === 'text') {
+                    return `
+                        <div class="benefit-row no-action">
+                            <div class="benefit-header">
+                                <span class="benefit-name">${b.name}</span>
+                                <span class="benefit-rate">${(b.rate * 100).toFixed(1)}%</span>
+                            </div>
+                            <div class="benefit-desc">${b.desc}</div>
+                        </div>
+                    `;
+                }
+                
+                const isClickable = b.list && b.list.length > 0;
+                return `
+                    <div class="benefit-row ${isClickable ? '' : 'no-action'}" 
+                         onclick="${isClickable ? `openSchemeList(${cardIndex}, ${bIndex})` : ''}">
+                        <div class="benefit-header">
+                            <span class="benefit-name">${b.name}</span>
+                            <span class="benefit-rate ${b.rate >= 0.035 ? 'high' : ''}">${b.rate > 0 ? (b.rate * 100).toFixed(1) + '%' : ''}</span>
+                        </div>
+                        <div class="benefit-desc">${b.desc}</div>
+                        ${b.note ? `<div class="benefit-note">💡 ${b.note}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openSchemeList(cardIndex, benefitIndex) {
             const benefit = cardBenefitsData[cardIndex].benefits[benefitIndex];
             const cardName = cardBenefitsData[cardIndex].name;
             
-            let listHtml = '<div style="color:#999;">暫無詳細清單</div>';
-            if (benefit.list && benefit.list.length > 0) {
-                listHtml = `<div class="scheme-list-container">
-                    ${benefit.list.map(item => `<span class="scheme-list-item">${item}</span>`).join('')}
-                </div>`;
-            }
-
+            document.getElementById('modalTitle').innerText = `${cardName} - ${benefit.name}`;
             document.getElementById('detailBody').innerHTML = `
-                <div style="font-size:1.2em; font-weight:700; color:var(--color-primary); margin-bottom:5px;">${cardName}</div>
-                <div style="font-size:1.1em; font-weight:600; margin-bottom:10px;">${benefit.name} <span style="color:var(--color-success)">${(benefit.rate * 100).toFixed(1)}%</span></div>
-                <div style="font-size:0.9em; color:#666; margin-bottom:15px;">${benefit.note}</div>
-                <div style="border-top:1px solid #eee; padding-top:10px;">
-                    <div style="font-weight:600; margin-bottom:8px;">適用通路：</div>
-                    ${listHtml}
+                <div style="margin-bottom:15px; font-size:0.9em; color:#666;">${benefit.note}</div>
+                <div class="scheme-list-container">
+                    ${benefit.list.map(item => `<span class="scheme-list-item">${item}</span>`).join('')}
                 </div>
             `;
             document.getElementById('detailModal').classList.add('show');
         }
 
+        function toggleAccordion(header) {
+            const body = header.nextElementSibling;
+            const isOpen = body.classList.contains('open');
+            if (!isOpen) {
+                body.classList.add('open');
+                header.classList.add('active');
+            } else {
+                body.classList.remove('open');
+                header.classList.remove('active');
+            }
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.nav-item[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
         function closeDetailModal() {
             document.getElementById('detailModal').classList.remove('show');
-        }
-
-        // === 搜尋引擎 (核心邏輯：即時掃描權益表) ===
-        function handleSearch(e) {
-            const inputVal = document.getElementById('searchMerchant').value.trim().toLowerCase();
-            const container = document.getElementById('merchantContainer');
-            const clearBtn = document.getElementById('clearSearch');
-            
-            clearBtn.style.display = inputVal ? 'flex' : 'none';
-
-            if (!inputVal) {
-                container.innerHTML = '';
-                return;
-            }
-
-            // 1. 處理別名
-            let searchKey = inputVal;
-            for (const [alias, realName] of Object.entries(aliasMap)) {
-                if (inputVal.includes(alias)) {
-                    searchKey = realName.toLowerCase(); // 轉換為正規名稱進行搜尋
-                    break;
-                }
-            }
-
-            // 2. 掃描所有卡片的權益
-            let results = [];
-
-            cardBenefitsData.forEach(card => {
-                let bestBenefit = null;
-                let maxRate = 0;
-
-                card.benefits.forEach(benefit => {
-                    // 檢查是否匹配 (名稱 或 列表內容)
-                    let isMatch = false;
-                    
-                    // DAWHO 全通路特判
-                    if (card.id === 'dawho' && benefit.tag === 'all') isMatch = true;
-                    
-                    // 檢查列表
-                    if (benefit.list) {
-                        if (benefit.list.some(m => m.toLowerCase().includes(searchKey))) isMatch = true;
-                    }
-                    // 檢查描述
-                    if (benefit.desc.toLowerCase().includes(searchKey)) isMatch = true;
-
-                    // 如果匹配，且回饋率更高，則更新
-                    if (isMatch) {
-                        let currentRate = benefit.rate;
-                        
-                        // 新戶加碼計算
-                        if (card.id === 'unicard' && benefit.name === 'UP選') {
-                            const newUsersList = ['LINE Pay', 'Uber Eats', '家樂福', '韓國', '全盈+PAY'];
-                            if (newUsersList.some(n => searchKey.includes(n.toLowerCase()) || benefit.list.some(l => l.toLowerCase().includes(searchKey) && n.toLowerCase().includes(l.toLowerCase())))) {
-                                // 簡易判斷：若搜尋詞包含新戶指定通路，則+3%
-                                if(newUsersList.some(n => searchKey.includes(n.toLowerCase()) || benefit.list.filter(item => item.toLowerCase().includes(searchKey)).some(x => newUsersList.includes(x)) )) {
-                                     currentRate = 0.075; 
-                                }
-                            }
-                        }
-                        if (card.id === 'ubear' && benefit.tag === 'net') {
-                             currentRate = 0.10; // 新戶網購10%
-                        }
-
-                        if (currentRate > maxRate) {
-                            maxRate = currentRate;
-                            bestBenefit = { ...benefit, finalRate: currentRate };
-                        }
-                    }
-                });
-
-                if (bestBenefit) {
-                    results.push({
-                        cardName: card.name,
-                        benefitName: bestBenefit.name,
-                        rate: bestBenefit.finalRate,
-                        note: bestBenefit.note,
-                        tag: bestBenefit.tag
-                    });
-                }
-            });
-
-            // 3. 排序與顯示
-            results.sort((a, b) => b.rate - a.rate);
-
-            if (results.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:#999;">找不到相關通路，請嘗試其他關鍵字</div>';
-            } else {
-                renderSearchResults(results);
-            }
-        }
-
-        function renderSearchResults(results) {
-            const container = document.getElementById('merchantContainer');
-            
-            // 找出最高回饋
-            const bestRate = results[0].rate;
-            
-            const html = results.map((res, idx) => {
-                const isBest = res.rate === bestRate;
-                // 膠囊顏色邏輯
-                let badgeClass = 'scheme-badge';
-                if (res.tag === 'crazy') badgeClass += ' crazy'; // 瘋大港紅色
-                if (res.rate >= 0.07) badgeClass += ' new-user'; // 新戶/高回饋橘色
-
-                return `
-                    <div class="merchant-list">
-                        <div class="card-row">
-                            <div class="card-info">
-                                <span style="font-weight:700; font-size:1.05em;">${res.cardName}</span>
-                                <span class="${badgeClass}">${res.benefitName}</span>
-                            </div>
-                            <div class="card-rate ${isBest ? 'high' : ''}">${(res.rate * 100).toFixed(1)}%</div>
-                        </div>
-                        <div style="font-size:0.85em; color:#666; margin-top:6px;">
-                            ${res.note}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            container.innerHTML = html;
-        }
-
-        function clearSearch() {
-            document.getElementById('searchMerchant').value = '';
-            document.getElementById('merchantContainer').innerHTML = '';
-            document.getElementById('clearSearch').style.display = 'none';
-        }
-
-        function quickSearch(term) {
-            const input = document.getElementById('searchMerchant');
-            input.value = term;
-            handleSearch();
         }
 
         window.addEventListener('DOMContentLoaded', init);
