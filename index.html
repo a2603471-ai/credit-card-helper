@@ -18,7 +18,6 @@
             --color-success-bg: #e8f5e9;
             --color-success-border: #a5d6a7;
             --color-danger: #e74c3c;
-            --color-warning: #f57c00;
             --color-badge-bg: #e3f2fd;
             --color-badge-text: #1565c0;
         }
@@ -29,11 +28,12 @@
             padding: 20px;
             line-height: 1.6;
             padding-top: 10px;
+            padding-bottom: 80px; /* 預留底部空間 */
         }
         .container { max-width: 800px; margin: 0 auto; }
         h1 { text-align: center; margin-bottom: 15px; color: var(--color-primary); font-size: 1.6em; }
         
-        /* === 頂部導覽列 === */
+        /* === 導覽列 === */
         .nav-tabs {
             display: flex;
             background: var(--color-surface);
@@ -53,18 +53,18 @@
             border-radius: 8px;
             font-weight: 600;
             color: var(--color-text-light);
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
         .nav-item.active {
             background-color: var(--color-primary);
             color: white;
             box-shadow: 0 2px 4px rgba(33, 128, 160, 0.3);
         }
-        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content { display: none; animation: fadeIn 0.2s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* === 搜尋頁樣式 === */
+        /* === 搜尋與輸入 === */
         .form-section {
             background: var(--color-surface);
             padding: 20px;
@@ -85,18 +85,14 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--color-text); }
         .input-wrapper { position: relative; display: flex; align-items: center; }
-        input[type="text"] {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 14px 40px 14px 16px;
             border: 1px solid var(--color-border);
             border-radius: 8px;
             font-size: 16px;
         }
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(33, 128, 160, 0.1);
-        }
+        input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(33, 128, 160, 0.1); }
         .clear-btn {
             position: absolute; right: 12px;
             background: #eee; border: none; border-radius: 50%;
@@ -114,8 +110,8 @@
         }
         .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
         .suggestion-item:hover { background-color: #f5f9ff; }
-        
-        /* 搜尋結果列表 (商家聚合卡片) */
+
+        /* 商家列表 (搜尋結果) */
         .merchant-list {
             background: var(--color-surface); padding: 16px;
             border-radius: 12px; margin-bottom: 12px;
@@ -131,21 +127,16 @@
         .best-rate { color: var(--color-success); font-weight: 800; font-size: 1.3em; }
         .best-card-name { font-size: 0.9em; color: #666; }
 
-        /* 膠囊標籤樣式 (Badge) */
+        /* 膠囊標籤 */
         .scheme-badge {
-            display: inline-block;
-            background-color: var(--color-badge-bg);
-            color: var(--color-badge-text);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.85em;
-            font-weight: 700; margin: 0 4px;
+            display: inline-block; background-color: var(--color-badge-bg); color: var(--color-badge-text);
+            padding: 2px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 700; margin: 0 4px;
             border: 1px solid rgba(21, 101, 192, 0.2);
         }
         .scheme-badge.crazy { background-color: #ffebee; color: #c62828; border-color: #ffcdd2; }
         .scheme-badge.new-user { background-color: #fff3e0; color: #e65100; border-color: #ffe0b2; }
 
-        /* === 權益總覽樣式 === */
+        /* 權益總覽 (Accordion) */
         .card-accordion-item {
             background: var(--color-surface); border-radius: 12px; margin-bottom: 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid var(--color-border);
@@ -154,7 +145,6 @@
             padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
             background: white; transition: background 0.2s;
         }
-        .accordion-header:hover { background: #f9f9f9; }
         .card-title-row { display: flex; align-items: center; gap: 10px; }
         .card-icon { font-size: 1.2em; }
         .card-title-text { font-weight: 700; font-size: 1.1em; color: var(--color-text); }
@@ -162,72 +152,46 @@
         .accordion-header.active .chevron { transform: rotate(180deg); }
         .accordion-body { display: none; padding: 0; background: #fff; border-top: 1px solid #eee; }
         .accordion-body.open { display: block; animation: slideDown 0.3s ease-out; }
-        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 3000px; } }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
         
-        .benefit-row { 
-            padding: 14px 20px; border-bottom: 1px solid #f0f0f0; 
-            display: flex; flex-direction: column; cursor: pointer; transition: background 0.2s;
-            position: relative;
-        }
-        .benefit-row:hover { background-color: #f8fbff; }
-        .benefit-row::after {
-            content: '›'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
-            font-size: 1.5em; color: #ccc; font-weight: 300;
-        }
-        .benefit-row.no-action::after { content: ''; }
-        .benefit-row.no-action { cursor: default; }
-
+        .benefit-row { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; display: flex; flex-direction: column; position: relative; }
+        .benefit-row:not(.no-action):hover { background-color: #f8fbff; cursor: pointer; }
+        .benefit-row:not(.no-action)::after { content: '›'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 1.5em; color: #ccc; }
         .benefit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-right: 20px; }
-        .benefit-name { font-weight: 600; font-size: 1em; color: #444; display: flex; align-items: center; gap: 6px; }
+        .benefit-name { font-weight: 600; font-size: 1em; color: #444; }
         .benefit-rate { font-weight: 700; color: var(--color-primary); font-size: 1.1em; }
         .benefit-rate.high { color: var(--color-danger); }
-        .benefit-desc { font-size: 0.85em; color: #666; margin-top: 2px; padding-right: 20px; line-height: 1.4; }
-        .benefit-note { font-size: 0.8em; color: #999; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+        .benefit-desc { font-size: 0.85em; color: #666; margin-top: 2px; padding-right: 20px; }
+        .benefit-note { font-size: 0.8em; color: #999; margin-top: 4px; }
         .urgent-text { color: #c62828; font-weight: 700; background: #ffebee; padding: 1px 4px; border-radius: 4px; }
 
-        /* === 詳情彈窗樣式 (新版美編) === */
+        /* 彈窗樣式 */
         .detail-modal {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6); z-index: 2000;
-            align-items: center; justify-content: center; padding: 20px;
-            backdrop-filter: blur(2px);
+            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; padding: 20px;
+            backdrop-filter: blur(2px); overflow-y: auto;
         }
         .detail-modal.show { display: flex; }
         .detail-content {
-            background: var(--color-surface); border-radius: 16px;
-            width: 100%; max-width: 500px; max-height: 85vh;
-            display: flex; flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            background: var(--color-surface); border-radius: 16px; width: 100%; max-width: 500px; 
+            display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.3); margin-top: 50px; margin-bottom: 50px;
         }
         .detail-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: flex-start; }
         .detail-title h2 { font-size: 1.5em; color: var(--color-primary); margin: 0; }
-        .detail-close {
-            background: #f0f0f0; border: none; width: 32px; height: 32px;
-            border-radius: 50%; font-size: 20px; cursor: pointer; color: #666;
-        }
-        .detail-body { padding: 20px; overflow-y: auto; }
-        
-        /* 彈窗內分類樣式 (權益總覽用) */
-        .detail-category-group { margin-bottom: 20px; }
-        .detail-category-title { 
-            font-size: 0.95em; font-weight: 700; color: var(--color-text); margin-bottom: 8px; 
-            background: #f0f4f8; padding: 6px 10px; border-radius: 6px; display: inline-block;
-        }
-        .scheme-list-container { display: flex; flex-wrap: wrap; gap: 8px; }
-        .scheme-list-item { background: #fff; border: 1px solid #eee; padding: 6px 12px; border-radius: 6px; font-size: 0.9em; color: #333; }
-        
-        /* 排名彈窗樣式 (回歸舊版綠色方框美編) */
+        .detail-close { background: #f0f0f0; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer; color: #666; }
+        .detail-body { padding: 20px; }
+
+        /* 排名彈窗卡片 (綠色方框美編) */
         .detail-card-item { margin-bottom: 12px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; }
-        /* 第一名樣式 */
         .detail-card-item.best-card { border: 2px solid var(--color-success-border); background-color: var(--color-success-bg); }
         .detail-card-header { padding: 12px 15px; background: #f9f9f9; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
         .detail-card-item.best-card .detail-card-header { background: #c8e6c9; color: var(--color-success); }
         .detail-card-body { padding: 15px; }
-        .rate-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .rate-val { font-weight: 800; font-size: 1.4em; }
         .detail-card-item.best-card .rate-val { color: var(--color-success); }
         .plan-warning { color: var(--color-danger); font-weight: 600; font-size: 0.9em; margin-top: 8px; display: flex; align-items: center; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.1); }
         .plan-warning::before { content: '⚠️'; margin-right: 4px; }
+        .limit-info { font-size: 0.85em; color: #666; margin-top: 4px; }
 
         /* 快速分類按鈕 */
         .category-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
@@ -235,10 +199,20 @@
             padding: 8px 16px; background: var(--color-surface);
             border: 1px solid var(--color-border); border-radius: 20px;
             cursor: pointer; font-size: 0.9em; color: var(--color-text); font-weight: 500;
-            transition: all 0.2s; user-select: none; display: flex; align-items: center; gap: 6px;
+            transition: all 0.2s; user-select: none;
         }
         .category-tag:hover { border-color: var(--color-primary); color: var(--color-primary); background: #e3f2fd; }
         .category-tag.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+
+        /* 試算結果樣式 */
+        .calc-result-item { margin-bottom: 15px; padding: 15px; background: white; border: 1px solid #eee; border-radius: 12px; }
+        .calc-result-item.winner { border: 2px solid var(--color-success-border); background: var(--color-success-bg); }
+        .calc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .calc-money { font-size: 1.4em; font-weight: 800; color: var(--color-text); }
+        .calc-result-item.winner .calc-money { color: var(--color-success); }
+        .calc-detail { font-size: 0.85em; color: #666; background: rgba(0,0,0,0.03); padding: 8px; border-radius: 6px; margin-top: 8px; }
+        .toggle-container { display: flex; align-items: center; margin-top: 10px; cursor: pointer; }
+        .toggle-checkbox { width: 18px; height: 18px; margin-right: 8px; }
 
         @media (max-width: 480px) {
             body { padding: 15px; padding-top: 10px; }
@@ -254,18 +228,19 @@
         <div class="nav-tabs">
             <div class="nav-item active" onclick="switchTab('search')">🔍 通路搜尋</div>
             <div class="nav-item" onclick="switchTab('overview')">📋 權益總覽</div>
+            <div class="nav-item" onclick="switchTab('calculator')">💰 回饋試算</div>
         </div>
 
         <div id="tab-search" class="tab-content active">
             <div class="form-section">
                 <div class="info-text">
-                    🔍 <strong>2026年最新權益</strong>：國泰CUBE(瘋大港3.5%)、台新Richart(七大權益)、玉山Unicard(新戶7.5%)、UBear(新戶10%)、永豐DAWHO。
+                    🔍 <strong>2026年權益</strong>：國泰CUBE(瘋大港3.5%至3/23)、台新Richart(Pay著刷3.8%)、Unicard(新戶7.5%)、UBear(新戶10%)、永豐DAWHO。
                 </div>
                 
                 <div class="form-group">
                     <label for="searchMerchant">搜尋通路名稱</label>
                     <div class="input-wrapper">
-                        <input type="text" id="searchMerchant" placeholder="例如：全家、高鐵、蝦皮..." autocomplete="off">
+                        <input type="text" id="searchMerchant" placeholder="例如：全家、高鐵、蝦皮、ZARA..." autocomplete="off">
                         <button id="clearSearch" class="clear-btn" onclick="clearSearch()">✕</button>
                         <div id="suggestionDropdown" class="suggestion-dropdown"></div>
                     </div>
@@ -273,8 +248,7 @@
                 
                 <div style="margin-top: 15px;">
                     <label>快速分類搜尋</label>
-                    <div class="category-tags" id="quickCategoryTags">
-                        </div>
+                    <div class="category-tags" id="quickCategoryTags"></div>
                 </div>
             </div>
 
@@ -285,6 +259,28 @@
 
         <div id="tab-overview" class="tab-content">
             <div id="cardOverviewContainer"></div>
+        </div>
+
+        <div id="tab-calculator" class="tab-content">
+            <div class="form-section">
+                <div class="form-group">
+                    <label>消費金額 (TWD)</label>
+                    <input type="number" id="calcAmount" placeholder="例如：20000" inputmode="numeric">
+                </div>
+                <div class="form-group">
+                    <label>消費通路</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="calcMerchant" placeholder="例如：蝦皮購物" autocomplete="off">
+                        <div id="calcSuggestionDropdown" class="suggestion-dropdown"></div>
+                    </div>
+                </div>
+                <label class="toggle-container">
+                    <input type="checkbox" id="calcNewUser" class="toggle-checkbox">
+                    <span>我是新戶 🐣 (計算 Unicard / UBear 加碼)</span>
+                </label>
+                <button onclick="calculateRewards()" style="width:100%; padding:12px; background:var(--color-primary); color:white; border:none; border-radius:8px; font-weight:700; margin-top:15px; font-size:1.1em;">開始試算</button>
+            </div>
+            <div id="calcResults"></div>
         </div>
 
     </div>
@@ -305,15 +301,12 @@
         // === 核心資料：權益總覽 (Single Source of Truth) ===
         const cardBenefitsData = [
             {
-                id: 'richart',
-                name: '台新 Richart',
-                icon: '🐶',
-                note: '需每日透過 Richart App 切換至對應權益方案',
+                id: 'richart', name: '台新 Richart', icon: '🐶', note: '需每日透過 Richart App 切換至對應權益方案',
                 benefits: [
-                    { name: 'Pay著刷', rate: 0.038, desc: '四大超商 | 新光三越 | IKEA | 台灣大車隊', note: '需綁定台新Pay支付', tag: 'pay', categories: { '超商':['7-11', '全家便利商店'], '百貨':['新光三越'], '居家':['IKEA'], '交通':['台灣大車隊'], '量販':['大潤發'] } },
+                    { name: 'Pay著刷', rate: 0.038, desc: '四大超商 | 新光三越 | IKEA | 台灣大車隊', note: '需綁定台新Pay支付', tag: 'pay', categories: { '超商':['7-11', '全家便利商店'], '百貨':['新光三越'], '居家':['IKEA'], '交通':['台灣大車隊'], '量販':['大潤發'], '美妝':['康是美'], '服飾':['NET'] } },
                     { name: '數趣刷', rate: 0.033, desc: '網購 | 遊戲影音 | 線上課程 | AI服務', note: '上限 1000 元', tag: 'digital', categories: { '網購平台':['蝦皮購物', 'momo購物網', '酷澎(Coupang)', 'PChome', '淘寶', 'Amazon', '東森', '博客來', 'Richart Mart', 'PayEasy', 'iHerb', 'SHEIN', 'Farfetch', 'Olive Young'], '線上課程':['知識衛星', 'Amazing Talker', 'Tutor ABC', 'Hahow', 'PressPlay'], '遊戲影音':['MyCard', '遊戲橘子', 'Steam', 'PlayStation', 'Nintendo', 'Netfilx', 'Disney+'], 'AI服務':['ChatGPT', 'Notion', 'Canva', 'Perplexity', 'Claude'] } },
                     { name: '玩旅刷', rate: 0.033, desc: '海外 | 航空 | 訂房 | 旅行社', note: '上限 1000 元', tag: 'travel', categories: { '海外消費':['海外消費(含實體)'], '訂房平台':['Klook', 'KKday', 'Agoda', 'Booking.com', 'Trip.com', 'Airbnb', 'Hotels.com', 'Expedia'], '海外交通':['Uber', 'Grab', 'SUICA', 'ICOCA', 'PASMO', 'WOWPASS', 'AIRSIM'], '旅行社':['雄獅旅遊', '易遊網', '東南旅遊', '可樂旅遊', '長汎假期', '五福旅遊', '喜鴻假期', '易飛旅遊', '燦星旅遊', '加利利旅行社', '鳳凰國際旅行社', '山富旅遊', '行健旅遊'], '航空公司':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '華信航空', '立榮航空', '樂桃航空', '阿聯酋航空', '亞洲航空', '酷航', '捷星航空', '新加坡航空', '日本航空', '越捷航空'] } },
-                    { name: '天天刷', rate: 0.033, desc: '超商量販 | 交通 | 停車 | 藥局', note: '上限 1000 元', tag: 'daily', categories: { '超商量販(台新Pay)':['7-11', '全家便利商店', '家樂福', '大買家', '唐吉軻德', 'LOPIA'], '通勤交通':['台灣鐵路', '台灣高鐵', '台灣大車隊', 'Yoxi', 'Uber'], '停車租車':['嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車'], '藥妝藥局':['寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'] } },
+                    { name: '天天刷', rate: 0.033, desc: '超商量販 | 交通 | 停車 | 藥局', note: '上限 1000 元', tag: 'daily', categories: { '超商量販(台新Pay)':['7-11', '全家', '家樂福', '大買家', '唐吉軻德', 'LOPIA'], '通勤交通':['台灣鐵路', '台灣高鐵', '台灣大車隊', 'Yoxi', 'Uber'], '停車租車':['嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車'], '藥妝藥局':['寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'] } },
                     { name: '大筆刷', rate: 0.033, desc: '百貨 | Outlet | 居家 | 時尚', note: '上限 1000 元', tag: 'big', categories: { '指定百貨':['新光三越', '遠東百貨', '遠東SOGO', '漢神巨蛋', '漢神百貨', '微風', '台北101', '遠東巨城', '廣三SOGO', '南紡購物中心', '誠品生活', '京站', '三創生活', '夢時代', '統一時代', '中友百貨', 'LaLaport'], '指定Outlet':['MITSUI OUTLET PARK', '華泰名品城', 'SKM Park Outlets'], '居家裝修':['IKEA', '特力屋', 'HOLA', '宜得利', '瑪黑家居'], '時尚品味':['UNIQLO', 'GU', 'ZARA', 'NET', 'lululemon'] } },
                     { name: '好饗刷', rate: 0.033, desc: '餐飲 | 外送 | 加油 | 娛樂', note: '上限 1000 元', tag: 'fun', categories: { '餐飲外送':['國內餐飲', '王品瘋Pay', 'Uber Eats', 'Foodpanda'], '加油充電':['台灣中油-直營站', '台亞直營', '全國加油', 'EVOASIS', 'EVALUE'], '展演購票':['拓元售票', 'KKTIX', '年代售票', '寬宏售票', 'OPENTIX', 'FunNow'], '指定KTV':['錢櫃', '好樂迪', 'ONCOR', 'sing!go', '享溫馨'], '指定樂園':['義大遊樂世界', '麗寶樂園', '六福村', '九族文化村', '劍湖山', 'X-Park', '國立海洋生物博物館', '遠雄海洋公園', '小人國'], '指定飯店':['晶華', '雲朗', '萬豪', '煙波', '老爺', '福華', '漢來', '君悅', '洲際', '寒沐'] } },
                     { name: 'LINE Pay', rate: 0.023, desc: '一般 LINE Pay 綁定支付', note: '無門檻', tag: 'line', categories: { '行動支付':['LINE Pay'] } },
@@ -321,12 +314,9 @@
                 ]
             },
             {
-                id: 'cube',
-                name: '國泰 CUBE',
-                icon: '⚪️',
-                note: '需每日透過 CUBE App 切換至對應權益方案',
+                id: 'cube', name: '國泰 CUBE', icon: '⚪️', note: '需每日透過 CUBE App 切換至對應權益方案',
                 benefits: [
-                    { name: '瘋大港', rate: 0.035, desc: '指定高雄住宿 | Klook | 高鐵 | 台鐵', note: '<span class="urgent-text">2026/3/23 截止</span>', tag: 'crazy', categories: { '指定高雄住宿':['城市商旅', '和逸飯店', '旅居文旅', '秝芯旅店', '夏優旅居', '華園大飯店', '捷絲旅', '麗尊酒店', '帕可麗酒店', '鈞怡大飯店'], '旅遊平台':['Klook'], '指定交通':['台灣高鐵', '台灣鐵路'] } },
+                    { name: '瘋大港', rate: 0.035, desc: '指定高雄住宿 | Klook | 高鐵 | 台鐵', note: '<span class="urgent-text">2026/3/23 截止</span>', tag: 'crazy', categories: { '指定高雄住宿':['城市商旅', '和逸飯店', '旅居文旅', '秝芯旅店', '夏優旅居', '華園大飯店', '捷絲旅', '麗尊酒店', '帕可麗酒店', '鈞怡大飯店'], '旅遊平台':['Klook'], '指定交通':['台灣高鐵', '台灣鐵路局'] } },
                     { name: '玩數位', rate: 0.03, desc: '網購 | 影音 | AI | 國際電商', note: '無上限', tag: 'digital', categories: { 'AI工具':['ChatGPT', 'Canva', 'Claude', 'Cursor', 'Duolingo', 'Gamma', 'Gemini', 'Notion', 'Perplexity', 'Speak'], '國際電商':['淘寶', '天貓', 'Coupang 酷澎'], '網購平台':['蝦皮購物', 'momo購物網', 'PChome 24h購物', '小樹購'], '數位串流':['Apple 媒體服務', 'Google Play', 'Disney+', 'Netflix', 'Spotify', 'YouTube Premium', 'Max'] } },
                     { name: '樂響購', rate: 0.03, desc: '百貨公司 | 全球餐飲 | 外送 | 藥妝', note: '無上限', tag: 'fun', categories: { '國內百貨':['遠東SOGO', '遠東Garden City', '新光三越', '遠東百貨', '台北101', 'BELLAVITA', '微風廣場', '統一時代', '誠品生活', 'ATT 4 FUN', '京站', '美麗華', 'NOKE忠泰樂生活', '大葉高島屋', 'Mitsui Shopping Park LaLaport', '宏匯廣場', '台茂', '大江', 'Big City', '中友', '廣三SOGO', '南紡', '耐斯廣場', '夢時代', '漢神百貨', '漢神巨蛋', '新月廣場', 'CITYLINK', '秀泰生活', '環球購物中心', '太平洋百貨', '華泰名品城', 'SKM Park', 'MITSUI OUTLET PARK'], '國內餐飲':['國內餐飲', '麥當勞'], '外送平台':['Uber Eats', 'foodpanda'], '國內藥妝':['屈臣氏', '康是美'] } },
                     { name: '趣旅行', rate: 0.03, desc: '海外實體 | 訂房 | 航空 | 旅行社 | 國內交通', note: '無上限', tag: 'travel', categories: { '海外消費':['海外實體消費'], '海外交通':['SUICA', 'PASMO', 'ICOCA', 'Uber', 'Grab'], '指定樂園':['東京迪士尼', '哈利波特影城', '大阪環球影城'], '旅遊訂房':['Klook', 'KKday', 'Agoda', 'Airbnb', 'Booking.com', 'Trip.com'], '國內旅行社':['雄獅', '易遊網', '可樂', '東南', '五福', '燦星', '山富', '長汎假期', '鳳凰', '易飛網', '理想旅遊', '永利', '三賀'], '國內交通':['台灣高鐵', '台灣大車隊', 'yoxi', 'iRent', '和運租車', '格上租車', 'Uber'], '指定航空':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '樂桃航空', '阿聯酋航空', '酷航', '捷星航空', '日本航空', '亞洲航空', '聯合航空', '新加坡航空', 'ANA全日空', '越捷航空', '大韓航空', '達美航空', '土耳其航空', '法國航空', '卡達航空'], '指定住宿':['國內飯店', '星野集團', '全球迪士尼飯店', '東橫INN'] } },
@@ -334,10 +324,7 @@
                 ]
             },
             {
-                id: 'unicard',
-                name: '玉山 Unicard',
-                icon: '⛰️',
-                note: '簡單選 3% / 任意選 3.5% / UP選 4.5% (需149點訂閱)',
+                id: 'unicard', name: '玉山 Unicard', icon: '⛰️', note: '簡單選 3% / 任意選 3.5% / UP選 4.5% (需149點訂閱)',
                 benefits: [
                     { 
                         name: '百大特店名單', rate: 0, tag: 'list', type: 'modal',
@@ -354,7 +341,7 @@
                             '國外實體': ['日本', '韓國', '泰國', '越南', '新加坡', '馬來西亞', '菲律賓', '中國', '香港', '澳門', '美國', '加拿大', '英國', '法國', '德國', '義大利', '澳洲'],
                             'ESG消費': ['特斯拉', 'Gogoro', 'YouBike']
                         },
-                        note: '簡單選 3% / 任意選 3.5%'
+                        note: '點擊查看詳情'
                     },
                     { name: 'UP選', rate: 0.045, desc: '百大特店 (需149點訂閱)', type: 'text', note: '需完成UP任務' },
                     { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '需透過 App 設定' },
@@ -368,60 +355,39 @@
                 ]
             },
             {
-                id: 'ubear',
-                name: '玉山 UBear',
-                icon: '🐻',
-                note: '指定娛樂 10% / 網購 3% (新戶網購 +7% = 10%)',
+                id: 'ubear', name: '玉山 UBear', icon: '🐻', note: '指定娛樂 10% / 網購 3% (新戶網購 +7% = 10%)',
                 benefits: [
-                    { 
-                        name: '影音娛樂', rate: 0.10, tag: 'ent',
-                        desc: 'Netflix | Disney+ | Nintendo | PlayStation', 
-                        categories: { '影音娛樂': ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes', 'Google Play', 'Funnow'] },
-                        note: '每期上限 100 元' 
-                    },
-                    { 
-                        name: '網購/Pay', rate: 0.03, tag: 'net',
-                        desc: '網購 | 行動支付 | 交通訂房 | 外送', 
-                        categories: { 
-                            '行動支付': ['LINE Pay', '街口支付', '悠遊付', 'OPEN錢包', 'icash Pay', '全盈+PAY', '全支付', '橘子支付', 'skm pay', '中油Pay', '玉山Wallet', 'Pi 拍錢包', '歐付寶', 'PayPal', 'Hami Pay'],
-                            '線上購物': ['PChome', 'momo購物網', '蝦皮購物', 'Coupang酷澎', 'Yahoo', '淘寶', '露天', '博客來', '生活市集', '松果購物', '誠品網路', 'friDay購物', 'udn售票網', 'GOMAJI', '樂天市場', '屈臣氏線上', '康是美線上', '家樂福線上', '神腦', '燦坤線上', 'Apple官網', '小米台灣', '迪卡儂線上', '拓元', 'ZARA', 'H&M', 'GU', 'UNIQLO', 'Lativ', 'ZALORA', 'Pinkoi'],
-                            '交通訂房': ['55688', 'Uber', '台灣高鐵T-EX', '台灣鐵路線上', '易遊網', 'Agoda', 'Hotels.com', 'Expedia', 'Klook', 'KKday', 'Booking.com', 'Airbnb', '中華航空', '長榮航空', '台灣虎航'],
-                            '外送平台': ['Uber Eats', 'foodpanda', 'foodomo', 'lalamove', '你訂']
-                        },
-                        note: '<span class="urgent-text">新戶+7% (最高10%)</span>' 
+                    { name: '影音娛樂', rate: 0.10, tag: 'ent', desc: 'Netflix | Disney+ | Nintendo | PlayStation', categories: { '影音娛樂': ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes', 'Google Play', 'Funnow'] }, note: '每期上限 100 元 (可刷$1,000)' },
+                    { name: '網購/Pay', rate: 0.03, tag: 'net', desc: '網購 | 行動支付 | 交通訂房 | 外送', 
+                      categories: { 
+                        '行動支付': ['LINE Pay', '街口支付', '悠遊付', 'OPEN錢包', 'icash Pay', '全盈+PAY', '全支付', '橘子支付', 'skm pay', '中油Pay', '玉山Wallet', 'Pi 拍錢包', '歐付寶', 'PayPal', 'Hami Pay'],
+                        '線上購物': ['PChome', 'momo購物網', '蝦皮購物', 'Coupang酷澎', 'Yahoo', '淘寶', '露天', '博客來', '生活市集', '松果購物', '誠品網路', 'friDay購物', 'udn售票網', 'GOMAJI', '樂天市場', '屈臣氏線上', '康是美線上', '家樂福線上', '神腦', '燦坤線上', 'Apple官網', '小米台灣', '迪卡儂線上', '拓元', 'ZARA', 'H&M', 'GU', 'UNIQLO', 'Lativ', 'ZALORA', 'Pinkoi'],
+                        '交通訂房': ['55688', 'Uber', '台灣高鐵T-EX', '台灣鐵路線上', '易遊網', 'Agoda', 'Hotels.com', 'Expedia', 'Klook', 'KKday', 'Booking.com', 'Airbnb', '中華航空', '長榮航空', '台灣虎航'],
+                        '外送平台': ['Uber Eats', 'foodpanda', 'foodomo', 'lalamove', '你訂']
+                      },
+                      note: '<span class="urgent-text">新戶+7% (最高10%)</span>' 
                     }
                 ]
             },
             {
-                id: 'dawho',
-                name: '永豐 DAWHO',
-                icon: '⚫️',
-                note: '國內 3.5% / 國外 4.5% (需大戶等級)',
+                id: 'dawho', name: '永豐 DAWHO', icon: '⚫️', note: '國內 3.5% / 國外 4.5% (需大戶等級)',
                 benefits: [
-                    { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷 (含任務)', tag: 'all', categories: {}, note: '上限顯示 3.5%' },
-                    { name: '悠遊卡', rate: 0.03, desc: '悠遊卡自動加值', tag: 'easy', categories: { '電子票證':['悠遊卡自動加值'] }, note: '上限100元' }
+                    { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷 (含任務)', tag: 'all', categories: {}, note: '上限$16,000' },
+                    { name: '悠遊卡', rate: 0.03, desc: '悠遊卡自動加值', tag: 'easy', categories: { '電子票證':['悠遊卡自動加值'] }, note: '上限$3,333' }
                 ]
             }
         ];
 
-        // === 資料正規化字典 & 別名搜尋字典 ===
+        // === 資料正規化字典 (Normalization Map) ===
         const normalizationMap = {
-            '全家': '全家便利商店',
-            '7-11': '7-ELEVEN', '小七': '7-ELEVEN',
-            '蝦皮': '蝦皮購物', 'shopee': '蝦皮購物',
-            'uber': 'Uber',
-            '高鐵': '台灣高鐵', '台鐵': '台灣鐵路',
-            '中油': '台灣中油-直營站',
-            'line': 'LINE Pay', 'linepay': 'LINE Pay',
-            'ubereats': 'Uber Eats',
-            'foodpanda': 'foodpanda', '熊貓': 'foodpanda',
-            '全聯': '全聯福利中心',
-            '家樂福': '家樂福',
-            'momo': 'momo購物網',
-            'pchome': 'PChome 24h購物',
-            'klook': 'Klook', 'kkday': 'KKday'
+            '全家': '全家便利商店', '7-11': '7-ELEVEN', '小七': '7-ELEVEN',
+            '蝦皮': '蝦皮購物', 'uber': 'Uber', '高鐵': '台灣高鐵', '台鐵': '台灣鐵路',
+            '中油': '台灣中油-直營站', 'line': 'LINE Pay', 'linepay': 'LINE Pay',
+            'ubereats': 'Uber Eats', 'foodpanda': 'foodpanda', '熊貓': 'foodpanda',
+            '全聯': '全聯福利中心', '家樂福': '家樂福', 'momo': 'momo購物網',
+            'pchome': 'PChome 24h購物', 'klook': 'Klook', 'kkday': 'KKday',
+            'uniqlo': 'UNIQLO', 'ikea': 'IKEA'
         };
-
         const aliasMap = { ...normalizationMap, '肯德基': '國內餐飲', '星巴克': '國內餐飲', '麥當勞': '麥當勞' };
 
         // === 快速分類按鈕設定 ===
@@ -443,66 +409,62 @@
             renderCardOverview();
             renderQuickFilters();
             
+            // Search Tab Listeners
             const input = document.getElementById('searchMerchant');
             input.addEventListener('input', handleSearchInput); 
             input.addEventListener('focus', handleSearchInput); 
             
+            // Calc Tab Listeners
+            const calcInput = document.getElementById('calcMerchant');
+            calcInput.addEventListener('input', (e) => handleCalcSearchInput(e));
+            calcInput.addEventListener('focus', (e) => handleCalcSearchInput(e));
+
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.input-wrapper')) {
                     document.getElementById('suggestionDropdown').style.display = 'none';
+                    document.getElementById('calcSuggestionDropdown').style.display = 'none';
                 }
             });
         }
 
-        // === 1. 自動生成商家資料庫 (含正規化) ===
+        // === 1. 自動生成商家資料庫 ===
         function generateMerchantDB() {
             globalMerchantDB = {};
-            
             cardBenefitsData.forEach(card => {
                 card.benefits.forEach(benefit => {
                     if (benefit.categories) {
                         Object.entries(benefit.categories).forEach(([catName, list]) => {
                             list.forEach(rawMerchant => {
-                                // 正規化處理
                                 const merchant = normalizationMap[rawMerchant] || rawMerchant;
                                 const key = merchant.toLowerCase();
-
                                 if (!globalMerchantDB[key]) {
-                                    globalMerchantDB[key] = {
-                                        name: merchant,
-                                        category: catName,
-                                        cards: []
-                                    };
+                                    globalMerchantDB[key] = { name: merchant, category: catName, cards: [] };
                                 }
                                 
                                 let rate = benefit.rate;
                                 let note = benefit.note;
                                 let scheme = benefit.name;
 
-                                // 新戶加碼邏輯 (Unicard)
+                                // 新戶邏輯
                                 if (card.id === 'unicard' && benefit.name === '百大特店名單') {
                                     rate = 0.045; scheme = 'UP選';
                                     const newBonusBenefit = card.benefits.find(b => b.tag === 'new');
-                                    if (newBonusBenefit) {
-                                        const newBonusList = Object.values(newBonusBenefit.categories).flat();
-                                        if (newBonusList.some(nm => rawMerchant.includes(nm) || merchant.includes(nm))) {
-                                            rate = 0.075; note = '含新戶加碼'; scheme = 'UP選+新戶';
-                                        }
+                                    if (newBonusBenefit && Object.values(newBonusBenefit.categories).flat().some(nm => rawMerchant.includes(nm) || merchant.includes(nm))) {
+                                        rate = 0.075; note = '含新戶加碼 (上限$16,666)'; scheme = 'UP選+新戶';
+                                    } else {
+                                        note = '上限$142,857';
                                     }
                                 }
-                                // 新戶加碼邏輯 (UBear)
                                 if (card.id === 'ubear' && benefit.tag === 'net') {
-                                    rate = 0.10; note = '含新戶加碼';
+                                    rate = 0.10; note = '含新戶加碼 (上限$2,142)';
                                 }
+                                // Richart/CUBE 上限標註
+                                if (card.id === 'richart') note = '無上限';
+                                if (card.id === 'cube') note = '無上限';
 
                                 if (!globalMerchantDB[key].cards.some(c => c.cardName === card.name && c.scheme === scheme)) {
                                     globalMerchantDB[key].cards.push({
-                                        cardId: card.id,
-                                        cardName: card.name,
-                                        rate: rate,
-                                        scheme: scheme,
-                                        note: note,
-                                        tag: benefit.tag
+                                        cardId: card.id, cardName: card.name, rate: rate, scheme: scheme, note: note, tag: benefit.tag
                                     });
                                 }
                             });
@@ -512,11 +474,10 @@
             });
         }
 
-        // === 2. 介面渲染 ===
+        // === 2. 搜尋功能 (Tab 1) ===
         function renderQuickFilters() {
-            const container = document.getElementById('quickCategoryTags');
-            container.innerHTML = quickFilters.map(filter => 
-                `<div class="category-tag" onclick="applyCategoryFilter('${filter.name}')">${filter.name}</div>`
+            document.getElementById('quickCategoryTags').innerHTML = quickFilters.map(f => 
+                `<div class="category-tag" onclick="applyCategoryFilter('${f.name}')">${f.name}</div>`
             ).join('');
         }
 
@@ -532,55 +493,25 @@
             tags.forEach(t => t.classList.toggle('active', t.textContent === filterName));
             
             const filter = quickFilters.find(f => f.name === filterName);
-            const matchedMerchants = [];
-            Object.values(globalMerchantDB).forEach(data => {
-                if (filter.keywords.some(kw => data.category.includes(kw))) matchedMerchants.push(data);
-            });
-            renderFilteredResults(matchedMerchants);
-        }
-
-        function renderFilteredResults(merchants) {
-            const container = document.getElementById('merchantContainer');
-            if (merchants.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">此分類暫無資料</div>';
-                return;
-            }
-            container.innerHTML = merchants.map(data => generateMerchantCardHTML(data.name)).join('');
+            const matched = Object.values(globalMerchantDB).filter(d => filter.keywords.some(kw => d.category.includes(kw)));
+            document.getElementById('merchantContainer').innerHTML = matched.length ? matched.map(d => generateMerchantCardHTML(d.name)).join('') : '<div style="text-align:center; padding:20px; color:#999;">無資料</div>';
         }
 
         function handleSearchInput(e) {
             const val = e.target.value.trim().toLowerCase();
             const dropdown = document.getElementById('suggestionDropdown');
-            const clearBtn = document.getElementById('clearSearch');
-            clearBtn.style.display = val ? 'flex' : 'none';
-
+            document.getElementById('clearSearch').style.display = val ? 'flex' : 'none';
             if (!val) { dropdown.style.display = 'none'; return; }
 
             let matches = new Set();
-            for (const [alias, realName] of Object.entries(aliasMap)) {
-                if (alias.includes(val)) matches.add(realName);
-            }
-            Object.keys(globalMerchantDB).forEach(key => {
-                if (key.includes(val)) matches.add(globalMerchantDB[key].name);
-            });
+            for (const [alias, real] of Object.entries(aliasMap)) if (alias.includes(val)) matches.add(real);
+            Object.keys(globalMerchantDB).forEach(k => { if(k.includes(val)) matches.add(globalMerchantDB[k].name); });
 
             const results = Array.from(matches).slice(0, 10);
-            if (results.length > 0) {
-                dropdown.innerHTML = results.map(name => `<div class="suggestion-item" onclick="selectMerchant('${name}')">${name}</div>`).join('');
-                dropdown.style.display = 'block';
-            } else {
-                dropdown.innerHTML = '<div class="suggestion-item" style="cursor:default; color:#999;">無相關通路，試試看 DAWHO (3.5%)</div>';
-                dropdown.style.display = 'block';
-            }
-        }
-
-        function clearSearch() {
-            document.getElementById('searchMerchant').value = '';
-            document.getElementById('merchantContainer').innerHTML = '';
-            document.getElementById('clearSearch').style.display = 'none';
-            document.getElementById('suggestionDropdown').style.display = 'none';
-            activeFilter = null;
-            document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
+            dropdown.innerHTML = results.length 
+                ? results.map(n => `<div class="suggestion-item" onclick="selectMerchant('${n}')">${n}</div>`).join('')
+                : '<div class="suggestion-item" style="color:#999;">無相關資料</div>';
+            dropdown.style.display = 'block';
         }
 
         function selectMerchant(name) {
@@ -588,38 +519,45 @@
             document.getElementById('suggestionDropdown').style.display = 'none';
             activeFilter = null;
             document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
-            renderMerchantResult(name);
+            document.getElementById('merchantContainer').innerHTML = generateMerchantCardHTML(name);
         }
 
-        function renderMerchantResult(name) {
-            const container = document.getElementById('merchantContainer');
-            container.innerHTML = generateMerchantCardHTML(name);
+        function clearSearch() {
+            document.getElementById('searchMerchant').value = '';
+            document.getElementById('merchantContainer').innerHTML = '';
+            document.getElementById('clearSearch').style.display = 'none';
+            document.getElementById('suggestionDropdown').style.display = 'none';
+            resetFilters();
         }
+        
+        function resetFilters() {
+            activeFilter = null;
+            document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
+        }
+
+        function quickSearch(term) { selectMerchant(term); }
 
         function generateMerchantCardHTML(name) {
             const key = name.toLowerCase();
             let data = globalMerchantDB[key];
             if (!data) {
-                const fuzzyKey = Object.keys(globalMerchantDB).find(k => k.includes(key) || key.includes(k));
-                if (fuzzyKey) data = globalMerchantDB[fuzzyKey];
+                const fuzzy = Object.keys(globalMerchantDB).find(k => k.includes(key) || key.includes(k));
+                if (fuzzy) data = globalMerchantDB[fuzzy];
             }
-
             let cards = data ? [...data.cards] : [];
-            const dawho = { cardId: 'dawho', cardName: '永豐 DAWHO', rate: 0.035, scheme: '國內全通路', note: '無腦刷', tag: 'all' };
-            if (!cards.find(c => c.cardId === 'dawho')) cards.push(dawho);
-
+            if (!cards.find(c => c.cardId === 'dawho')) cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', rate: 0.035, scheme: '國內全通路', note: '上限$16,000', tag: 'all' });
             cards.sort((a, b) => b.rate - a.rate);
-            const bestCard = cards[0];
+            const best = cards[0];
 
             return `
                 <div class="merchant-list" onclick='openRankingModal(${JSON.stringify(cards)}, "${data ? data.name : name}")'>
-                    <div class="merchant-info">
-                        <span class="merchant-name">${data ? data.name : name}</span>
+                    <div>
+                        <div class="merchant-name">${data ? data.name : name}</div>
                         ${data ? `<span class="merchant-type">${data.category}</span>` : ''}
                     </div>
                     <div class="merchant-best-info">
-                        <div class="best-rate">${(bestCard.rate * 100).toFixed(1)}%</div>
-                        <div class="best-card-name">🏆 ${bestCard.cardName}</div>
+                        <div class="best-rate">${(best.rate * 100).toFixed(1)}%</div>
+                        <div class="best-card-name">🏆 ${best.cardName}</div>
                     </div>
                 </div>
             `;
@@ -628,17 +566,12 @@
         function openRankingModal(cards, merchantName) {
             const body = document.getElementById('detailBody');
             document.getElementById('modalTitle').innerText = `${merchantName} 回饋排名`;
-            
             const html = cards.map((c, idx) => {
                 const isBest = idx === 0;
                 let badgeClass = 'scheme-badge';
                 if (c.tag === 'crazy') badgeClass += ' crazy';
                 if (c.rate >= 0.07) badgeClass += ' new-user';
-                
-                const needsSwitch = c.cardId === 'richart' || c.cardId === 'cube';
-                const warningHtml = (isBest && needsSwitch) ? 
-                    `<div class="plan-warning">需切換至「${c.scheme}」</div>` : '';
-
+                const warningHtml = (isBest && (c.cardId === 'richart' || c.cardId === 'cube')) ? `<div class="plan-warning">需切換至「${c.scheme}」</div>` : '';
                 return `
                     <div class="detail-card-item ${isBest ? 'best-card' : ''}">
                         <div class="detail-card-header">
@@ -655,28 +588,168 @@
                     </div>
                 `;
             }).join('');
-
             body.innerHTML = html;
             document.getElementById('detailModal').classList.add('show');
         }
 
+        // === 3. 試算功能 (Tab 3) ===
+        function handleCalcSearchInput(e) {
+            const val = e.target.value.trim().toLowerCase();
+            const dropdown = document.getElementById('calcSuggestionDropdown');
+            if (!val) { dropdown.style.display = 'none'; return; }
+            let matches = new Set();
+            for (const [alias, real] of Object.entries(aliasMap)) if (alias.includes(val)) matches.add(real);
+            Object.keys(globalMerchantDB).forEach(k => { if(k.includes(val)) matches.add(globalMerchantDB[k].name); });
+            const results = Array.from(matches).slice(0, 5);
+            dropdown.innerHTML = results.map(n => `<div class="suggestion-item" onclick="selectCalcMerchant('${n}')">${n}</div>`).join('');
+            dropdown.style.display = 'block';
+        }
+
+        function selectCalcMerchant(name) {
+            document.getElementById('calcMerchant').value = name;
+            document.getElementById('calcSuggestionDropdown').style.display = 'none';
+        }
+
+        function calculateRewards() {
+            const amount = parseFloat(document.getElementById('calcAmount').value);
+            const merchantInput = document.getElementById('calcMerchant').value.trim();
+            const isNewUser = document.getElementById('calcNewUser').checked;
+            const container = document.getElementById('calcResults');
+
+            if (!amount || !merchantInput) {
+                container.innerHTML = '<div style="color:red; text-align:center;">請輸入金額與通路</div>';
+                return;
+            }
+
+            // 1. 取得該通路的卡片方案 (類似搜尋邏輯)
+            const key = merchantInput.toLowerCase();
+            let data = globalMerchantDB[key];
+            if (!data) {
+                const fuzzy = Object.keys(globalMerchantDB).find(k => k.includes(key) || key.includes(k));
+                if (fuzzy) data = globalMerchantDB[fuzzy];
+            }
+
+            let cards = data ? [...data.cards] : [];
+            if (!cards.find(c => c.cardId === 'dawho')) cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', scheme: '國內全通路', tag: 'all' });
+
+            // 2. 計算邏輯 (核心)
+            const results = cards.map(c => {
+                let reward = 0;
+                let detailText = '';
+                
+                // Richart (無上限)
+                if (c.cardId === 'richart') {
+                    reward = amount * c.rate;
+                    detailText = `全額 ${amount} × ${(c.rate*100).toFixed(1)}%`;
+                }
+                // CUBE (無上限)
+                else if (c.cardId === 'cube') {
+                    reward = amount * c.rate;
+                    detailText = `全額 ${amount} × ${(c.rate*100).toFixed(1)}%`;
+                }
+                // DAWHO (3.5% 上限 16000, 超過 1%)
+                else if (c.cardId === 'dawho') {
+                    const cap = 16000;
+                    if (amount <= cap) {
+                        reward = amount * 0.035;
+                        detailText = `全額 ${amount} × 3.5%`;
+                    } else {
+                        reward = (cap * 0.035) + ((amount - cap) * 0.01);
+                        detailText = `$16,000 × 3.5% + $${amount-cap} × 1%`;
+                    }
+                }
+                // UBear (網購)
+                else if (c.cardId === 'ubear' && c.tag === 'net') {
+                    const baseRate = 0.01;
+                    const bonusRate = 0.02; 
+                    const newUserBonusRate = 0.07;
+                    
+                    const bonusCap = 7500; // 3% 上限
+                    const newUserCap = 2142; // 10% 上限
+
+                    if (isNewUser) {
+                        // 新戶: 前2142享10%, 之後到7500享3%, 之後1%
+                        let tier1 = Math.min(amount, newUserCap);
+                        let tier2 = Math.max(0, Math.min(amount, bonusCap) - newUserCap);
+                        let tier3 = Math.max(0, amount - bonusCap);
+                        
+                        reward = (tier1 * 0.10) + (tier2 * 0.03) + (tier3 * 0.01);
+                        detailText = `前$${newUserCap}享10% + 區間3% + 餘額1%`;
+                    } else {
+                        // 舊戶: 前7500享3%, 之後1%
+                        let tier1 = Math.min(amount, bonusCap);
+                        let tier2 = Math.max(0, amount - bonusCap);
+                        reward = (tier1 * 0.03) + (tier2 * 0.01);
+                        detailText = `前$${bonusCap}享3% + 餘額1%`;
+                    }
+                }
+                // Unicard (UP選)
+                else if (c.cardId === 'unicard' && c.tag === 'list') { // UP選
+                    // 這裡簡化假設 UP選 4.5% 上限 142857
+                    const upCap = 142857;
+                    const newUserCap = 16666;
+                    const baseRate = 0.045;
+                    
+                    let finalReward = 0;
+                    
+                    // 檢查是否為新戶指定通路
+                    const newBonusList = ['line pay', 'uber eats', '家樂福', '韓國', '全盈'];
+                    const isNewBonus = newBonusList.some(kw => merchantInput.toLowerCase().includes(kw));
+
+                    if (isNewUser && isNewBonus) {
+                        // 前16666享7.5%, 之後回4.5%
+                        let tier1 = Math.min(amount, newUserCap);
+                        let tier2 = Math.min(Math.max(0, amount - tier1), upCap - tier1); // 剩餘額度
+                        let tier3 = Math.max(0, amount - tier1 - tier2); // 超過 UP 上限 (變1%)
+                        
+                        finalReward = (tier1 * 0.075) + (tier2 * 0.045) + (tier3 * 0.01);
+                        detailText = `新戶前$${newUserCap}享7.5% + 餘額4.5%`;
+                    } else {
+                        // 正常 UP 選
+                        let tier1 = Math.min(amount, upCap);
+                        let tier2 = Math.max(0, amount - upCap);
+                        finalReward = (tier1 * 0.045) + (tier2 * 0.01);
+                        detailText = `前$${upCap}享4.5% + 餘額1%`;
+                    }
+                    reward = finalReward;
+                } 
+                // 其他預設 (直接乘費率，不考慮極端上限)
+                else {
+                    reward = amount * c.rate;
+                    detailText = `全額 × ${(c.rate*100).toFixed(1)}%`;
+                }
+
+                return { ...c, reward: Math.floor(reward), detail: detailText };
+            });
+
+            // 排序並顯示
+            results.sort((a, b) => b.reward - a.reward);
+            
+            container.innerHTML = results.map((res, idx) => `
+                <div class="calc-result-item ${idx===0 ? 'winner' : ''}">
+                    <div class="calc-header">
+                        <span style="font-weight:700;">${idx+1}. ${res.cardName} (${res.scheme})</span>
+                        <span class="calc-money">$${res.reward}</span>
+                    </div>
+                    <div style="font-size:0.9em; color:${idx===0?'var(--color-success)':'#555'};">
+                        平均回饋率：${((res.reward/amount)*100).toFixed(2)}%
+                    </div>
+                    <div class="calc-detail">計算細節：${res.detail}</div>
+                </div>
+            `).join('');
+        }
+
+        // === 權益總覽介面 ===
         function renderCardOverview() {
-            const container = document.getElementById('cardOverviewContainer');
-            container.innerHTML = cardBenefitsData.map((card, cardIndex) => `
+            document.getElementById('cardOverviewContainer').innerHTML = cardBenefitsData.map((card, idx) => `
                 <div class="card-accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="card-title-row">
-                            <span class="card-icon">${card.icon}</span>
-                            <span class="card-title-text">${card.name}</span>
-                        </div>
+                        <div class="card-title-row"><span class="card-icon">${card.icon}</span><span class="card-title-text">${card.name}</span></div>
                         <span class="chevron">▼</span>
                     </div>
                     <div class="accordion-body">
-                        <div class="benefit-row no-action" style="background:#fffcec; border-bottom:1px dashed #e0e0e0;">
-                            <div class="benefit-name" style="font-size:0.9em; color:#666;">ℹ️ 卡片備註</div>
-                            <div class="benefit-desc">${card.note}</div>
-                        </div>
-                        ${renderBenefits(card, cardIndex)}
+                        <div class="benefit-row no-action" style="background:#fffcec;"><div class="benefit-desc">${card.note}</div></div>
+                        ${renderBenefits(card, idx)}
                     </div>
                 </div>
             `).join('');
@@ -685,28 +758,9 @@
         function renderBenefits(card, cardIndex) {
             return card.benefits.map((b, bIndex) => {
                 if (card.id === 'unicard' && b.type === 'text') {
-                    return `
-                        <div class="benefit-row no-action">
-                            <div class="benefit-header">
-                                <span class="benefit-name">${b.name}</span>
-                                <span class="benefit-rate">${(b.rate * 100).toFixed(1)}%</span>
-                            </div>
-                            <div class="benefit-desc">${b.desc}</div>
-                        </div>
-                    `;
+                    return `<div class="benefit-row no-action"><div class="benefit-header"><span class="benefit-name">${b.name}</span><span class="benefit-rate">${(b.rate * 100).toFixed(1)}%</span></div><div class="benefit-desc">${b.desc}</div></div>`;
                 }
-                const isClickable = b.categories && Object.keys(b.categories).length > 0;
-                return `
-                    <div class="benefit-row ${isClickable ? '' : 'no-action'}" 
-                         onclick="${isClickable ? `openSchemeList(${cardIndex}, ${bIndex})` : ''}">
-                        <div class="benefit-header">
-                            <span class="benefit-name">${b.name}</span>
-                            <span class="benefit-rate ${b.rate >= 0.035 ? 'high' : ''}">${b.rate > 0 ? (b.rate * 100).toFixed(1) + '%' : ''}</span>
-                        </div>
-                        <div class="benefit-desc">${b.desc}</div>
-                        ${b.note ? `<div class="benefit-note">💡 ${b.note}</div>` : ''}
-                    </div>
-                `;
+                return `<div class="benefit-row" onclick="openSchemeList(${cardIndex}, ${bIndex})"><div class="benefit-header"><span class="benefit-name">${b.name}</span><span class="benefit-rate">${(b.rate * 100).toFixed(1)}%</span></div><div class="benefit-desc">${b.desc}</div></div>`;
             }).join('');
         }
 
@@ -714,21 +768,11 @@
             const benefit = cardBenefitsData[cardIndex].benefits[benefitIndex];
             const cardName = cardBenefitsData[cardIndex].name;
             document.getElementById('modalTitle').innerText = `${cardName} - ${benefit.name}`;
-            
             let htmlContent = `<div style="margin-bottom:15px; font-size:0.9em; color:#666;">${benefit.note}</div>`;
             if (benefit.categories) {
                 Object.entries(benefit.categories).forEach(([categoryName, items]) => {
-                    htmlContent += `
-                        <div class="detail-category-group">
-                            <div class="detail-category-title">${categoryName}</div>
-                            <div class="scheme-list-container">
-                                ${items.map(item => `<span class="scheme-list-item">${item}</span>`).join('')}
-                            </div>
-                        </div>
-                    `;
+                    htmlContent += `<div class="detail-category-group"><div class="detail-category-title">${categoryName}</div><div class="scheme-list-container">${items.map(item => `<span class="scheme-list-item">${item}</span>`).join('')}</div></div>`;
                 });
-            } else {
-                htmlContent += '<div style="color:#999;">暫無詳細清單</div>';
             }
             document.getElementById('detailBody').innerHTML = htmlContent;
             document.getElementById('detailModal').classList.add('show');
@@ -737,13 +781,8 @@
         function toggleAccordion(header) {
             const body = header.nextElementSibling;
             const isOpen = body.classList.contains('open');
-            if (!isOpen) {
-                body.classList.add('open');
-                header.classList.add('active');
-            } else {
-                body.classList.remove('open');
-                header.classList.remove('active');
-            }
+            if (!isOpen) { body.classList.add('open'); header.classList.add('active'); } 
+            else { body.classList.remove('open'); header.classList.remove('active'); }
         }
 
         function switchTab(tabId) {
@@ -753,12 +792,9 @@
             document.getElementById(`tab-${tabId}`).classList.add('active');
         }
 
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.remove('show');
-        }
+        function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
 
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
-
