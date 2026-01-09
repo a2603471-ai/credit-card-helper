@@ -15,11 +15,11 @@
             --color-success: #2e7d32;
             
             /* === 品牌色定義 === */
-            --brand-richart: #e01a22;
-            --brand-cube: #00AA4F;
-            --brand-unicard: #1890ff;
-            --brand-ubear: #e6b800;
-            --brand-dawho: #2d3436;
+            --brand-richart: #e01a22; /* 台新紅 */
+            --brand-cube: #00AA4F;    /* 國泰綠 */
+            --brand-unicard: #1890ff; /* 玉山藍 */
+            --brand-ubear: #e6b800;   /* 玉山黃 */
+            --brand-dawho: #2d3436;   /* 永豐黑 */
         }
 
         body {
@@ -143,15 +143,14 @@
             display: inline-block; vertical-align: middle; margin-right: 6px;
         }
         
-        /* === 方案標籤樣式 (統一淺藍色，新戶橘色) === */
+        /* === 方案標籤樣式 (淺藍色風格) === */
         .scheme-badge {
             display: inline-block; 
-            background-color: #e3f2fd; /* 統一淺藍底 */
-            color: var(--color-primary); /* 統一深藍字 */
-            border: 1px solid #b3e5fc; /* 統一藍邊框 */
+            background-color: #e3f2fd; /* 淺藍底 */
+            color: var(--color-primary); /* 深藍字 */
+            border: 1px solid #b3e5fc; /* 藍邊框 */
             padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 700;
         }
-        /* 列表中的標籤微調 */
         .list-badge {
             padding: 1px 8px; border-radius: 10px; font-size: 0.8em; margin-left: 6px; vertical-align: middle;
         }
@@ -246,10 +245,8 @@
 
         .calc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         
-        /* 預設皆為黑色 (第2名以後) */
         .calc-money { font-size: 1.5em; font-weight: 800; color: #333; }
         
-        /* 只有冠軍 (Winner) 才顯示品牌色 */
         .calc-result-item.winner.card-theme-richart .calc-money { color: var(--brand-richart); }
         .calc-result-item.winner.card-theme-cube .calc-money { color: var(--brand-cube); }
         .calc-result-item.winner.card-theme-unicard .calc-money { color: var(--brand-unicard); }
@@ -377,7 +374,6 @@
             return fixed.endsWith('.0') ? fixed.slice(0, -2) : fixed;
         };
         
-        // 防抖動函式 (Debounce)
         const debounce = (func, delay = 300) => {
             let timer;
             return (...args) => {
@@ -536,17 +532,19 @@
             chk.checked = !chk.checked;
             btn.classList.toggle('active', chk.checked);
             
-            // 立即觸發搜尋，不使用 Debounce，避免列表跳動
-            if (activeFilter) {
-                // 如果當前有分類篩選，重新套用分類
+            // 優先檢查搜尋框是否有字
+            const val = document.getElementById('searchMerchant').value.trim();
+            
+            if (val) {
+                // 如果有搜尋字，強制原地刷新結果 (不跳動)
+                renderMerchantResult(val);
+            } else if (activeFilter) {
+                // 如果沒有搜尋字但有分類，重跑分類
                 const currentFilter = activeFilter;
-                activeFilter = null;
+                activeFilter = null; // 重置以觸發渲染
                 applyCategoryFilter(currentFilter);
-            } else {
-                // 如果當前是關鍵字搜尋或無搜尋，直接呼叫 render
-                const val = document.getElementById('searchMerchant').value;
-                if (val) renderMerchantResult(val);
-            }
+            } 
+            // 如果都沒選，什麼都不做
         }
 
         function toggleCalcNewUser() {
@@ -627,6 +625,9 @@
         function selectMerchant(name) {
             document.getElementById('searchMerchant').value = name;
             document.getElementById('suggestionDropdown').style.display = 'none';
+            // 點選搜尋建議時，強制清除分類標籤，避免邏輯衝突
+            activeFilter = null; 
+            document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
             renderMerchantResult(name);
         }
         function clearSearch(inputId, btnId, isSearch) {
