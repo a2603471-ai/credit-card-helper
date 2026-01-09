@@ -14,7 +14,7 @@
             --color-border: #e0e0e0;
             --color-success: #2e7d32;
             
-            /* === 品牌色定義 (最終確認) === */
+            /* === 品牌色定義 (保留確認版) === */
             --brand-richart: #e01a22; /* 台新紅 */
             --brand-cube: #00AA4F;    /* 國泰綠 */
             --brand-unicard: #1890ff; /* 玉山藍 */
@@ -133,7 +133,6 @@
         .merchant-type { font-size: 0.85em; color: #888; background: #eee; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
         .merchant-best-info { text-align: right; }
         
-        /* 搜尋結果：回饋率維持藍色 */
         .best-rate { color: var(--color-primary); font-weight: 800; font-size: 1.4em; }
         
         .best-card-name { font-size: 0.85em; color: #666; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
@@ -204,12 +203,21 @@
         .detail-card-header { padding: 10px 15px; background: #f9f9f9; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
         .detail-card-body { padding: 12px 15px; }
         
+        /* === 修正：方案標籤顏色統一 (除了新戶) === */
         .scheme-badge {
-            display: inline-block; background-color: #eee; color: #555;
+            display: inline-block; 
+            background-color: #e3f2fd; /* 統一淺藍底 */
+            color: var(--color-primary); /* 統一深藍字 */
+            border: 1px solid #b3e5fc; /* 統一藍邊框 */
             padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 700;
         }
-        .scheme-badge.crazy { background-color: #ffebee; color: #c62828; }
-        .scheme-badge.new-user { background-color: #fff3e0; color: #e65100; }
+        /* 移除 crazy (紅色) 樣式，使其跟隨統一樣式 */
+        
+        /* 新戶回饋維持橘色 */
+        .scheme-badge.new-user { 
+            background-color: #fff3e0; color: #e65100; border-color: #ffe0b2;
+        }
+        
         .plan-warning { color: var(--color-danger); font-weight: 600; font-size: 0.85em; margin-top: 6px; display: flex; align-items: center; padding-top: 6px; border-top: 1px dashed rgba(0,0,0,0.1); }
         .plan-warning::before { content: '⚠️'; margin-right: 4px; }
 
@@ -237,7 +245,7 @@
 
         .calc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         
-        /* 修正：預設皆為黑色 (第2名以後) */
+        /* 預設皆為黑色 (第2名以後) */
         .calc-money { font-size: 1.5em; font-weight: 800; color: #333; }
         
         /* 只有冠軍 (Winner) 才顯示品牌色 */
@@ -868,6 +876,3 @@
     </script>
 </body>
 </html>
-
-
-
