@@ -124,7 +124,7 @@
         .benefit-row { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; flex-direction: column; position: relative; }
         .benefit-row.is-general { background-color: #f9f9f9; border-bottom: 2px dashed #eee; } 
         .benefit-row:not(.no-action):hover { background-color: #f8fbff; cursor: pointer; }
-        .benefit-row:not(.no-action)::after { content: '›'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 1.5em; color: #ccc; }
+        .benefit-row:not(.no-action):::after { content: '›'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 1.5em; color: #ccc; }
         .benefit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; padding-right: 20px; }
         .benefit-name { font-weight: 600; font-size: 1em; color: #444; }
         .benefit-rate { font-weight: 700; color: var(--color-primary); font-size: 1.1em; }
@@ -231,9 +231,9 @@
                 <div class="controls-row">
                     <div class="control-group">
                         <select id="searchUnicardScheme" onchange="reSearch()">
-                            <option value="any" selected>Unicard: 任意選</option>
-                            <option value="simple">Unicard: 簡單選</option>
-                            <option value="up">Unicard: UP選</option>
+                            <option value="any" selected>Unicard: 任意選 (3.5%)</option>
+                            <option value="simple">Unicard: 簡單選 (3.0%)</option>
+                            <option value="up">Unicard: UP選 (4.5%)</option>
                         </select>
                     </div>
                     <div class="toggle-btn" id="searchNewUserBtn" onclick="toggleSearchNewUser()">
@@ -276,9 +276,9 @@
                 <div class="controls-row">
                     <div class="control-group">
                         <select id="calcUnicardScheme">
-                            <option value="any" selected>Unicard: 任意選</option>
-                            <option value="simple">Unicard: 簡單選</option>
-                            <option value="up">Unicard: UP選</option>
+                            <option value="any" selected>Unicard: 任意選 (3.5%)</option>
+                            <option value="simple">Unicard: 簡單選 (3.0%)</option>
+                            <option value="up">Unicard: UP選 (4.5%)</option>
                         </select>
                     </div>
                     <div class="toggle-btn" id="calcNewUserBtn" onclick="toggleCalcNewUser()">
@@ -308,6 +308,12 @@
     <script>
         // === 工具函數: 格式化金額 ===
         const formatMoney = (num) => '$' + num.toLocaleString();
+        
+        // === 工具函數: 格式化回饋率 (去除多餘的 .0) ===
+        const formatRate = (num) => {
+            let fixed = parseFloat(num).toFixed(1);
+            return fixed.endsWith('.0') ? fixed.slice(0, -2) : fixed;
+        };
         
         // === 核心資料：權益總覽 ===
         const cardBenefitsData = [
@@ -638,7 +644,7 @@
             document.getElementById('detailModal').classList.add('show');
         }
 
-        // === 3. 試算功能 (精準拆分) ===
+        // === 3. 試算功能 (修正版) ===
         function handleCalcSearchInput(e) {
             const val = e.target.value.trim().toLowerCase();
             const dropdown = document.getElementById('calcSuggestionDropdown');
@@ -656,6 +662,7 @@
             document.getElementById('calcSuggestionDropdown').style.display = 'none';
             if (name) calculateRewards();
         }
+
         function calculateRewards() {
             const amount = parseFloat(document.getElementById('calcAmount').value);
             const merchantInput = document.getElementById('calcMerchant').value.trim();
@@ -712,12 +719,12 @@
                         detailText = `${formatMoney(base)} (一般0.3%) + ${formatMoney(bonus)} (加碼3%)`;
                     }
                 }
-                // CUBE (No Split needed)
+                // CUBE (格式修正：3.0% -> 3%)
                 else if (c.cardId === 'cube') {
                     reward = Math.floor(amount * c.rate);
-                    detailText = `${formatMoney(reward)} (方案${(c.rate*100).toFixed(1)}%)`;
+                    detailText = `${formatMoney(reward)} (方案${formatRate(c.rate*100)}%)`;
                 }
-                // DAWHO (Split: Base+Bonus)
+                // DAWHO (文字修正：任務加碼2.5%)
                 else if (c.cardId === 'dawho') {
                     const cap = 16000;
                     let baseRate = (c.tag === 'foreign') ? 0.02 : 0.01;
@@ -727,12 +734,12 @@
                         let base = Math.floor(amount * baseRate);
                         let bonus = Math.floor(amount * bonusRate);
                         reward = base + bonus;
-                        detailText = `${formatMoney(base)} (基本${baseRate*100}%) + ${formatMoney(bonus)} (任務加碼${bonusRate*100}%)`;
+                        detailText = `${formatMoney(base)} (基本${formatRate(baseRate*100)}%) + ${formatMoney(bonus)} (任務加碼${formatRate(bonusRate*100)}%)`;
                     } else {
                         let base = Math.floor(amount * baseRate);
                         let bonus = Math.floor(cap * bonusRate);
                         reward = base + bonus;
-                        detailText = `${formatMoney(base)} (基本${baseRate*100}%) + ${formatMoney(bonus)} (任務加碼)`;
+                        detailText = `${formatMoney(base)} (基本${formatRate(baseRate*100)}%) + ${formatMoney(bonus)} (任務加碼2.5%)`;
                     }
                 }
                 // UBear (Split)
@@ -773,10 +780,10 @@
                     if (isNewUser && newBonusList.some(kw => merchantInput.toLowerCase().includes(kw))) {
                         let nAmount = Math.min(amount, 16666);
                         newBonus = Math.floor(nAmount * 0.03);
-                        detailText = `${formatMoney(base)} (基本1%) + ${formatMoney(bonus)} (${schemeName}${bonusRate*100}%) + ${formatMoney(newBonus)} (新戶3%)`;
+                        detailText = `${formatMoney(base)} (基本1%) + ${formatMoney(bonus)} (${schemeName}${formatRate(bonusRate*100)}%) + ${formatMoney(newBonus)} (新戶3%)`;
                         c.scheme = schemeName + "+新戶";
                     } else {
-                        detailText = `${formatMoney(base)} (基本1%) + ${formatMoney(bonus)} (${schemeName}${bonusRate*100}%)`;
+                        detailText = `${formatMoney(base)} (基本1%) + ${formatMoney(bonus)} (${schemeName}${formatRate(bonusRate*100)}%)`;
                         c.scheme = schemeName;
                     }
                     reward = base + bonus + newBonus;
@@ -786,13 +793,15 @@
                 // General Fallback
                 else {
                     reward = Math.floor(amount * c.rate);
-                    detailText = `${formatMoney(reward)} (全額${(c.rate*100).toFixed(1)}%)`;
+                    detailText = `${formatMoney(reward)} (全額${formatRate(c.rate*100)}%)`;
                 }
                 
                 return { ...c, reward: Math.floor(reward), detail: detailText, upgradeTip };
             });
 
             results.sort((a, b) => b.reward - a.reward);
+            
+            // 格式修正：平均回饋率 (去除 .0)
             container.innerHTML = results.map((res, idx) => `
                 <div class="calc-result-item ${idx===0 ? 'winner' : ''}">
                     <div class="calc-header">
@@ -800,7 +809,7 @@
                         <span class="calc-money">${formatMoney(res.reward)}</span>
                     </div>
                     <div style="font-size:0.9em; color:${idx===0?'var(--color-success)':'#555'};">
-                        平均回饋率：${((res.reward/amount)*100).toFixed(2)}%
+                        平均回饋率：${formatRate((res.reward/amount)*100)}%
                     </div>
                     <div class="calc-detail">${res.detail}</div>
                     ${res.upgradeTip || ''}
