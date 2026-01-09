@@ -20,7 +20,7 @@
             --color-danger: #e74c3c;
             --color-badge-bg: #e3f2fd;
             --color-badge-text: #1565c0;
-            --tag-bg: #f0f2f5; /* 通路標籤背景 */
+            --tag-bg: #f0f2f5;
             --tag-text: #444;
         }
         body {
@@ -131,12 +131,12 @@
         .detail-content {
             background: var(--color-surface); border-radius: 16px; width: 100%; max-width: 500px;
             display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            max-height: 85vh; /* 限制高度 */
+            max-height: 85vh;
         }
         .detail-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: flex-start; }
         .detail-title h2 { font-size: 1.5em; color: var(--color-primary); margin: 0; }
         .detail-close { background: #f0f0f0; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer; color: #666; }
-        .detail-body { padding: 20px; overflow-y: auto; /* 關鍵：內容過長可捲動 */ }
+        .detail-body { padding: 20px; overflow-y: auto; }
 
         /* === 權益總覽彈窗 (優化標籤樣式) === */
         .detail-category-group { margin-bottom: 20px; }
@@ -145,18 +145,12 @@
             padding-left: 8px; border-left: 4px solid var(--color-primary);
         }
         .scheme-list-container { display: flex; flex-wrap: wrap; gap: 8px; }
-        /* 膠囊化標籤樣式 */
         .scheme-list-item { 
-            background: var(--tag-bg); 
-            padding: 6px 14px; 
-            border-radius: 20px; /* 圓角膠囊 */
-            font-size: 0.9em; 
-            color: var(--tag-text);
-            border: 1px solid #e0e0e0;
-            display: inline-block;
+            background: var(--tag-bg); padding: 6px 12px; border-radius: 20px; 
+            font-size: 0.9em; color: var(--tag-text); border: 1px solid #e0e0e0; display: inline-block;
         }
 
-        /* === 排名彈窗 (回歸舊版綠色方框美編 + 膠囊標籤) === */
+        /* === 排名彈窗 (綠色方框 + 膠囊標籤) === */
         .detail-card-item { margin-bottom: 12px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; }
         .detail-card-item.best-card { border: 2px solid var(--color-success-border); background-color: var(--color-success-bg); }
         .detail-card-header { padding: 12px 15px; background: #f9f9f9; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
@@ -164,7 +158,6 @@
         .detail-card-body { padding: 15px; }
         .rate-val { font-weight: 800; font-size: 1.4em; }
         .detail-card-item.best-card .rate-val { color: var(--color-success); }
-        /* 方案膠囊標籤 */
         .scheme-badge {
             display: inline-block; background-color: var(--color-badge-bg); color: var(--color-badge-text);
             padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 700;
@@ -172,7 +165,6 @@
         }
         .scheme-badge.crazy { background-color: #ffebee; color: #c62828; border-color: #ffcdd2; }
         .scheme-badge.new-user { background-color: #fff3e0; color: #e65100; border-color: #ffe0b2; }
-        
         .plan-warning { color: var(--color-danger); font-weight: 600; font-size: 0.9em; margin-top: 8px; display: flex; align-items: center; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.1); }
         .plan-warning::before { content: '⚠️'; margin-right: 4px; }
 
@@ -197,6 +189,7 @@
         .toggle-container { display: flex; align-items: center; margin-top: 10px; cursor: pointer; }
         .toggle-checkbox { width: 18px; height: 18px; margin-right: 8px; }
         .limit-reached { color: var(--color-danger); font-size: 0.8em; margin-left: 6px; font-weight: bold; }
+        .upgrade-tip { background-color: #fff3e0; color: #e65100; padding: 8px 12px; border-radius: 8px; font-size: 0.9em; margin-top: 8px; font-weight: 600; border: 1px solid #ffe0b2; }
 
         @media (max-width: 480px) {
             body { padding: 15px; padding-top: 10px; }
@@ -261,9 +254,9 @@
                 <div class="form-group" id="unicardSchemeDiv" style="display:none;">
                     <label>玉山 Unicard 方案</label>
                     <select id="calcUnicardScheme">
-                        <option value="up">UP選 (4.5%)</option>
-                        <option value="any">任意選 (3.5%)</option>
-                        <option value="simple">簡單選 (3.0%)</option>
+                        <option value="up">UP選 (3.5% + 加碼)</option>
+                        <option value="any">任意選 (2.5% + 加碼)</option>
+                        <option value="simple">簡單選 (2.0% + 加碼)</option>
                     </select>
                 </div>
                 <label class="toggle-container">
@@ -295,12 +288,12 @@
             {
                 id: 'richart', name: '台新 Richart', icon: '🐶', note: '需每日透過 Richart App 切換至對應權益方案',
                 benefits: [
-                    { name: 'Pay著刷', rate: 0.038, desc: '四大超商 | 新光三越 | IKEA | 台灣大車隊', note: '需綁定台新Pay支付', tag: 'pay', categories: { '超商':['7-11', '全家便利商店'], '百貨':['新光三越'], '居家':['IKEA'], '交通':['台灣大車隊'], '量販':['大潤發'], '美妝':['康是美'], '服飾':['NET'] } },
-                    { name: '數趣刷', rate: 0.033, desc: '網購 | 遊戲影音 | 線上課程 | AI服務', note: '上限$1,000', tag: 'digital', categories: { '網購平台':['蝦皮購物', 'momo購物網', '酷澎(Coupang)', 'PChome', '淘寶', 'Amazon', '東森', '博客來', 'Richart Mart', 'PayEasy', 'iHerb', 'SHEIN', 'Farfetch', 'Olive Young'], '線上課程':['知識衛星', 'Amazing Talker', 'Tutor ABC', 'Hahow', 'PressPlay'], '遊戲影音':['MyCard', '遊戲橘子', 'Steam', 'PlayStation', 'Nintendo', 'Netfilx', 'Disney+'], 'AI服務':['ChatGPT', 'Notion', 'Canva', 'Perplexity', 'Claude'] } },
-                    { name: '玩旅刷', rate: 0.033, desc: '海外 | 航空 | 訂房 | 旅行社', note: '上限$1,000', tag: 'travel', categories: { '海外消費':['海外消費(含實體)'], '訂房平台':['Klook', 'KKday', 'Agoda', 'Booking.com', 'Trip.com', 'Airbnb', 'Hotels.com', 'Expedia'], '海外交通':['Uber', 'Grab', 'SUICA', 'ICOCA', 'PASMO', 'WOWPASS', 'AIRSIM'], '旅行社':['雄獅旅遊', '易遊網', '東南旅遊', '可樂旅遊', '長汎假期', '五福旅遊', '喜鴻假期', '易飛旅遊', '燦星旅遊', '加利利旅行社', '鳳凰國際旅行社', '山富旅遊', '行健旅遊'], '航空公司':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '華信航空', '立榮航空', '樂桃航空', '阿聯酋航空', '亞洲航空', '酷航', '捷星航空', '新加坡航空', '日本航空', '越捷航空'] } },
-                    { name: '天天刷', rate: 0.033, desc: '超商量販 | 交通 | 停車 | 藥局', note: '上限$1,000', tag: 'daily', categories: { '超商量販(台新Pay)':['7-11', '全家', '家樂福', '大買家', '唐吉軻德', 'LOPIA'], '通勤交通':['台灣鐵路', '台灣高鐵', '台灣大車隊', 'Yoxi', 'Uber'], '停車租車':['嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車'], '藥妝藥局':['寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'] } },
-                    { name: '大筆刷', rate: 0.033, desc: '百貨 | Outlet | 居家 | 時尚', note: '上限$1,000', tag: 'big', categories: { '指定百貨':['新光三越', '遠東百貨', '遠東SOGO', '漢神巨蛋', '漢神百貨', '微風', '台北101', '遠東巨城', '廣三SOGO', '南紡購物中心', '誠品生活', '京站', '三創生活', '夢時代', '統一時代', '中友百貨', 'LaLaport'], '指定Outlet':['MITSUI OUTLET PARK', '華泰名品城', 'SKM Park Outlets'], '居家裝修':['IKEA', '特力屋', 'HOLA', '宜得利', '瑪黑家居'], '時尚品味':['UNIQLO', 'GU', 'ZARA', 'NET', 'lululemon'] } },
-                    { name: '好饗刷', rate: 0.033, desc: '餐飲 | 外送 | 加油 | 娛樂', note: '上限$1,000', tag: 'fun', categories: { '餐飲外送':['國內餐飲', '王品瘋Pay', 'Uber Eats', 'Foodpanda'], '加油充電':['台灣中油-直營站', '台亞直營', '全國加油', 'EVOASIS', 'EVALUE'], '展演購票':['拓元售票', 'KKTIX', '年代售票', '寬宏售票', 'OPENTIX', 'FunNow'], '指定KTV':['錢櫃', '好樂迪', 'ONCOR', 'sing!go', '享溫馨'], '指定樂園':['義大遊樂世界', '麗寶樂園', '六福村', '九族文化村', '劍湖山', 'X-Park', '國立海洋生物博物館', '遠雄海洋公園', '小人國'], '指定飯店':['晶華', '雲朗', '萬豪', '煙波', '老爺', '福華', '漢來', '君悅', '洲際', '寒沐'] } },
+                    { name: 'Pay著刷', rate: 0.038, desc: '台新Pay(超商/百貨) | IKEA | 台灣大車隊', note: '無上限', tag: 'pay', categories: { '台新Pay':['7-11', '全家便利商店', '新光三越', 'Richart Mart', '康是美', 'IKEA', 'NET'], '台灣Pay':['神腦', '燦坤', '全國電子', '麥當勞', '美廉社', '大樹藥局', '杏一醫療'], '交通':['台灣大車隊'] } },
+                    { name: '數趣刷', rate: 0.033, desc: '網購 | 遊戲影音 | 線上課程 | AI服務', note: '無上限', tag: 'digital', categories: { '網購平台':['蝦皮購物', 'momo購物網', '酷澎(Coupang)', 'PChome', '淘寶', 'Amazon', '東森', '博客來', 'Richart Mart', 'PayEasy', 'iHerb', 'SHEIN', 'Farfetch', 'Olive Young'], '線上課程':['知識衛星', 'Amazing Talker', 'Tutor ABC', 'Hahow', 'PressPlay'], '遊戲影音':['MyCard', '遊戲橘子', 'Steam', 'PlayStation', 'Nintendo', 'Netfilx', 'Disney+'], 'AI服務':['ChatGPT', 'Notion', 'Canva', 'Perplexity', 'Claude'] } },
+                    { name: '玩旅刷', rate: 0.033, desc: '海外 | 航空 | 訂房 | 旅行社', note: '無上限', tag: 'travel', categories: { '海外消費':['海外消費(含實體)'], '訂房平台':['Klook', 'KKday', 'Agoda', 'Booking.com', 'Trip.com', 'Airbnb', 'Hotels.com', 'Expedia'], '海外交通':['Uber', 'Grab', 'SUICA', 'ICOCA', 'PASMO', 'WOWPASS', 'AIRSIM'], '旅行社':['雄獅旅遊', '易遊網', '東南旅遊', '可樂旅遊', '長汎假期', '五福旅遊', '喜鴻假期', '易飛旅遊', '燦星旅遊', '加利利旅行社', '鳳凰國際旅行社', '山富旅遊', '行健旅遊'], '航空公司':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '華信航空', '立榮航空', '樂桃航空', '阿聯酋航空', '亞洲航空', '酷航', '捷星航空', '新加坡航空', '日本航空', '越捷航空'] } },
+                    { name: '天天刷', rate: 0.033, desc: '超商量販 | 交通 | 停車 | 藥局', note: '無上限', tag: 'daily', categories: { '超商量販(台新Pay)':['7-11', '全家', '家樂福', '大買家', '唐吉軻德', 'LOPIA'], '通勤交通':['台灣鐵路', '台灣高鐵', '台灣大車隊', 'Yoxi', 'Uber'], '停車租車':['嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車'], '藥妝藥局':['寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'] } },
+                    { name: '大筆刷', rate: 0.033, desc: '百貨 | Outlet | 居家 | 時尚', note: '無上限', tag: 'big', categories: { '指定百貨':['新光三越', '遠東百貨', '遠東SOGO', '漢神巨蛋', '漢神百貨', '微風', '台北101', '遠東巨城', '廣三SOGO', '南紡購物中心', '誠品生活', '京站', '三創生活', '夢時代', '統一時代', '中友百貨', 'LaLaport'], '指定Outlet':['MITSUI OUTLET PARK', '華泰名品城', 'SKM Park Outlets'], '居家裝修':['IKEA', '特力屋', 'HOLA', '宜得利', '瑪黑家居'], '時尚品味':['UNIQLO', 'GU', 'ZARA', 'NET', 'lululemon'] } },
+                    { name: '好饗刷', rate: 0.033, desc: '餐飲 | 外送 | 加油 | 娛樂', note: '無上限', tag: 'fun', categories: { '餐飲外送':['國內餐飲', '王品瘋Pay', 'Uber Eats', 'Foodpanda'], '加油充電':['台灣中油-直營站', '台亞直營', '全國加油', 'EVOASIS', 'EVALUE'], '展演購票':['拓元售票', 'KKTIX', '年代售票', '寬宏售票', 'OPENTIX', 'FunNow'], '指定KTV':['錢櫃', '好樂迪', 'ONCOR', 'sing!go', '享溫馨'], '指定樂園':['義大遊樂世界', '麗寶樂園', '六福村', '九族文化村', '劍湖山', 'X-Park', '國立海洋生物博物館', '遠雄海洋公園', '小人國'], '指定飯店':['晶華', '雲朗', '萬豪', '煙波', '老爺', '福華', '漢來', '君悅', '洲際', '寒沐'] } },
                     { name: 'LINE Pay', rate: 0.023, desc: '一般 LINE Pay 綁定支付', note: '無門檻', tag: 'line', categories: { '行動支付':['LINE Pay'] } },
                     { name: '假日刷', rate: 0.02, desc: '國內節假日不限通路', note: '基本回饋', categories: {} }
                 ]
@@ -316,11 +309,11 @@
                 ]
             },
             {
-                id: 'unicard', name: '玉山 Unicard', icon: '⛰️', note: '簡單選 3% / 任意選 3.5% / UP選 4.5% (需149點訂閱)',
+                id: 'unicard', name: '玉山 Unicard', icon: '⛰️', note: '簡單選 2% / 任意選 2.5% / UP選 3.5% (需149點訂閱)',
                 benefits: [
                     { 
                         name: '百大特店名單', rate: 0, tag: 'list', type: 'modal',
-                        desc: '點擊查看完整百大特店 (UP選4.5%)', 
+                        desc: '點擊查看完整百大特店 (UP選3.5%)', 
                         categories: {
                             '行動支付': ['玉山Wallet', 'LINE Pay', '全支付', '街口支付', '悠遊付', '全盈+PAY', 'iPASS MONEY', 'icash Pay'],
                             '加油交通': ['台灣中油-直營站', '55688', '台灣鐵路', '台灣高鐵', 'Uber', 'Yoxi'],
@@ -335,21 +328,21 @@
                         },
                         note: '點擊查看詳情'
                     },
-                    { name: 'UP選', rate: 0.045, desc: '百大特店 (需149點訂閱)', type: 'text', note: '需完成UP任務' },
-                    { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '需透過 App 設定' },
-                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '核卡即享' },
+                    { name: 'UP選', rate: 0.035, desc: '百大特店 (需149點訂閱)', type: 'text', note: '需完成UP任務' },
+                    { name: '任意選', rate: 0.025, desc: '百大特店 (需設定8家)', type: 'text', note: '需透過 App 設定' },
+                    { name: '簡單選', rate: 0.02, desc: '百大特店 (預設方案)', type: 'text', note: '核卡即享' },
                     { 
                         name: '新戶回饋', rate: 0.03, tag: 'new', type: 'modal',
                         desc: '五大指定通路 +3%', 
                         categories: { '指定通路': ['LINE Pay', 'Uber Eats', '家樂福', '韓國', '全盈+PAY'] },
-                        note: '<span class="urgent-text">新戶+3% (最高7.5%)</span>' 
+                        note: '<span class="urgent-text">新戶+3% (最高6.5%~7.5%)</span>' 
                     }
                 ]
             },
             {
                 id: 'ubear', name: '玉山 UBear', icon: '🐻', note: '指定娛樂 10% / 網購 3% (新戶網購 +7% = 10%)',
                 benefits: [
-                    { name: '影音娛樂', rate: 0.10, tag: 'ent', desc: 'Netflix | Disney+ | Nintendo | PlayStation', categories: { '影音娛樂': ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes', 'Google Play', 'Funnow'] }, note: '每期上限 100 元 (可刷$1,000)' },
+                    { name: '影音娛樂', rate: 0.10, tag: 'ent', desc: 'Netflix | Disney+ | Nintendo | PlayStation', categories: { '影音娛樂': ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes', 'Google Play', 'Funnow'] }, note: '每期上限$100 (可刷$1,000)' },
                     { name: '網購/Pay', rate: 0.03, tag: 'net', desc: '網購 | 行動支付 | 交通訂房 | 外送', 
                       categories: { 
                         '行動支付': ['LINE Pay', '街口支付', '悠遊付', 'OPEN錢包', 'icash Pay', '全盈+PAY', '全支付', '橘子支付', 'skm pay', '中油Pay', '玉山Wallet', 'Pi 拍錢包', '歐付寶', 'PayPal', 'Hami Pay'],
@@ -359,7 +352,7 @@
                       },
                       note: '' 
                     },
-                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '[新戶] 網購/Pay加碼 +7% (上限$2,142)', note: '僅限新戶', categories: {} }
+                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '[新戶] 網購/Pay加碼 +7% (上限$2,142)', note: '僅限新戶，網購/Pay通路', categories: {} }
                 ]
             },
             {
@@ -414,7 +407,7 @@
             // Show/Hide Unicard Scheme Select
             document.getElementById('calcMerchant').addEventListener('input', (e) => {
                 const val = e.target.value.toLowerCase();
-                // 簡單判斷：若搜尋到 Unicard 相關通路，可考慮顯示 (這裡簡化處理，計算時才真正用到)
+                // 簡單判斷：若搜尋到 Unicard 相關通路，可考慮顯示
                 document.getElementById('unicardSchemeDiv').style.display = 'block'; 
             });
         }
@@ -439,12 +432,12 @@
 
                                 // 新戶邏輯 (Unicard)
                                 if (card.id === 'unicard' && benefit.name === '百大特店名單') {
-                                    rate = 0.045; scheme = 'UP選';
+                                    rate = 0.035; scheme = 'UP選'; // 預設 UP (3.5%)
                                     const newBonusBenefit = card.benefits.find(b => b.tag === 'new');
                                     if (newBonusBenefit) {
                                         const newBonusList = Object.values(newBonusBenefit.categories).flat();
                                         if (newBonusList.some(nm => rawMerchant.includes(nm) || merchant.includes(nm))) {
-                                            rate = 0.075; note = '含新戶加碼 (上限$16,666)'; scheme = 'UP選+新戶';
+                                            rate = 0.065; note = '含新戶加碼 (上限$16,666)'; scheme = 'UP選+新戶';
                                         } else note = '上限$142,857';
                                     }
                                 }
@@ -585,7 +578,7 @@
             if (!cards.find(c => c.cardId === 'dawho')) cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', scheme: '國內全通路', tag: 'all' });
 
             const results = cards.map(c => {
-                let reward = 0, detailText = '', limitReached = false;
+                let reward = 0, detailText = '', limitReached = false, upgradeTip = '';
                 
                 // Richart / CUBE (無上限)
                 if (c.cardId === 'richart' || c.cardId === 'cube') {
@@ -597,7 +590,7 @@
                     if (amount <= cap) { reward = amount * 0.035; detailText = `$${amount} × 3.5% = $${Math.floor(reward)}`; }
                     else { 
                         reward = (cap * 0.035) + ((amount - cap) * 0.01); 
-                        detailText = `($${cap}×3.5% = $${cap*0.035}) + ($${amount-cap}×1% = $${(amount-cap)*0.01})`; 
+                        detailText = `($${cap}×3.5% = $${Math.floor(cap*0.035)}) + ($${amount-cap}×1% = $${Math.floor((amount-cap)*0.01)})`; 
                         limitReached = true;
                     }
                 }
@@ -623,11 +616,11 @@
                 }
                 // Unicard
                 else if (c.cardId === 'unicard' && c.tag === 'list') {
-                    let schemeRate = 0.03, cap = 40000; // default Simple
+                    let schemeRate = 0.02, cap = 50000; // default Simple
                     let schemeName = '簡單選';
                     
-                    if (unicardScheme === 'up') { schemeRate = 0.045; cap = 142857; schemeName = 'UP選'; }
-                    else if (unicardScheme === 'any') { schemeRate = 0.035; cap = 40000; schemeName = '任意選'; }
+                    if (unicardScheme === 'up') { schemeRate = 0.035; cap = 142857; schemeName = 'UP選'; }
+                    else if (unicardScheme === 'any') { schemeRate = 0.025; cap = 50000; schemeName = '任意選'; }
 
                     // 新戶加碼判斷
                     const newBonusList = ['line pay', 'uber eats', '家樂福', '韓國', '全盈'];
@@ -635,9 +628,9 @@
                     const newUserCap = 16666;
 
                     if (isNewUser && isNewBonus) {
-                        let t1 = Math.min(amount, newUserCap); // 7.5% (UP) or Scheme+3%
-                        let t2 = Math.min(Math.max(0, amount - t1), cap - t1);
-                        let t3 = Math.max(0, amount - t1 - t2);
+                        let t1 = Math.min(amount, newUserCap); // Scheme+3% (max 16666)
+                        let t2 = Math.min(Math.max(0, amount - t1), cap - t1); // Scheme
+                        let t3 = Math.max(0, amount - t1 - t2); // 1%
                         
                         let finalRate1 = schemeRate + 0.03;
                         reward = (t1 * finalRate1) + (t2 * schemeRate) + (t3 * 0.01);
@@ -652,11 +645,16 @@
                         c.scheme = schemeName;
                         if (amount > cap) limitReached = true;
                     }
+
+                    // UP Upgrade Tip
+                    if (unicardScheme !== 'up' && amount > 15000) {
+                         upgradeTip = '<div class="upgrade-tip">💡 消費滿 1.5 萬，建議訂閱升級 [UP選] 回饋最高！</div>';
+                    }
                 }
                 else {
                     reward = amount * c.rate; detailText = `$${amount} × ${(c.rate*100).toFixed(1)}% = $${Math.floor(reward)}`;
                 }
-                return { ...c, reward: Math.floor(reward), detail: detailText, limitReached };
+                return { ...c, reward: Math.floor(reward), detail: detailText, limitReached, upgradeTip };
             });
 
             results.sort((a, b) => b.reward - a.reward);
@@ -671,6 +669,7 @@
                         ${res.limitReached ? '<span class="limit-reached">(已達上限)</span>' : ''}
                     </div>
                     <div class="calc-detail">${res.detail}</div>
+                    ${res.upgradeTip || ''}
                 </div>
             `).join('');
         }
