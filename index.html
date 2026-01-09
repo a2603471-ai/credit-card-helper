@@ -14,12 +14,12 @@
             --color-border: #e0e0e0;
             --color-success: #2e7d32;
             
-            /* === 品牌色定義 (保留確認版) === */
-            --brand-richart: #e01a22; /* 台新紅 */
-            --brand-cube: #00AA4F;    /* 國泰綠 */
-            --brand-unicard: #1890ff; /* 玉山藍 */
-            --brand-ubear: #e6b800;   /* 玉山黃 */
-            --brand-dawho: #2d3436;   /* 永豐黑 */
+            /* === 品牌色定義 === */
+            --brand-richart: #e01a22;
+            --brand-cube: #00AA4F;
+            --brand-unicard: #1890ff;
+            --brand-ubear: #e6b800;
+            --brand-dawho: #2d3436;
         }
 
         body {
@@ -135,13 +135,29 @@
         
         .best-rate { color: var(--color-primary); font-weight: 800; font-size: 1.4em; }
         
-        .best-card-name { font-size: 0.85em; color: #666; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+        .best-card-name { font-size: 0.85em; color: #666; display: flex; align-items: center; justify-content: flex-end; gap: 4px; flex-wrap: wrap; }
         
         /* 圖示：12px 圓形點 */
         .card-icon-shape { 
             width: 12px; height: 12px; border-radius: 50%;
-            display: inline-block; vertical-align: middle; margin-right: 8px;
+            display: inline-block; vertical-align: middle; margin-right: 6px;
         }
+        
+        /* === 方案標籤樣式 (統一淺藍色，新戶橘色) === */
+        .scheme-badge {
+            display: inline-block; 
+            background-color: #e3f2fd; /* 統一淺藍底 */
+            color: var(--color-primary); /* 統一深藍字 */
+            border: 1px solid #b3e5fc; /* 統一藍邊框 */
+            padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 700;
+        }
+        /* 列表中的標籤微調 */
+        .list-badge {
+            padding: 1px 8px; border-radius: 10px; font-size: 0.8em; margin-left: 6px; vertical-align: middle;
+        }
+        
+        /* 新戶回饋維持橘色 */
+        .scheme-badge.new-user { background-color: #fff3e0; color: #e65100; border-color: #ffe0b2; }
         
         /* === Accordion (權益總覽) === */
         .card-accordion-item {
@@ -202,21 +218,6 @@
         .detail-card-item.best-card { background-color: #fafffc; }
         .detail-card-header { padding: 10px 15px; background: #f9f9f9; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
         .detail-card-body { padding: 12px 15px; }
-        
-        /* === 修正：方案標籤顏色統一 (除了新戶) === */
-        .scheme-badge {
-            display: inline-block; 
-            background-color: #e3f2fd; /* 統一淺藍底 */
-            color: var(--color-primary); /* 統一深藍字 */
-            border: 1px solid #b3e5fc; /* 統一藍邊框 */
-            padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 700;
-        }
-        /* 移除 crazy (紅色) 樣式，使其跟隨統一樣式 */
-        
-        /* 新戶回饋維持橘色 */
-        .scheme-badge.new-user { 
-            background-color: #fff3e0; color: #e65100; border-color: #ffe0b2;
-        }
         
         .plan-warning { color: var(--color-danger); font-weight: 600; font-size: 0.85em; margin-top: 6px; display: flex; align-items: center; padding-top: 6px; border-top: 1px dashed rgba(0,0,0,0.1); }
         .plan-warning::before { content: '⚠️'; margin-right: 4px; }
@@ -387,24 +388,24 @@
 
         const brandColorMap = {
             'richart': { class: 'card-theme-richart', color: '#e01a22' },
-            'cube': { class: 'card-theme-cube', color: '#00AA4F' },    /* 國泰綠 */
-            'unicard': { class: 'card-theme-unicard', color: '#1890ff' }, /* 玉山藍 */
+            'cube': { class: 'card-theme-cube', color: '#00AA4F' },
+            'unicard': { class: 'card-theme-unicard', color: '#1890ff' },
             'ubear': { class: 'card-theme-ubear', color: '#e6b800' },
             'dawho': { class: 'card-theme-dawho', color: '#2d3436' }
         };
 
         const cardBenefitsData = [
             {
-                id: 'richart', name: '台新 Richart', note: '需每日 App 切換權益 (一般消無上限/權益上限本身額度+30萬)',
+                id: 'richart', name: '台新 Richart', note: '需每日 App 切換權益 (各權益組別上限不同)',
                 benefits: [
                     { name: '一般消費', rate: 0.003, desc: '國內外一般消費', type: 'text', note: '0.3%', categories: {} },
-                    { name: 'Pay著刷', rate: 0.038, desc: '台新Pay(超商/百貨) | IKEA | 台灣大車隊', note: '一般0.3% + Pay著刷3.5%', tag: 'pay', categories: { '台新Pay':['7-11', '全家便利商店', '新光三越', 'Richart Mart', '康是美', 'IKEA', 'NET'], '台灣Pay':['神腦', '燦坤', '全國電子', '麥當勞', '美廉社', '大樹藥局', '杏一醫療'], '交通':['台灣大車隊'] } },
-                    { name: '數趣刷', rate: 0.033, desc: '網購 | 遊戲 | AI服務', note: '一般0.3% + 數趣刷3.5%', tag: 'digital', categories: { '網購平台':['蝦皮購物', 'momo購物網', '酷澎(Coupang)', 'PChome', '淘寶', 'Amazon', '東森', '博客來', 'Richart Mart', 'PayEasy', 'iHerb', 'SHEIN', 'Farfetch', 'Olive Young'], '線上課程':['知識衛星', 'Amazing Talker', 'Tutor ABC', 'Hahow', 'PressPlay'], '遊戲影音':['MyCard', '遊戲橘子', 'Steam', 'PlayStation', 'Nintendo', 'Netfilx', 'Disney+'], 'AI服務':['ChatGPT', 'Notion', 'Canva', 'Perplexity', 'Claude'] } },
-                    { name: '玩旅刷', rate: 0.033, desc: '海外 | 航空 | 訂房 | 旅行社', note: '一般0.3% + 玩旅刷3.5%', tag: 'travel', categories: { '海外消費':['海外消費(含實體)'], '訂房平台':['Klook', 'KKday', 'Agoda', 'Booking.com', 'Trip.com', 'Airbnb', 'Hotels.com', 'Expedia'], '海外交通':['Uber', 'Grab', 'SUICA', 'ICOCA', 'PASMO', 'WOWPASS', 'AIRSIM'], '旅行社':['雄獅旅遊', '易遊網', '東南旅遊', '可樂旅遊', '長汎假期', '五福旅遊', '喜鴻假期', '易飛旅遊', '燦星旅遊', '加利利旅行社', '鳳凰國際旅行社', '山富旅遊', '行健旅遊'], '航空公司':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '華信航空', '立榮航空', '樂桃航空', '阿聯酋航空', '亞洲航空', '酷航', '捷星航空', '新加坡航空', '日本航空', '越捷航空'] } },
-                    { name: '天天刷', rate: 0.033, desc: '超商量販 | 交通 | 停車', note: '一般0.3% + 天天刷3.5%', tag: 'daily', categories: { '超商量販(台新Pay)':['7-11', '全家', '家樂福', '大買家', '唐吉軻德', 'LOPIA'], '通勤交通':['台灣鐵路', '台灣高鐵', '台灣大車隊', 'Yoxi', 'Uber'], '停車租車':['嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車'], '藥妝藥局':['寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'] } },
-                    { name: '大筆刷', rate: 0.033, desc: '百貨 | Outlet | 居家', note: '一般0.3% + 大筆刷3.5%', tag: 'big', categories: { '指定百貨':['新光三越', '遠東百貨', '遠東SOGO', '漢神巨蛋', '漢神百貨', '微風', '台北101', '遠東巨城', '廣三SOGO', '南紡購物中心', '誠品生活', '京站', '三創生活', '夢時代', '統一時代', '中友百貨', 'LaLaport'], '指定Outlet':['MITSUI OUTLET PARK', '華泰名品城', 'SKM Park Outlets'], '居家裝修':['IKEA', '特力屋', 'HOLA', '宜得利', '瑪黑家居'], '時尚品味':['UNIQLO', 'GU', 'ZARA', 'NET', 'lululemon'] } },
-                    { name: '好饗刷', rate: 0.033, desc: '餐飲 | 外送 | 加油', note: '一般0.3% + 好饗刷3.5%', tag: 'fun', categories: { '餐飲外送':['國內餐飲', '王品瘋Pay', 'Uber Eats', 'Foodpanda'], '加油充電':['台灣中油-直營站', '台亞直營', '全國加油', 'EVOASIS', 'EVALUE'], '展演購票':['拓元售票', 'KKTIX', '年代售票', '寬宏售票', 'OPENTIX', 'FunNow'], '指定KTV':['錢櫃', '好樂迪', 'ONCOR', 'sing!go', '享溫馨'], '指定樂園':['義大遊樂世界', '麗寶樂園', '六福村', '九族文化村', '劍湖山', 'X-Park', '國立海洋生物博物館', '遠雄海洋公園', '小人國'], '指定飯店':['晶華', '雲朗', '萬豪', '煙波', '老爺', '福華', '漢來', '君悅', '洲際', '寒沐'] } },
-                    { name: 'LINE Pay', rate: 0.023, desc: 'LINE Pay 綁定支付', note: '一般0.3% + LINE Pay 2%', tag: 'line', categories: { '行動支付':['LINE Pay'] } }
+                    { name: 'Pay著刷', rate: 0.038, desc: '台新Pay(超商/百貨) | IKEA | 台灣大車隊', note: '3.8%', tag: 'pay', categories: { '台新Pay':['7-11', '全家便利商店', '新光三越', 'Richart Mart', '康是美', 'IKEA', 'NET'], '台灣Pay':['神腦', '燦坤', '全國電子', '麥當勞', '美廉社', '大樹藥局', '杏一醫療'], '交通':['台灣大車隊'] } },
+                    { name: '數趣刷', rate: 0.033, desc: '網購 | 遊戲 | AI服務', note: '3.3%', tag: 'digital', categories: { '網購平台':['蝦皮購物', 'momo購物網', '酷澎(Coupang)', 'PChome', '淘寶', 'Amazon', '東森', '博客來', 'Richart Mart', 'PayEasy', 'iHerb', 'SHEIN', 'Farfetch', 'Olive Young'], '線上課程':['知識衛星', 'Amazing Talker', 'Tutor ABC', 'Hahow', 'PressPlay'], '遊戲影音':['MyCard', '遊戲橘子', 'Steam', 'PlayStation', 'Nintendo', 'Netfilx', 'Disney+'], 'AI服務':['ChatGPT', 'Notion', 'Canva', 'Perplexity', 'Claude'] } },
+                    { name: '玩旅刷', rate: 0.033, desc: '海外 | 航空 | 訂房 | 旅行社', note: '3.3%', tag: 'travel', categories: { '海外消費':['海外消費(含實體)'], '訂房平台':['Klook', 'KKday', 'Agoda', 'Booking.com', 'Trip.com', 'Airbnb', 'Hotels.com', 'Expedia'], '海外交通':['Uber', 'Grab', 'SUICA', 'ICOCA', 'PASMO', 'WOWPASS', 'AIRSIM'], '旅行社':['雄獅旅遊', '易遊網', '東南旅遊', '可樂旅遊', '長汎假期', '五福旅遊', '喜鴻假期', '易飛旅遊', '燦星旅遊', '加利利旅行社', '鳳凰國際旅行社', '山富旅遊', '行健旅遊'], '航空公司':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '華信航空', '立榮航空', '樂桃航空', '阿聯酋航空', '亞洲航空', '酷航', '捷星航空', '新加坡航空', '日本航空', '越捷航空'] } },
+                    { name: '天天刷', rate: 0.033, desc: '超商量販 | 交通 | 停車', note: '3.3%', tag: 'daily', categories: { '超商量販(台新Pay)':['7-11', '全家', '家樂福', '大買家', '唐吉軻德', 'LOPIA'], '通勤交通':['台灣鐵路', '台灣高鐵', '台灣大車隊', 'Yoxi', 'Uber'], '停車租車':['嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車'], '藥妝藥局':['寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'] } },
+                    { name: '大筆刷', rate: 0.033, desc: '百貨 | Outlet | 居家', note: '3.3%', tag: 'big', categories: { '指定百貨':['新光三越', '遠東百貨', '遠東SOGO', '漢神巨蛋', '漢神百貨', '微風', '台北101', '遠東巨城', '廣三SOGO', '南紡購物中心', '誠品生活', '京站', '三創生活', '夢時代', '統一時代', '中友百貨', 'LaLaport'], '指定Outlet':['MITSUI OUTLET PARK', '華泰名品城', 'SKM Park Outlets'], '居家裝修':['IKEA', '特力屋', 'HOLA', '宜得利', '瑪黑家居'], '時尚品味':['UNIQLO', 'GU', 'ZARA', 'NET', 'lululemon'] } },
+                    { name: '好饗刷', rate: 0.033, desc: '餐飲 | 外送 | 加油', note: '3.3%', tag: 'fun', categories: { '餐飲外送':['國內餐飲', '王品瘋Pay', 'Uber Eats', 'Foodpanda'], '加油充電':['台灣中油-直營站', '台亞直營', '全國加油', 'EVOASIS', 'EVALUE'], '展演購票':['拓元售票', 'KKTIX', '年代售票', '寬宏售票', 'OPENTIX', 'FunNow'], '指定KTV':['錢櫃', '好樂迪', 'ONCOR', 'sing!go', '享溫馨'], '指定樂園':['義大遊樂世界', '麗寶樂園', '六福村', '九族文化村', '劍湖山', 'X-Park', '國立海洋生物博物館', '遠雄海洋公園', '小人國'], '指定飯店':['晶華', '雲朗', '萬豪', '煙波', '老爺', '福華', '漢來', '君悅', '洲際', '寒沐'] } },
+                    { name: 'LINE Pay', rate: 0.023, desc: 'LINE Pay 綁定支付', note: '2.3%', tag: 'line', categories: { '行動支付':['LINE Pay'] } }
                 ]
             },
             {
@@ -419,7 +420,7 @@
                 ]
             },
             {
-                id: 'unicard', name: '玉山 Unicard', note: '當月月底最後一天切方案',
+                id: 'unicard', name: '玉山 Unicard', note: '簡單/任意/UP (加碼上限刷 4萬 ~ 14萬)',
                 benefits: [
                     { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '1%', categories: {} },
                     { 
@@ -439,14 +440,14 @@
                         },
                         note: '回饋依方案'
                     },
-                    { name: 'UP選', rate: 0.045, desc: '百大特店 (需149點訂閱)', type: 'text', note: '一般1% + UP選3.5% (上限刷$142,857)' },
-                    { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '一般1% + 任意選2.5% (上限刷$400,000)' },
-                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '一般1% + 簡單選2% (上限刷$500,000)' },
+                    { name: 'UP選', rate: 0.045, desc: '百大特店 (需149點訂閱)', type: 'text', note: '4.5%' },
+                    { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '3.5%' },
+                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '3%' },
                     { 
                         name: '新戶回饋', rate: 0.03, tag: 'new', type: 'modal',
-                        desc: '指定通路', 
+                        desc: '指定通路 +3% (最高7.5%)', 
                         categories: { '指定通路': ['LINE Pay', 'Uber Eats', '家樂福', '韓國', '全盈+PAY'] },
-                        note: '<span class="urgent-text">指定通路 + 3% (上限刷$14,667) 最高7.5%</span>' 
+                        note: '<span class="urgent-text">新戶+3%</span>' 
                     }
                 ]
             },
@@ -454,7 +455,7 @@
                 id: 'ubear', name: '玉山 UBear', note: '娛樂10% / 網購3% (網購上限刷 $7,500)',
                 benefits: [
                     { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '1%', categories: {} },
-                    { name: '影音娛樂', rate: 0.10, tag: 'ent', desc: 'Netflix | Disney+ | Nintendo', categories: { '影音娛樂': ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes', 'Google Play', 'Funnow'] }, note: '10% (上限刷$1000)' },
+                    { name: '影音娛樂', rate: 0.10, tag: 'ent', desc: 'Netflix | Disney+ | Nintendo', categories: { '影音娛樂': ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes', 'Google Play', 'Funnow'] }, note: '10% (上限$100)' },
                     { name: '網購/Pay', rate: 0.03, tag: 'net', desc: '網購 | 行動支付 | 訂房 | 外送', 
                       categories: { 
                         '行動支付': ['LINE Pay', '街口支付', '悠遊付', 'OPEN錢包', 'icash Pay', '全盈+PAY', '全支付', '橘子支付', 'skm pay', '中油Pay', '玉山Wallet', 'Pi 拍錢包', '歐付寶', 'PayPal', 'Hami Pay'],
@@ -462,18 +463,18 @@
                         '交通訂房': ['55688', 'Uber', '台灣高鐵T-EX', '台灣鐵路線上', '易遊網', 'Agoda', 'Hotels.com', 'Expedia', 'Klook', 'KKday', 'Booking.com', 'Airbnb', '中華航空', '長榮航空', '台灣虎航'],
                         '外送平台': ['Uber Eats', 'foodpanda', 'foodomo', 'lalamove', '你訂']
                       },
-                      note: '一般1% + 網購2% (上限刷$7500)' 
+                      note: '3% (新戶10%)' 
                     },
-                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '同網購/Pay通路', note: '網購/Pay加碼 + 7% (上限刷$2142) 最高10%', categories: {} }
+                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '[新戶] 網購/Pay加碼 +7%', note: '上限$2142', categories: {} }
                 ]
             },
             {
                 id: 'dawho', name: '永豐 DAWHO', note: '大戶等級：國內3.5%/國外4.5% (上限刷 1.6 萬)',
                 benefits: [
                     { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '國內1%/國外2%', categories: {} },
-                    { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷', tag: 'all', type: 'text', note: '一般1% + 任務2.5% (上限刷$16,000)' },
-                    { name: '國外全通路', rate: 0.045, desc: '國外消費)', tag: 'foreign', type: 'text', note: '一般2% + 任務2.5% (上限刷$16,000)' },
-                    { name: '悠遊卡自動加值', rate: 0.03, desc: '不含一般消費回饋', tag: 'easy', type: 'text', note: '3% (上限刷$3333)' }
+                    { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷 (含任務)', tag: 'all', type: 'text', note: '3.5%' },
+                    { name: '國外全通路', rate: 0.045, desc: '國外消費 (含任務)', tag: 'foreign', type: 'text', note: '4.5%' },
+                    { name: '悠遊卡', rate: 0.03, desc: '悠遊卡自動加值', tag: 'easy', type: 'text', note: '3% (上限$100)' }
                 ]
             }
         ];
@@ -535,12 +536,16 @@
             chk.checked = !chk.checked;
             btn.classList.toggle('active', chk.checked);
             
+            // 立即觸發搜尋，不使用 Debounce，避免列表跳動
             if (activeFilter) {
+                // 如果當前有分類篩選，重新套用分類
                 const currentFilter = activeFilter;
                 activeFilter = null;
                 applyCategoryFilter(currentFilter);
             } else {
-                debouncedReSearch();
+                // 如果當前是關鍵字搜尋或無搜尋，直接呼叫 render
+                const val = document.getElementById('searchMerchant').value;
+                if (val) renderMerchantResult(val);
             }
         }
 
@@ -561,6 +566,9 @@
             globalMerchantDB = {};
             cardBenefitsData.forEach(card => {
                 card.benefits.forEach(benefit => {
+                    // 修正：Unicard 新戶回饋不加入獨立列表
+                    if (card.id === 'unicard' && benefit.tag === 'new') return;
+
                     if (benefit.categories) {
                         Object.entries(benefit.categories).forEach(([catName, list]) => {
                             list.forEach(rawMerchant => {
@@ -656,11 +664,18 @@
                     let rate = 0.035, bonus = 0.025, txt = '任意選';
                     if (uniScheme === 'simple') { rate = 0.03; bonus = 0.02; txt = '簡單選'; }
                     if (uniScheme === 'up') { rate = 0.045; bonus = 0.035; txt = 'UP選'; }
+                    
+                    // 修正：Unicard 新戶直接疊加，不重複顯示
                     if (isNew) {
                         const newBonusList = ['line pay', 'uber eats', '家樂福', '韓國', '全盈'];
-                        if (newBonusList.some(kw => name.toLowerCase().includes(kw))) { rate += 0.03; txt += ' + 新戶'; }
+                        if (newBonusList.some(kw => name.toLowerCase().includes(kw))) { 
+                            rate += 0.03; 
+                            txt += ' + 新戶'; // 更新方案名稱
+                        }
                     }
-                    c.rate = rate; c.scheme = txt; c.note = `${(rate*100).toFixed(1)}% (一般1% + ${txt.replace(' ','').replace('簡單選','簡單選2%').replace('任意選','任意選2.5%').replace('UP選','UP選3.5%')})`;
+                    c.rate = rate; 
+                    c.scheme = txt; // 更新後的方案名
+                    c.note = `${(rate*100).toFixed(1)}% (一般1% + ${txt.replace(' ','').replace('簡單選','簡單選2%').replace('任意選','任意選2.5%').replace('UP選','UP選3.5%')})`;
                 }
                 if (c.cardId === 'ubear' && c.tag === 'net' && isNew) { c.rate = 0.10; c.scheme = '網購/Pay + 新戶'; c.note = '10% (一般1% + 網購2% + 新戶7%)'; }
             });
@@ -681,7 +696,11 @@
                     <div><div class="merchant-name">${data ? data.name : name}</div>${data ? `<span class="merchant-type">${data.category}</span>` : '<span class="merchant-type">一般消費排行</span>'}</div>
                     <div class="merchant-best-info">
                         <div class="best-rate">${(best.rate * 100).toFixed(1)}%</div>
-                        <div class="best-card-name"><span class="card-icon-shape" style="background:${dotColor}"></span>${best.cardName}</div>
+                        <div class="best-card-name">
+                            <span class="card-icon-shape" style="background:${dotColor}"></span>
+                            ${best.cardName}
+                            <span class="scheme-badge list-badge">${best.scheme}</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -692,7 +711,9 @@
             const html = cards.map((c, idx) => {
                 const isBest = idx === 0;
                 let badgeClass = 'scheme-badge';
-                if (c.tag === 'crazy') badgeClass += ' crazy'; if (c.rate >= 0.07) badgeClass += ' new-user';
+                // 只有包含 "新戶" 字串的標籤才套用橘色樣式
+                if (c.scheme.includes('新戶') || c.rate >= 0.07) badgeClass += ' new-user';
+                
                 const warningHtml = (isBest && c.tag === 'pay' && c.cardId === 'richart') ? `<div class="plan-warning">限台新Pay/台灣Pay</div>` : '';
                 const themeClass = brandColorMap[c.cardId]?.class || '';
                 
