@@ -14,13 +14,12 @@
             --color-border: #e0e0e0;
             --color-success: #2e7d32;
             
-            /* 品牌色定義 */
+            /* 品牌色定義 (已修正) */
             --brand-richart: #e01a22;
-            --brand-cube: #00994e;
+            --brand-cube: #636e72;   /* 改為深灰色 */
             --brand-unicard: #69c3a7;
-            --brand-ubear: #e6007e;
+            --brand-ubear: #e6b800;  /* 改為深金黃色 */
             --brand-dawho: #bfa065;
-            --brand-default: #2180a0;
         }
 
         body {
@@ -29,14 +28,14 @@
             color: var(--color-text);
             padding: 20px;
             line-height: 1.6;
-            padding-bottom: 90px; /* 為了避開手機底部導覽列 */
+            padding-bottom: 90px;
             -webkit-tap-highlight-color: transparent;
         }
         
         .container { max-width: 800px; margin: 0 auto; }
         h1 { text-align: center; margin-bottom: 15px; color: var(--color-primary); font-size: 1.6em; }
 
-        /* === 優化：導覽列 (支援手機底部模式) === */
+        /* === 導覽列 (支援手機底部模式) === */
         .nav-tabs {
             display: flex; background: var(--color-surface); padding: 5px;
             border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -48,15 +47,13 @@
             border-radius: 8px; font-weight: 600; color: #888; transition: all 0.2s;
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
         }
-        .nav-icon { font-size: 1.2em; margin-bottom: 2px; display: none; } /* 電腦版隱藏圖示 */
-        
+        .nav-icon { font-size: 1.2em; margin-bottom: 2px; display: none; }
         .nav-item.active { background-color: var(--color-primary); color: white; box-shadow: 0 2px 4px rgba(33, 128, 160, 0.3); }
 
-        /* 手機版底部導覽列樣式 */
         @media (max-width: 768px) {
             .nav-tabs {
                 position: fixed; bottom: 0; top: auto; left: 0; right: 0;
-                margin-bottom: 0; border-radius: 0; padding: 8px 5px 20px 5px; /* 底部加高適應全螢幕手機 */
+                margin-bottom: 0; border-radius: 0; padding: 8px 5px 20px 5px;
                 background: rgba(255, 255, 255, 0.95);
                 backdrop-filter: blur(10px);
                 border-top: 1px solid #eee;
@@ -66,8 +63,6 @@
             .nav-item.active { color: var(--color-primary); box-shadow: none; }
             .nav-icon { display: block; font-size: 1.4rem; }
             .nav-text { margin-top: 2px; }
-            
-            /* 調整容器間距 */
             h1 { margin-top: 10px; font-size: 1.4em; }
             body { padding-top: 10px; }
         }
@@ -115,16 +110,15 @@
         .toggle-btn.active { background: #e3f2fd; border-color: var(--color-primary); color: var(--color-primary); font-weight: 700; transform: scale(1.02); }
         .toggle-checkbox { margin-right: 6px; width: 16px; height: 16px; pointer-events: none; }
 
-        /* === 優化：品牌卡片列表 === */
+        /* === 品牌卡片列表 === */
         .merchant-list {
             background: var(--color-surface); padding: 16px; border-radius: 12px; margin-bottom: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer;
             border: 1px solid transparent; display: flex; justify-content: space-between; align-items: center;
-            border-left: 5px solid #ccc; /* 預設左邊框 */
+            border-left: 5px solid #ccc;
         }
         .merchant-list:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
         
-        /* 品牌顏色定義 */
         .card-theme-richart { border-left-color: var(--brand-richart) !important; }
         .card-theme-cube { border-left-color: var(--brand-cube) !important; }
         .card-theme-unicard { border-left-color: var(--brand-unicard) !important; }
@@ -217,25 +211,30 @@
         .category-tag:hover { border-color: var(--color-primary); color: var(--color-primary); background: #e3f2fd; }
         .category-tag.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
 
-        /* === 優化：試算結果 & 動畫 === */
+        /* === 試算結果樣式修正 === */
         .calc-result-item { 
             margin-bottom: 12px; padding: 15px; background: white; 
             border: 1px solid #eee; border-radius: 12px; border-left: 5px solid #ccc;
             transition: transform 0.2s;
         }
-        /* 冠軍樣式 + 呼吸動畫 */
+        /* 冠軍樣式 (呼吸動畫) */
         .calc-result-item.winner { 
             background: #ffffff; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             border: 1px solid rgba(0,0,0,0.05);
-            /* border-left color will be set by JS via brand class */
             animation: pulse 2s infinite;
         }
         @keyframes pulse { 0% { box-shadow: 0 4px 15px rgba(0,0,0,0.08); } 50% { box-shadow: 0 8px 20px rgba(0,0,0,0.12); } 100% { box-shadow: 0 4px 15px rgba(0,0,0,0.08); } }
 
         .calc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .calc-money { font-size: 1.5em; font-weight: 800; color: var(--color-text); }
-        /* 金額數字顏色也會跟隨品牌色變更 */
+        
+        /* 修正：預設字重為一般 (400) */
+        .calc-money { font-size: 1.5em; font-weight: 400; color: var(--color-text); }
+        
+        /* 修正：只有冠軍是粗體 (800) */
+        .calc-result-item.winner .calc-money { font-weight: 800; }
+
+        /* 品牌顏色對應 */
         .calc-result-item.card-theme-richart .calc-money { color: var(--brand-richart); }
         .calc-result-item.card-theme-cube .calc-money { color: var(--brand-cube); }
         .calc-result-item.card-theme-unicard .calc-money { color: var(--brand-unicard); }
@@ -363,12 +362,12 @@
             return fixed.endsWith('.0') ? fixed.slice(0, -2) : fixed;
         };
         
-        // === 優化：品牌色對應表 ===
+        // === 修正：品牌色定義 (UBear 黃色, CUBE 深灰) ===
         const brandColorMap = {
             'richart': { class: 'card-theme-richart', color: '#e01a22' },
-            'cube': { class: 'card-theme-cube', color: '#00994e' },
+            'cube': { class: 'card-theme-cube', color: '#636e72' },  // 深灰色
             'unicard': { class: 'card-theme-unicard', color: '#69c3a7' },
-            'ubear': { class: 'card-theme-ubear', color: '#e6007e' },
+            'ubear': { class: 'card-theme-ubear', color: '#e6b800' },  // 深金黃色
             'dawho': { class: 'card-theme-dawho', color: '#bfa065' }
         };
 
@@ -694,23 +693,6 @@
             if (name) calculateRewards();
         }
 
-        // === 優化：數字滾動動畫 ===
-        function animateValue(obj, start, end, duration, formatFn) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const value = Math.floor(progress * (end - start) + start);
-                obj.innerHTML = formatFn ? formatFn(value) : value;
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                } else {
-                    obj.innerHTML = formatFn ? formatFn(end) : end;
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-
         function calculateRewards() {
             const amount = parseFloat(document.getElementById('calcAmount').value);
             const merchantInput = document.getElementById('calcMerchant').value.trim();
@@ -782,16 +764,16 @@
 
             results.sort((a, b) => b.reward - a.reward);
             
+            // 修正：取消數字滾動動畫，第一名增加獎盃符號
             container.innerHTML = results.map((res, idx) => {
                 const isWinner = idx === 0;
                 const themeClass = brandColorMap[res.cardId]?.class || '';
-                // 如果是贏家，稍後觸發動畫
-                const moneyId = `money-${idx}`;
+                const trophy = isWinner ? '🏆 ' : '';
                 return `
                 <div class="calc-result-item ${isWinner ? 'winner' : ''} ${themeClass}">
                     <div class="calc-header">
                         <span style="font-weight:700;">${idx+1}. ${res.cardName} (${res.scheme})</span>
-                        <span id="${moneyId}" class="calc-money">${isWinner ? '$0' : formatMoney(res.reward)}</span>
+                        <span class="calc-money">${trophy}${formatMoney(res.reward)}</span>
                     </div>
                     <div style="font-size:0.9em; color:${isWinner?'var(--color-success)':'#555'};">
                         平均回饋率：${formatRate((res.reward/amount)*100)}%
@@ -800,12 +782,6 @@
                     ${res.upgradeTip || ''}
                 </div>
             `}).join('');
-
-            // 觸發數字動畫 (只針對第一名，讓效果更明顯)
-            if (results.length > 0) {
-                const winnerObj = document.getElementById('money-0');
-                animateValue(winnerObj, 0, results[0].reward, 800, formatMoney);
-            }
         }
 
         function renderCardOverview() {
