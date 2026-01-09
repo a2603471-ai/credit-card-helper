@@ -2,266 +2,285 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>信用卡回饋查詢助手 2026</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --color-primary: #2180a0;
-            --color-bg: #f8f9fa; /* 背景稍微改亮一點 */
+            --color-bg: #f5f5f5;
             --color-surface: #ffffff;
             --color-text: #333333;
-            --color-subtext: #666666;
             --color-border: #e0e0e0;
             --color-success: #2e7d32;
             
             /* === 品牌色定義 === */
-            --brand-richart: #e01a22;
-            --brand-cube: #00AA4F;
-            --brand-unicard: #1890ff;
-            --brand-ubear: #e6b800;
-            --brand-dawho: #2d3436;
+            --brand-richart: #e01a22; /* 台新紅 */
+            --brand-cube: #00AA4F;    /* 國泰綠 */
+            --brand-unicard: #1890ff; /* 玉山藍 */
+            --brand-ubear: #e6b800;   /* 玉山黃 */
+            --brand-dawho: #2d3436;   /* 永豐黑 */
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--color-bg);
             color: var(--color-text);
-            padding: 16px;
-            line-height: 1.5;
-            padding-bottom: 100px; /* 增加底部空間給導覽列 */
+            padding: 20px;
+            line-height: 1.6;
+            padding-bottom: 90px;
             -webkit-tap-highlight-color: transparent;
-            font-size: 16px; /* 基準字體 */
         }
         
-        .container { max-width: 600px; margin: 0 auto; } /* 縮小最大寬度讓桌機版更好看 */
-        
-        /* 標題優化：手機版縮小 */
-        h1 { 
-            text-align: center; margin-bottom: 12px; 
-            color: var(--color-primary); font-size: 1.5rem; 
-            font-weight: 800; letter-spacing: -0.5px;
-        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 15px; color: var(--color-primary); font-size: 1.6em; }
 
-        /* === 導覽列 (Bottom Nav) === */
+        /* === 導覽列 === */
         .nav-tabs {
-            display: flex; background: var(--color-surface); padding: 4px;
-            border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex; background: var(--color-surface); padding: 5px;
+            border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             margin-bottom: 20px; position: sticky; top: 10px; z-index: 900;
             transition: all 0.3s;
         }
         .nav-item {
-            flex: 1; text-align: center; padding: 10px; cursor: pointer;
-            border-radius: 8px; font-weight: 600; color: #999; transition: all 0.2s;
+            flex: 1; text-align: center; padding: 12px; cursor: pointer;
+            border-radius: 8px; font-weight: 600; color: #888; transition: all 0.2s;
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-            font-size: 0.95rem;
         }
-        .nav-icon { font-size: 1.2em; display: none; margin-bottom: 0; }
-        .nav-item.active { background-color: #e3f2fd; color: var(--color-primary); box-shadow: none; }
+        .nav-icon { font-size: 1.2em; margin-bottom: 2px; display: none; }
+        .nav-item.active { background-color: var(--color-primary); color: white; box-shadow: 0 2px 4px rgba(33, 128, 160, 0.3); }
 
         @media (max-width: 768px) {
             .nav-tabs {
                 position: fixed; bottom: 0; top: auto; left: 0; right: 0;
-                margin-bottom: 0; border-radius: 0; 
-                padding: 6px 0 6px 0; /* 緊湊一點 */
-                padding-bottom: env(safe-area-inset-bottom); /* 支援 iPhone X+ 底部 */
-                background: rgba(255, 255, 255, 0.98);
+                margin-bottom: 0; border-radius: 0; padding: 8px 5px 20px 5px;
+                background: rgba(255, 255, 255, 0.95);
                 backdrop-filter: blur(10px);
                 border-top: 1px solid #eee;
-                box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
             }
-            .nav-item { 
-                background: transparent !important; color: #bbb; 
-                padding: 4px; font-size: 0.7rem; /* 手機版字體縮小 */
-            }
-            .nav-item.active { color: var(--color-primary); }
-            .nav-icon { display: block; font-size: 1.3rem; margin-bottom: 2px; }
-            
-            h1 { margin-top: 5px; font-size: 1.3rem; } /* 手機標題縮小 */
-            body { padding: 12px; padding-bottom: 90px; }
+            .nav-item { background: transparent !important; color: #999; padding: 4px; font-size: 0.75rem; }
+            .nav-item.active { color: var(--color-primary); box-shadow: none; }
+            .nav-icon { display: block; font-size: 1.4rem; }
+            .nav-text { margin-top: 2px; }
+            h1 { margin-top: 10px; font-size: 1.4em; }
+            body { padding-top: 10px; }
         }
 
-        .tab-content { display: none; animation: fadeIn 0.2s ease-out; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-out; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* === 區塊與表單 === */
+        /* === 區塊樣式 === */
         .form-section {
-            background: var(--color-surface); padding: 16px;
-            border-radius: 16px; margin-bottom: 16px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02);
+            background: var(--color-surface); padding: 20px;
+            border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         .info-text {
-            background: #e3f2fd; padding: 10px 14px; border-radius: 10px; color: #0d47a1;
-            margin-bottom: 12px; font-size: 0.85rem; line-height: 1.5; 
-            border-left: 4px solid #2196f3;
+            background: #e3f2fd; padding: 12px; border-radius: 8px; color: #0d47a1;
+            margin-bottom: 15px; font-size: 0.9em; line-height: 1.5; border-left: 4px solid #2196f3;
         }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 5px; font-weight: 700; color: var(--color-text); font-size: 0.9rem; }
-        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--color-text); font-size: 0.95em; }
         .input-wrapper { position: relative; display: flex; align-items: center; }
         input[type="text"], input[type="number"], select {
-            width: 100%; padding: 12px 36px 12px 14px; 
-            border: 1px solid var(--color-border); border-radius: 10px;
-            font-size: 16px; /* 保持 16px 防止 iOS Zoom */
-            background: #fff; appearance: none; color: #333;
-            transition: border-color 0.2s;
+            width: 100%; padding: 12px 40px 12px 14px; border: 1px solid var(--color-border);
+            border-radius: 8px; font-size: 16px; background: #fff; appearance: none;
         }
-        input:focus, select:focus { outline: none; border-color: var(--color-primary); }
+        input:focus, select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(33, 128, 160, 0.1); }
         
-        /* 清除按鈕優化：加大觸控區 */
         .clear-btn {
-            position: absolute; right: 8px; background: #eee; border: none; border-radius: 50%;
-            width: 24px; height: 24px; cursor: pointer; color: #888; 
-            display: none; align-items: center; justify-content: center;
-            font-size: 12px; padding: 0; z-index: 5;
-        }
-        /* 增加透明觸控區 */
-        .clear-btn::after {
-            content: ''; position: absolute; top: -10px; bottom: -10px; left: -10px; right: -10px;
+            position: absolute; right: 5px; background: #eee; border: none; border-radius: 50%;
+            width: 30px; height: 30px; cursor: pointer; color: #666; display: none; align-items: center; justify-content: center;
+            font-size: 14px;
         }
         
         .suggestion-dropdown {
             position: absolute; top: 100%; left: 0; right: 0; background: var(--color-surface);
-            border: 1px solid var(--color-border); border-radius: 0 0 10px 10px;
-            max-height: 250px; overflow-y: auto; z-index: 1000; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: none;
+            border: 1px solid var(--color-border); border-radius: 0 0 8px 8px;
+            max-height: 250px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none;
         }
-        .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f5f5f5; font-size: 0.95rem; }
-        .suggestion-item:active { background-color: #f0f0f0; }
+        .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+        .suggestion-item:hover { background-color: #f5f9ff; }
 
-        .controls-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
+        .controls-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
         .control-group { flex: 1; }
         .toggle-btn {
-            display: flex; align-items: center; justify-content: center; padding: 0 12px;
-            background: #fff; border: 1px solid var(--color-border); border-radius: 10px;
-            cursor: pointer; user-select: none; font-size: 0.85rem; height: 46px; 
-            white-space: nowrap; transition: all 0.2s; color: var(--color-text);
+            display: flex; align-items: center; justify-content: center; padding: 10px;
+            background: #fff; border: 1px solid var(--color-border); border-radius: 8px;
+            cursor: pointer; user-select: none; font-size: 0.9em; height: 46px; white-space: nowrap; transition: all 0.2s;
         }
-        .toggle-btn.active { 
-            background: #e3f2fd; border-color: var(--color-primary); 
-            color: var(--color-primary); font-weight: 700; 
-        }
+        .toggle-btn.active { background: #e3f2fd; border-color: var(--color-primary); color: var(--color-primary); font-weight: 700; transform: scale(1.02); }
         .toggle-checkbox { margin-right: 6px; width: 16px; height: 16px; pointer-events: none; }
 
-        /* === 搜尋結果列表 (Compact Mode) === */
+        /* === 搜尋結果列表 === */
         .merchant-list {
-            background: var(--color-surface); padding: 12px 14px; /* 縮減 Padding */
-            border-radius: 12px; margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03); cursor: pointer;
-            border: 1px solid #eee; border-left: 4px solid #ccc;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s;
+            background: var(--color-surface); padding: 16px; border-radius: 12px; margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer;
+            border: 1px solid transparent; display: flex; justify-content: space-between; align-items: center;
+            border-left: 5px solid #ccc;
         }
-        .merchant-list:active { transform: scale(0.98); background: #fafafa; }
+        .merchant-list:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
         
+        /* 品牌色 Class */
         .card-theme-richart { border-left-color: var(--brand-richart) !important; }
         .card-theme-cube { border-left-color: var(--brand-cube) !important; }
         .card-theme-unicard { border-left-color: var(--brand-unicard) !important; }
         .card-theme-ubear { border-left-color: var(--brand-ubear) !important; }
         .card-theme-dawho { border-left-color: var(--brand-dawho) !important; }
 
-        .merchant-name { font-size: 1rem; font-weight: 700; color: var(--color-text); margin-bottom: 2px; }
-        .merchant-type { font-size: 0.75rem; color: #888; background: #f0f0f0; padding: 1px 6px; border-radius: 6px; margin-left: 6px; vertical-align: middle; }
+        .merchant-name { font-size: 1.1em; font-weight: 700; color: var(--color-text); }
+        .merchant-type { font-size: 0.85em; color: #888; background: #eee; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
+        .merchant-best-info { text-align: right; }
         
-        .merchant-best-info { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
-        .best-rate { color: var(--color-primary); font-weight: 800; font-size: 1.25rem; line-height: 1.2; }
+        .best-rate { color: var(--color-primary); font-weight: 800; font-size: 1.4em; }
         
-        .best-card-name { font-size: 0.8rem; color: #666; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+        .best-card-name { font-size: 0.85em; color: #666; display: flex; align-items: center; justify-content: flex-end; gap: 4px; flex-wrap: wrap; }
         
+        /* 圖示：12px 圓形點 */
         .card-icon-shape { 
-            width: 10px; height: 10px; border-radius: 50%;
-            display: inline-block; vertical-align: middle; margin-right: 4px;
+            width: 12px; height: 12px; border-radius: 50%;
+            display: inline-block; vertical-align: middle; margin-right: 6px;
         }
         
-        /* 方案標籤 (Blue Style) */
+        /* === 方案標籤樣式 (淺藍色風格) === */
         .scheme-badge {
-            display: inline-block; vertical-align: middle;
-            background-color: #e3f2fd; color: var(--color-primary); 
-            border: 1px solid #bbdefb;
-            padding: 2px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 600;
+            display: inline-block; 
+            background-color: #e3f2fd; /* 淺藍底 */
+            color: var(--color-primary); /* 深藍字 */
+            border: 1px solid #b3e5fc; /* 藍邊框 */
+            padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 700;
         }
-        .list-badge { margin-left: 0; margin-top: 0; font-size: 0.75rem; padding: 1px 6px; }
+        .list-badge {
+            padding: 1px 8px; border-radius: 10px; font-size: 0.8em; margin-left: 6px; vertical-align: middle;
+        }
+        
+        /* 新戶回饋維持橘色 */
         .scheme-badge.new-user { background-color: #fff3e0; color: #e65100; border-color: #ffe0b2; }
         
         /* === Accordion (權益總覽) === */
         .card-accordion-item {
-            background: var(--color-surface); border-radius: 12px; margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #eee;
-            border-left: 4px solid #ccc;
+            background: var(--color-surface); border-radius: 12px; margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid var(--color-border);
+            border-left: 5px solid #ccc;
         }
         .accordion-header {
-            padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-            background: white;
+            padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            background: white; transition: background 0.2s;
         }
-        .card-title-text { font-weight: 700; font-size: 1rem; color: var(--color-text); }
-        .accordion-body { display: none; padding: 0; background: #fafafa; border-top: 1px solid #eee; }
-        .accordion-body.open { display: block; }
+        .card-title-row { display: flex; align-items: center; }
+        .card-title-text { font-weight: 700; font-size: 1.1em; color: var(--color-text); }
+        .chevron { transition: transform 0.3s; color: #999; }
+        .accordion-header.active .chevron { transform: rotate(180deg); }
+        .accordion-body { display: none; padding: 0; background: #fff; border-top: 1px solid #eee; }
+        .accordion-body.open { display: block; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 3000px; } }
         
-        .benefit-row { padding: 10px 16px; border-bottom: 1px solid #eee; }
-        .benefit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-        .benefit-name { font-weight: 600; font-size: 0.95rem; color: #444; }
-        .benefit-rate { font-weight: 700; color: var(--color-primary); font-size: 1rem; }
-        .benefit-desc { font-size: 0.8rem; color: #666; line-height: 1.4; }
-        .benefit-note { margin-top: 4px; font-size: 0.8rem; color: #856404; background: #fff8e1; padding: 4px 8px; border-radius: 6px; display: inline-block; }
+        .benefit-row { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; flex-direction: column; position: relative; }
+        .benefit-row:not(.no-action):hover { background-color: #f8fbff; cursor: pointer; }
+        .benefit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; padding-right: 20px; }
+        .benefit-name { font-weight: 600; font-size: 1em; color: #444; }
+        .benefit-rate { font-weight: 700; color: var(--color-primary); font-size: 1.1em; }
+        .benefit-desc { font-size: 0.85em; color: #666; margin-top: 2px; padding-right: 20px; }
 
-        /* === 彈窗 (Modal - Bottom Sheet style on Mobile) === */
+        /* === 彈窗 === */
         .detail-modal {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); z-index: 2000; 
-            justify-content: center; align-items: center;
-            backdrop-filter: blur(2px); 
+            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; padding: 20px;
+            backdrop-filter: blur(4px); 
         }
-        .detail-modal.show { display: flex; }
-        
+        .detail-modal.show { display: flex; align-items: center; }
         .detail-content {
-            background: var(--color-surface); border-radius: 16px; 
-            width: 90%; max-width: 500px; max-height: 80vh;
-            display: flex; flex-direction: column; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--color-surface); border-radius: 16px; width: 100%; max-width: 500px;
+            display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-height: 85vh; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        .detail-header { padding: 14px 18px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .detail-title h2 { font-size: 1.2rem; color: var(--color-primary); margin: 0; }
-        .detail-close { background: #f5f5f5; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 18px; cursor: pointer; color: #666; }
-        .detail-body { padding: 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .detail-header { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .detail-title h2 { font-size: 1.4em; color: var(--color-primary); margin: 0; }
+        .detail-close { background: #f0f0f0; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer; color: #666; }
+        .detail-body { padding: 20px; overflow-y: auto; }
 
-        .detail-card-item { margin-bottom: 10px; border: 1px solid #eee; border-radius: 10px; overflow: hidden; border-left: 4px solid #ccc; background: #fff; }
-        .detail-card-header { padding: 8px 12px; background: #f9f9f9; font-weight: 600; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
-        .detail-card-body { padding: 10px 12px; }
-        .detail-note { font-size: 0.85rem; color: #555; margin-top: 4px; display: block; line-height: 1.4; }
+        .detail-category-group { margin-bottom: 20px; }
+        .detail-category-title { 
+            font-size: 0.95em; font-weight: 700; color: var(--color-text); margin-bottom: 10px; 
+            padding-left: 8px; border-left: 4px solid var(--color-primary);
+        }
+        .scheme-list-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        .scheme-list-item { 
+            background: var(--tag-bg); padding: 6px 12px; border-radius: 20px; 
+            font-size: 0.9em; color: var(--tag-text); border: 1px solid #e0e0e0; display: inline-block;
+        }
 
-        .category-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        /* === 彈窗列表樣式 (UI修正：手機字體優化) === */
+        .detail-card-item { margin-bottom: 12px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; border-left: 4px solid #ccc; }
+        .detail-card-item.best-card { background-color: #fafffc; }
+        
+        /* 縮小 Header 字體 */
+        .detail-card-header { 
+            padding: 10px 15px; background: #f9f9f9; 
+            font-weight: 600; display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.95em; /* 縮小 */
+        }
+        
+        /* 縮小 Body 字體與行距 */
+        .detail-card-body { padding: 12px 15px; font-size: 0.9em; }
+        
+        /* 微調標籤在彈窗內的大小 */
+        .detail-card-body .scheme-badge {
+            font-size: 0.8em; padding: 2px 8px;
+        }
+
+        .plan-warning { color: var(--color-danger); font-weight: 600; font-size: 0.85em; margin-top: 6px; display: flex; align-items: center; padding-top: 6px; border-top: 1px dashed rgba(0,0,0,0.1); }
+        .plan-warning::before { content: '⚠️'; margin-right: 4px; }
+
+        .category-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .category-tag {
-            padding: 5px 12px; background: var(--color-surface);
-            border: 1px solid #ddd; border-radius: 20px;
-            cursor: pointer; font-size: 0.85rem; color: var(--color-text); font-weight: 500;
-            user-select: none;
+            padding: 6px 14px; background: var(--color-surface);
+            border: 1px solid var(--color-border); border-radius: 20px;
+            cursor: pointer; font-size: 0.9em; color: var(--color-text); font-weight: 500;
+            transition: all 0.2s; user-select: none;
         }
+        .category-tag:hover { border-color: var(--color-primary); color: var(--color-primary); background: #e3f2fd; }
         .category-tag.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
 
-        /* === 試算結果 === */
+        /* === 試算結果樣式 === */
         .calc-result-item { 
-            margin-bottom: 10px; padding: 14px; background: white; 
-            border: 1px solid #eee; border-radius: 12px; border-left: 4px solid #ccc;
+            margin-bottom: 12px; padding: 15px; background: white; 
+            border: 1px solid #eee; border-radius: 12px; border-left: 5px solid #ccc;
+            transition: transform 0.2s;
         }
-        .calc-money { font-size: 1.3rem; font-weight: 800; color: #333; }
-        .calc-result-item.winner .calc-money { font-size: 1.5rem; }
+        .calc-result-item.winner { 
+            background: #ffffff; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* 修正：強制金額靠右且不換行 */
+        .calc-header { 
+            display: flex; justify-content: space-between; align-items: flex-start; /* 標題換行時對齊上方 */
+            margin-bottom: 6px; 
+        }
         
-        /* 品牌色應用 */
+        .calc-money { 
+            font-size: 1.5em; font-weight: 800; color: #333; 
+            white-space: nowrap; /* 禁止換行 */
+            flex-shrink: 0; /* 禁止壓縮 */
+            margin-left: 10px; /* 增加左邊距，避免太靠近標題 */
+            text-align: right; 
+        }
+        
         .calc-result-item.winner.card-theme-richart .calc-money { color: var(--brand-richart); }
         .calc-result-item.winner.card-theme-cube .calc-money { color: var(--brand-cube); }
         .calc-result-item.winner.card-theme-unicard .calc-money { color: var(--brand-unicard); }
         .calc-result-item.winner.card-theme-ubear .calc-money { color: #b8860b; } 
         .calc-result-item.winner.card-theme-dawho .calc-money { color: var(--brand-dawho); }
 
-        .action-btn { 
-            width:100%; padding:14px; background:var(--color-primary); color:white; 
-            border:none; border-radius:12px; font-weight:700; margin-top:10px; 
-            font-size:1.1em; box-shadow: 0 4px 10px rgba(33, 128, 160, 0.3); 
-        }
+        .calc-detail { font-size: 0.85em; color: #666; background: rgba(0,0,0,0.03); padding: 8px; border-radius: 6px; margin-top: 8px; font-family: monospace; }
+        .upgrade-tip { background-color: #fff3e0; color: #e65100; padding: 8px 12px; border-radius: 8px; font-size: 0.85em; margin-top: 8px; font-weight: 600; border: 1px solid #ffe0b2; }
+
+        .action-btn { width:100%; padding:14px; background:var(--color-primary); color:white; border:none; border-radius:12px; font-weight:700; margin-top:10px; font-size:1.1em; box-shadow: 0 4px 10px rgba(33, 128, 160, 0.3); transition: transform 0.1s; }
         .action-btn:active { transform: scale(0.98); }
 
     </style>
@@ -290,7 +309,7 @@
                 
                 <div class="form-group">
                     <div class="input-wrapper">
-                        <input type="text" id="searchMerchant" placeholder="輸入商家 (如：全家、高鐵)..." autocomplete="off" inputmode="search">
+                        <input type="text" id="searchMerchant" placeholder="輸入商家 (如：全家、高鐵)..." autocomplete="off">
                         <button id="clearSearchBtn" class="clear-btn" onclick="clearSearch('searchMerchant', 'clearSearchBtn', true)">✕</button>
                         <div id="suggestionDropdown" class="suggestion-dropdown"></div>
                     </div>
