@@ -432,13 +432,13 @@
                         note: '回饋依方案'
                     },
                     { name: 'UP選', rate: 0.045, desc: '百大特店 (需149點訂閱)', type: 'text', note: '一般1% + UP選3.5% (上限刷$142,857)' },
-                    { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '一般1% + 任意選2.5% (上限刷4萬)' },
-                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '一般1% + 簡單選2% (上限刷5萬)' },
+                    { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '一般1% + 任意選2.5% (上限刷$400,000)' },
+                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '一般1% + 簡單選2% (上限刷$500,000)' },
                     { 
                         name: '新戶回饋', rate: 0.03, tag: 'new', type: 'modal',
-                        desc: '指定通路 +3% 最高7.5%', 
+                        desc: '指定通路：LINE Pay、Uber Eats、家樂福、韓國、全盈+PAY', 
                         categories: { '指定通路': ['LINE Pay', 'Uber Eats', '家樂福', '韓國', '全盈+PAY'] },
-                        note: '<span class="urgent-text">3% (上限刷$14,667)</span>' 
+                        note: '<span class="urgent-text">指定通路 + 3% (上限刷$14,667) 最高7.5%</span>' 
                     }
                 ]
             },
@@ -456,16 +456,16 @@
                       },
                       note: '一般1% + 網購2% (上限刷$7500)' 
                     },
-                    { name: '新戶網購/Pay加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '網購/Pay加碼 + 7% (最高10%)', note: '7% (上限刷$2142)', categories: {} }
+                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '同網購/Pay通路', note: '網購/Pay加碼 + 7% (上限刷$2142) 最高10%', categories: {} }
                 ]
             },
             {
                 id: 'dawho', name: '永豐 DAWHO', note: '大戶等級：國內3.5%/國外4.5% (上限刷 1.6 萬)',
                 benefits: [
                     { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '國內1%/國外2%', categories: {} },
-                    { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷 (含任務)', tag: 'all', type: 'text', note: '一般1% + 任務2.5% (上限刷$16,000)' },
-                    { name: '國外全通路', rate: 0.045, desc: '國外消費 (含任務)', tag: 'foreign', type: 'text', note: '一般2% + 任務2.5% (上限刷$16,000)' },
-                    { name: '悠遊卡', rate: 0.03, desc: '悠遊卡自動加值', tag: 'easy', type: 'text', note: '3% (上限刷$3333)' }
+                    { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷', tag: 'all', type: 'text', note: '一般1% + 任務2.5% (上限刷$16,000)' },
+                    { name: '國外全通路', rate: 0.045, desc: '國外消費)', tag: 'foreign', type: 'text', note: '一般2% + 任務2.5% (上限刷$16,000)' },
+                    { name: '悠遊卡自動加值', rate: 0.03, desc: '不含一般消費回饋', tag: 'easy', type: 'text', note: '3% (上限刷$3333)' }
                 ]
             }
         ];
@@ -868,4 +868,5 @@
     </script>
 </body>
 </html>
+
 
