@@ -14,12 +14,12 @@
             --color-border: #e0e0e0;
             --color-success: #2e7d32;
             
-            /* 品牌色定義 (已修正) */
-            --brand-richart: #e01a22;
-            --brand-cube: #636e72;   /* 改為深灰色 */
-            --brand-unicard: #69c3a7;
-            --brand-ubear: #e6b800;  /* 改為深金黃色 */
-            --brand-dawho: #bfa065;
+            /* === 品牌色定義 (最終定案) === */
+            --brand-richart: #e01a22; /* 台新紅 */
+            --brand-cube: #636e72;    /* 國泰深灰 */
+            --brand-unicard: #69c3a7; /* 玉山青綠 */
+            --brand-ubear: #e6b800;   /* 玉山深黃 */
+            --brand-dawho: #2d3436;   /* 永豐黑 (修正以區隔黃色) */
         }
 
         body {
@@ -28,7 +28,7 @@
             color: var(--color-text);
             padding: 20px;
             line-height: 1.6;
-            padding-bottom: 90px;
+            padding-bottom: 90px; /* 避開手機底部導覽列 */
             -webkit-tap-highlight-color: transparent;
         }
         
@@ -110,7 +110,7 @@
         .toggle-btn.active { background: #e3f2fd; border-color: var(--color-primary); color: var(--color-primary); font-weight: 700; transform: scale(1.02); }
         .toggle-checkbox { margin-right: 6px; width: 16px; height: 16px; pointer-events: none; }
 
-        /* === 品牌卡片列表 === */
+        /* === 品牌卡片列表 (搜尋結果) === */
         .merchant-list {
             background: var(--color-surface); padding: 16px; border-radius: 12px; margin-bottom: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer;
@@ -119,6 +119,7 @@
         }
         .merchant-list:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
         
+        /* 品牌色 Class */
         .card-theme-richart { border-left-color: var(--brand-richart) !important; }
         .card-theme-cube { border-left-color: var(--brand-cube) !important; }
         .card-theme-unicard { border-left-color: var(--brand-unicard) !important; }
@@ -130,19 +131,27 @@
         .merchant-best-info { text-align: right; }
         .best-rate { color: var(--color-text); font-weight: 800; font-size: 1.4em; }
         .best-card-name { font-size: 0.85em; color: #666; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+        
+        /* 通用的迷你卡片 Icon (用於搜尋結果與 Overview) */
+        .card-icon-shape { 
+            width: 28px; height: 18px; border-radius: 4px; display: inline-block; 
+            vertical-align: middle; margin-right: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        /* 搜尋結果的小圓點 (保留作為裝飾，或也可統一) */
         .card-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 
-        /* === Accordion === */
+        /* === Accordion (權益總覽) === */
         .card-accordion-item {
             background: var(--color-surface); border-radius: 12px; margin-bottom: 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid var(--color-border);
+            border-left: 5px solid #ccc; /* 預設 */
         }
         .accordion-header {
             padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
             background: white; transition: background 0.2s;
         }
-        .card-title-row { display: flex; align-items: center; gap: 10px; }
-        .card-icon { font-size: 1.2em; }
+        .card-title-row { display: flex; align-items: center; }
         .card-title-text { font-weight: 700; font-size: 1.1em; color: var(--color-text); }
         .chevron { transition: transform 0.3s; color: #999; }
         .accordion-header.active .chevron { transform: rotate(180deg); }
@@ -217,29 +226,23 @@
             border: 1px solid #eee; border-radius: 12px; border-left: 5px solid #ccc;
             transition: transform 0.2s;
         }
-        /* 冠軍樣式 (呼吸動畫) */
         .calc-result-item.winner { 
             background: #ffffff; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             border: 1px solid rgba(0,0,0,0.05);
-            animation: pulse 2s infinite;
         }
-        @keyframes pulse { 0% { box-shadow: 0 4px 15px rgba(0,0,0,0.08); } 50% { box-shadow: 0 8px 20px rgba(0,0,0,0.12); } 100% { box-shadow: 0 4px 15px rgba(0,0,0,0.08); } }
 
         .calc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         
-        /* 修正：預設字重為一般 (400) */
-        .calc-money { font-size: 1.5em; font-weight: 400; color: var(--color-text); }
+        /* 修正：所有名次皆為粗體 (800)，預設黑色 */
+        .calc-money { font-size: 1.5em; font-weight: 800; color: #333; }
         
-        /* 修正：只有冠軍是粗體 (800) */
-        .calc-result-item.winner .calc-money { font-weight: 800; }
-
-        /* 品牌顏色對應 */
-        .calc-result-item.card-theme-richart .calc-money { color: var(--brand-richart); }
-        .calc-result-item.card-theme-cube .calc-money { color: var(--brand-cube); }
-        .calc-result-item.card-theme-unicard .calc-money { color: var(--brand-unicard); }
-        .calc-result-item.card-theme-ubear .calc-money { color: var(--brand-ubear); }
-        .calc-result-item.card-theme-dawho .calc-money { color: var(--brand-dawho); }
+        /* 修正：只有冠軍套用品牌色，其他維持黑色 */
+        .calc-result-item.winner.card-theme-richart .calc-money { color: var(--brand-richart); }
+        .calc-result-item.winner.card-theme-cube .calc-money { color: var(--brand-cube); }
+        .calc-result-item.winner.card-theme-unicard .calc-money { color: var(--brand-unicard); }
+        .calc-result-item.winner.card-theme-ubear .calc-money { color: var(--brand-ubear); }
+        .calc-result-item.winner.card-theme-dawho .calc-money { color: var(--brand-dawho); }
 
         .calc-detail { font-size: 0.85em; color: #666; background: rgba(0,0,0,0.03); padding: 8px; border-radius: 6px; margin-top: 8px; font-family: monospace; }
         .upgrade-tip { background-color: #fff3e0; color: #e65100; padding: 8px 12px; border-radius: 8px; font-size: 0.85em; margin-top: 8px; font-weight: 600; border: 1px solid #ffe0b2; }
@@ -362,18 +365,18 @@
             return fixed.endsWith('.0') ? fixed.slice(0, -2) : fixed;
         };
         
-        // === 修正：品牌色定義 (UBear 黃色, CUBE 深灰) ===
+        // === 修正：品牌色定義 (DAWHO 黑色, UBear 黃色) ===
         const brandColorMap = {
             'richart': { class: 'card-theme-richart', color: '#e01a22' },
-            'cube': { class: 'card-theme-cube', color: '#636e72' },  // 深灰色
+            'cube': { class: 'card-theme-cube', color: '#636e72' },
             'unicard': { class: 'card-theme-unicard', color: '#69c3a7' },
-            'ubear': { class: 'card-theme-ubear', color: '#e6b800' },  // 深金黃色
-            'dawho': { class: 'card-theme-dawho', color: '#bfa065' }
+            'ubear': { class: 'card-theme-ubear', color: '#e6b800' },
+            'dawho': { class: 'card-theme-dawho', color: '#2d3436' } /* 純黑 */
         };
 
         const cardBenefitsData = [
             {
-                id: 'richart', name: '台新 Richart', icon: '🐶', note: '需每日透過 App 切換權益',
+                id: 'richart', name: '台新 Richart', note: '需每日透過 App 切換權益',
                 benefits: [
                     { name: '一般消費', rate: 0.003, desc: '國內外一般消費', type: 'text', note: '0.3%', categories: {} },
                     { name: 'Pay著刷', rate: 0.038, desc: '台新Pay(超商/百貨) | IKEA | 台灣大車隊', note: '3.8%', tag: 'pay', categories: { '台新Pay':['7-11', '全家便利商店', '新光三越', 'Richart Mart', '康是美', 'IKEA', 'NET'], '台灣Pay':['神腦', '燦坤', '全國電子', '麥當勞', '美廉社', '大樹藥局', '杏一醫療'], '交通':['台灣大車隊'] } },
@@ -386,7 +389,7 @@
                 ]
             },
             {
-                id: 'cube', name: '國泰 CUBE', icon: '⚪️', note: '需每日透過 App 切換方案',
+                id: 'cube', name: '國泰 CUBE', note: '需每日透過 App 切換方案',
                 benefits: [
                     { name: '一般消費', rate: 0.003, desc: '一般消費 (無上限)', type: 'text', note: '0.3%', categories: {} },
                     { name: '瘋大港', rate: 0.035, desc: '高雄住宿 | Klook | 高鐵台鐵', note: '3.5%', tag: 'crazy', categories: { '指定高雄住宿':['城市商旅', '和逸飯店', '旅居文旅', '秝芯旅店', '夏優旅居', '華園大飯店', '捷絲旅', '麗尊酒店', '帕可麗酒店', '鈞怡大飯店'], '旅遊平台':['Klook'], '指定交通':['台灣高鐵', '台灣鐵路局'] } },
@@ -397,7 +400,7 @@
                 ]
             },
             {
-                id: 'unicard', name: '玉山 Unicard', icon: '⛰️', note: '方案: 簡單3% / 任意3.5% / UP4.5%',
+                id: 'unicard', name: '玉山 Unicard', note: '方案: 簡單3% / 任意3.5% / UP4.5%',
                 benefits: [
                     { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '1%', categories: {} },
                     { 
@@ -429,7 +432,7 @@
                 ]
             },
             {
-                id: 'ubear', name: '玉山 UBear', icon: '🐻', note: '娛樂10% / 網購3% (新戶10%)',
+                id: 'ubear', name: '玉山 UBear', note: '娛樂10% / 網購3% (新戶10%)',
                 benefits: [
                     { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '1%', categories: {} },
                     { name: '影音娛樂', rate: 0.10, tag: 'ent', desc: 'Netflix | Disney+ | Nintendo', categories: { '影音娛樂': ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes', 'Google Play', 'Funnow'] }, note: '10% (上限$100)' },
@@ -446,7 +449,7 @@
                 ]
             },
             {
-                id: 'dawho', name: '永豐 DAWHO', icon: '⚫️', note: '國內 3.5% / 國外 4.5% (大戶等級)',
+                id: 'dawho', name: '永豐 DAWHO', note: '國內 3.5% / 國外 4.5% (大戶等級)',
                 benefits: [
                     { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '國內1%/國外2%', categories: {} },
                     { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷 (含任務)', tag: 'all', type: 'text', note: '3.5%' },
@@ -499,12 +502,22 @@
             document.getElementById('calcNewUser').addEventListener('change', calculateRewards);
         }
 
+        // === 修正：新戶勾選時，立即更新列表 ===
         function toggleSearchNewUser() {
             const btn = document.getElementById('searchNewUserBtn');
             const chk = document.getElementById('searchNewUser');
             chk.checked = !chk.checked;
             btn.classList.toggle('active', chk.checked);
-            reSearch();
+            
+            // 邏輯判斷：如果有選分類，就重跑分類；如果有搜尋字，就重跑搜尋
+            if (activeFilter) {
+                // 為了重新渲染，先清空 activeFilter 再重新套用
+                const currentFilter = activeFilter;
+                activeFilter = null;
+                applyCategoryFilter(currentFilter);
+            } else {
+                reSearch();
+            }
         }
 
         function toggleCalcNewUser() {
@@ -561,7 +574,9 @@
                 activeFilter = null; tags.forEach(t => t.classList.remove('active'));
                 document.getElementById('merchantContainer').innerHTML = ''; return;
             }
-            activeFilter = filterName; tags.forEach(t => t.classList.toggle('active', t.textContent === filterName));
+            activeFilter = filterName; tags.forEach(t => {
+                t.classList.toggle('active', t.textContent === filterName);
+            });
             const filter = quickFilters.find(f => f.name === filterName);
             const matched = Object.values(globalMerchantDB).filter(d => filter.keywords.some(kw => d.category.includes(kw)));
             document.getElementById('merchantContainer').innerHTML = matched.length ? matched.map(d => generateMerchantCardHTML(d.name)).join('') : '<div style="text-align:center; padding:20px; color:#999;">無資料</div>';
@@ -643,7 +658,7 @@
                     <div><div class="merchant-name">${data ? data.name : name}</div>${data ? `<span class="merchant-type">${data.category}</span>` : '<span class="merchant-type">一般消費排行</span>'}</div>
                     <div class="merchant-best-info">
                         <div class="best-rate">${(best.rate * 100).toFixed(1)}%</div>
-                        <div class="best-card-name"><span class="card-dot" style="background:${dotColor}"></span>${best.cardName}</div>
+                        <div class="best-card-name"><span class="card-icon-shape" style="background:${dotColor}"></span>${best.cardName}</div>
                     </div>
                 </div>
             `;
@@ -764,7 +779,7 @@
 
             results.sort((a, b) => b.reward - a.reward);
             
-            // 修正：取消數字滾動動畫，第一名增加獎盃符號
+            // 修正：所有名次皆為粗體，只有第一名有獎盃和品牌色，其他皆黑色
             container.innerHTML = results.map((res, idx) => {
                 const isWinner = idx === 0;
                 const themeClass = brandColorMap[res.cardId]?.class || '';
@@ -784,18 +799,26 @@
             `}).join('');
         }
 
+        // === 修正：權益總覽卡片圖示改為品牌色矩形 ===
         function renderCardOverview() {
-            document.getElementById('cardOverviewContainer').innerHTML = cardBenefitsData.map((card, idx) => `
-                <div class="card-accordion-item">
+            document.getElementById('cardOverviewContainer').innerHTML = cardBenefitsData.map((card, idx) => {
+                const color = brandColorMap[card.id]?.color || '#ccc';
+                const themeClass = brandColorMap[card.id]?.class || '';
+                return `
+                <div class="card-accordion-item ${themeClass}">
                     <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="card-title-row"><span class="card-icon">${card.icon}</span><span class="card-title-text">${card.name}</span></div><span class="chevron">▼</span>
+                        <div class="card-title-row">
+                            <span class="card-icon-shape" style="background:${color}"></span>
+                            <span class="card-title-text">${card.name}</span>
+                        </div>
+                        <span class="chevron">▼</span>
                     </div>
                     <div class="accordion-body">
                         <div class="benefit-row no-action" style="background:#fffcec;"><div class="benefit-desc">${card.note}</div></div>
                         ${renderBenefits(card, idx)}
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
         function renderBenefits(card, cardIndex) {
             return card.benefits.map((b, bIndex) => {
