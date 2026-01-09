@@ -151,6 +151,7 @@
             border: 1px solid #b3e5fc; /* 藍邊框 */
             padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 700;
         }
+        /* 列表中的標籤微調 */
         .list-badge {
             padding: 1px 8px; border-radius: 10px; font-size: 0.8em; margin-left: 6px; vertical-align: middle;
         }
@@ -441,7 +442,7 @@
                     { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '3%' },
                     { 
                         name: '新戶回饋', rate: 0.03, tag: 'new', type: 'modal',
-                        desc: '指定通路 +3% (最高7.5%)', 
+                        desc: '指定通路', 
                         categories: { '指定通路': ['LINE Pay', 'Uber Eats', '家樂福', '韓國', '全盈+PAY'] },
                         note: '<span class="urgent-text">新戶+3%</span>' 
                     }
@@ -461,7 +462,7 @@
                       },
                       note: '3% (新戶10%)' 
                     },
-                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '[新戶] 網購/Pay加碼 +7%', note: '上限$2142', categories: {} }
+                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '同網購/Pay通路', note: '網購/Pay加碼 + 7% (上限刷$2142) 最高10%', categories: {} }
                 ]
             },
             {
