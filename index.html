@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>信用卡回饋查詢 2026</title>
+    <title>信用卡回饋查詢助手 2026)</title>
     <style>
         /* === 基礎設定 === */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -13,16 +13,19 @@
             --color-bg: #f4f7f6;
             --color-surface: #ffffff;
             --color-text: #333333;
+            --color-text-light: #666666;
             --color-border: #e0e0e0;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
             --radius-md: 12px;
+            --radius-lg: 16px;
 
-            /* === 品牌色定義 (最終定案) === */
-            --brand-richart: #e01a22; /* 台新紅 */
-            --brand-cube: #00AA4F;    /* 國泰綠 */
-            --brand-unicard: #1890ff; /* 玉山藍 */
-            --brand-ubear: #e6b800;   /* 玉山黃 */
-            --brand-dawho: #2d3436;   /* 永豐黑 */
+            /* 品牌色 */
+            --brand-richart: #e01a22;
+            --brand-cube: #636e72;
+            --brand-unicard: #69c3a7;
+            --brand-ubear: #e6b800;
+            --brand-dawho: #2d3436;
         }
 
         body {
@@ -39,17 +42,7 @@
         /* 標題與 Header */
         header { text-align: center; margin-bottom: 20px; }
         h1 { color: var(--color-primary); font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; }
-
-        /* === 品牌圓點 (核心修改) === */
-        .brand-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            flex-shrink: 0;
-            vertical-align: middle;
-        }
+        .subtitle { font-size: 0.9rem; color: var(--color-text-light); }
 
         /* === 導覽列 (Bottom Nav) === */
         .nav-tabs {
@@ -57,7 +50,7 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 8px;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             box-shadow: var(--shadow-sm);
             margin-bottom: 20px;
             position: sticky;
@@ -66,37 +59,64 @@
         }
 
         .nav-item {
-            flex: 1; text-align: center; padding: 10px; cursor: pointer;
-            border-radius: 8px; font-weight: 600; color: #999;
-            transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #999;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
         
-        .nav-item.active { background-color: var(--color-primary-light); color: var(--color-primary); }
+        .nav-item.active {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+        }
 
+        /* 手機版導覽列固定底部 */
         @media (max-width: 768px) {
             .nav-tabs {
-                position: fixed; bottom: 0; top: auto; left: 0; right: 0;
-                margin-bottom: 0; border-radius: 0; border-top: 1px solid #eee;
-                padding-bottom: max(10px, env(safe-area-inset-bottom)); z-index: 999;
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                left: 0;
+                right: 0;
+                margin-bottom: 0;
+                border-radius: 0;
+                border-top: 1px solid #eee;
+                padding-bottom: max(10px, env(safe-area-inset-bottom));
+                z-index: 999;
             }
             .nav-item { flex-direction: column; font-size: 0.75rem; gap: 2px; padding: 6px; }
+            .nav-icon { font-size: 1.2rem; margin-bottom: 2px; }
             body { padding-top: 10px; }
         }
 
-        .tab-content { display: none; opacity: 0; animation: fadeIn 0.3s forwards; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { to { opacity: 1; } }
+        /* === Tab 內容切換動畫 === */
+        .tab-content { display: none; opacity: 0; transform: translateY(5px); transition: opacity 0.2s, transform 0.2s; }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
 
         /* === 表單區域 === */
         .form-section {
-            background: var(--color-surface); padding: 20px;
-            border-radius: var(--radius-md); margin-bottom: 20px;
+            background: var(--color-surface);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
             box-shadow: var(--shadow-sm);
         }
 
         .info-alert {
-            background: #fff8e1; border-left: 4px solid #ffc107;
-            padding: 12px; border-radius: 6px; font-size: 0.9rem; color: #856404;
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #856404;
             margin-bottom: 15px;
         }
 
@@ -104,58 +124,104 @@
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #555; }
         
         input[type="text"], input[type="number"], select {
-            width: 100%; padding: 12px 40px 12px 14px;
-            border: 1px solid var(--color-border); border-radius: 10px;
-            font-size: 16px; background: #fff; appearance: none;
+            width: 100%;
+            padding: 12px 40px 12px 14px;
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            font-size: 16px; /* 防止 iOS zoom-in */
+            background: #fff;
+            appearance: none;
+            transition: border 0.2s;
         }
-        input:focus, select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(33, 128, 160, 0.15); }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(33, 128, 160, 0.15);
+        }
 
         .clear-btn {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-            background: #ddd; border: none; border-radius: 50%;
-            width: 20px; height: 20px; line-height: 20px; text-align: center;
-            font-size: 12px; color: #fff; cursor: pointer; display: none;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ddd;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+            display: none;
         }
 
+        /* 自動完成選單 */
         .suggestion-list {
-            position: absolute; top: 100%; left: 0; right: 0;
-            background: #fff; border: 1px solid #eee; border-radius: 0 0 10px 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 50;
-            max-height: 250px; overflow-y: auto; display: none;
+            position: absolute;
+            top: 100%; left: 0; right: 0;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 0 0 10px 10px;
+            box-shadow: var(--shadow-md);
+            z-index: 50;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
         }
         .suggestion-item { padding: 12px 16px; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
         .suggestion-item:active { background: #f0f0f0; }
 
+        /* 控制按鈕列 */
         .controls-row { display: flex; gap: 10px; margin-bottom: 15px; }
         .control-item { flex: 1; }
         
+        /* 切換開關按鈕 */
         .toggle-btn {
             display: flex; align-items: center; justify-content: center;
-            padding: 0 12px; height: 46px; background: #fff;
-            border: 1px solid var(--color-border); border-radius: 10px;
-            cursor: pointer; font-size: 0.9rem; user-select: none; transition: all 0.2s;
+            padding: 0 12px; height: 46px;
+            background: #fff; border: 1px solid var(--color-border);
+            border-radius: 10px; cursor: pointer;
+            font-size: 0.9rem; transition: all 0.2s;
+            user-select: none;
         }
-        .toggle-btn.active { background: var(--color-primary-light); border-color: var(--color-primary); color: var(--color-primary); font-weight: 700; }
+        .toggle-btn.active {
+            background: var(--color-primary-light);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            font-weight: 700;
+        }
         .toggle-btn input { display: none; }
         .toggle-btn::before {
             content: ''; display: inline-block; width: 16px; height: 16px;
             border: 2px solid #ccc; border-radius: 4px; margin-right: 6px;
             transition: all 0.2s;
         }
-        .toggle-btn.active::before { border-color: var(--color-primary); background: var(--color-primary); }
+        .toggle-btn.active::before {
+            border-color: var(--color-primary);
+            background: var(--color-primary);
+        }
 
+        /* 快速分類標籤 */
         .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .tag {
-            padding: 6px 14px; background: #fff; border: 1px solid var(--color-border);
-            border-radius: 20px; font-size: 0.85rem; color: #555; cursor: pointer;
+            padding: 6px 14px;
+            background: #fff; border: 1px solid var(--color-border);
+            border-radius: 20px;
+            font-size: 0.85rem; color: #555;
+            cursor: pointer; transition: all 0.2s;
         }
-        .tag.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+        .tag.active {
+            background: var(--color-primary); color: #fff; border-color: var(--color-primary);
+        }
 
-        /* === 列表與卡片樣式 === */
+        /* === 搜尋結果列表 === */
         .merchant-card {
             background: #fff; padding: 16px; border-radius: 12px;
             margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
-            border-left: 5px solid #ccc; box-shadow: var(--shadow-sm);
+            border-left: 5px solid #ccc;
+            box-shadow: var(--shadow-sm);
             cursor: pointer; transition: transform 0.1s;
         }
         .merchant-card:active { transform: scale(0.98); }
@@ -164,22 +230,27 @@
         
         .rate-block { text-align: right; }
         .rate-val { font-size: 1.5rem; font-weight: 800; color: #333; }
-        .card-name-row { font-size: 0.85rem; color: #666; display: flex; align-items: center; justify-content: flex-end; margin-top: 4px; }
+        .card-hint { font-size: 0.8rem; color: #666; display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+        .color-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
-        /* === 試算結果 === */
+        /* === 試算結果樣式 === */
         .calc-btn {
-            width: 100%; padding: 14px; background: var(--color-primary); color: white;
-            border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700;
-            box-shadow: 0 4px 10px rgba(33, 128, 160, 0.3); margin-top: 10px; cursor: pointer;
+            width: 100%; padding: 14px;
+            background: var(--color-primary); color: white;
+            border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 700;
+            box-shadow: 0 4px 10px rgba(33, 128, 160, 0.3);
+            margin-top: 10px; cursor: pointer;
         }
         .calc-btn:active { transform: scale(0.98); }
 
         .result-item {
             background: #fff; padding: 15px; border-radius: 12px;
-            margin-bottom: 12px; border: 1px solid #eee; border-left: 5px solid #ccc;
-            display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 10px;
+            margin-bottom: 12px; border: 1px solid #eee;
+            display: grid; grid-template-columns: 40px 1fr auto; align-items: center;
+            gap: 10px;
         }
-        .result-rank { font-weight: 700; color: #bbb; font-size: 0.9rem; text-align: center; }
+        .result-rank { font-weight: 800; color: #999; text-align: center; }
         .result-main h4 { font-size: 1rem; margin-bottom: 2px; }
         .result-desc { font-size: 0.8rem; color: #777; }
         .result-money { font-weight: 800; font-size: 1.2rem; text-align: right; }
@@ -187,54 +258,81 @@
 
         /* 冠軍樣式 */
         .result-item.winner {
-            background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05); z-index: 10;
+            background: #fff;
+            border: 2px solid var(--color-primary);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
         }
-        .result-item.winner .result-rank { font-size: 1.2rem; }
-        
-        /* 品牌色應用類別 */
-        .theme-richart { border-left-color: var(--brand-richart) !important; }
-        .theme-richart.winner .result-money, .theme-richart.winner .result-rank { color: var(--brand-richart); }
+        .result-item.winner::before {
+            content: ''; position: absolute; top:0; left:0; width: 6px; height: 100%;
+            background: var(--color-primary);
+        }
+        .result-item.winner .result-money { color: var(--color-primary); font-size: 1.4rem; }
+        .result-item.winner .result-rank { font-size: 1.5rem; }
 
-        .theme-cube { border-left-color: var(--brand-cube) !important; }
-        .theme-cube.winner .result-money, .theme-cube.winner .result-rank { color: var(--brand-cube); }
+        /* 品牌色 Class */
+        .theme-richart { border-left-color: var(--brand-richart); }
+        .theme-richart.winner { border-color: var(--brand-richart); }
+        .theme-richart.winner::before, .theme-richart.winner .result-money { background: none; color: var(--brand-richart); }
+        .theme-richart.winner::before { background: var(--brand-richart); }
 
-        .theme-unicard { border-left-color: var(--brand-unicard) !important; }
-        .theme-unicard.winner .result-money, .theme-unicard.winner .result-rank { color: var(--brand-unicard); }
+        .theme-cube { border-left-color: var(--brand-cube); }
+        .theme-cube.winner { border-color: var(--brand-cube); }
+        .theme-cube.winner::before, .theme-cube.winner .result-money { color: var(--brand-cube); }
+        .theme-cube.winner::before { background: var(--brand-cube); }
 
-        .theme-ubear { border-left-color: var(--brand-ubear) !important; }
-        /* 黃色文字太淺，改用深金色以利閱讀 */
-        .theme-ubear.winner .result-money, .theme-ubear.winner .result-rank { color: #b8860b; }
+        .theme-unicard { border-left-color: var(--brand-unicard); }
+        .theme-unicard.winner { border-color: var(--brand-unicard); }
+        .theme-unicard.winner::before, .theme-unicard.winner .result-money { color: var(--brand-unicard); }
+        .theme-unicard.winner::before { background: var(--brand-unicard); }
 
-        .theme-dawho { border-left-color: var(--brand-dawho) !important; }
-        .theme-dawho.winner .result-money, .theme-dawho.winner .result-rank { color: var(--brand-dawho); }
+        .theme-ubear { border-left-color: var(--brand-ubear); }
+        .theme-ubear.winner { border-color: var(--brand-ubear); }
+        .theme-ubear.winner::before, .theme-ubear.winner .result-money { color: #b8860b; } /* 深黃色字體較清楚 */
+        .theme-ubear.winner::before { background: var(--brand-ubear); }
 
-        /* === 權益總覽 === */
+        .theme-dawho { border-left-color: var(--brand-dawho); }
+        .theme-dawho.winner { border-color: var(--brand-dawho); }
+        .theme-dawho.winner::before, .theme-dawho.winner .result-money { color: var(--brand-dawho); }
+        .theme-dawho.winner::before { background: var(--brand-dawho); }
+
+        /* === 權益總覽 (Accordion) === */
         .accordion-item {
             background: #fff; border-radius: 12px; margin-bottom: 12px;
-            border: 1px solid #eee; overflow: hidden; border-left: 5px solid #ccc;
+            border: 1px solid #eee; overflow: hidden;
         }
         .accordion-header {
             padding: 16px; display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; font-weight: 700; color: #444;
+            cursor: pointer; font-weight: 700;
         }
-        .accordion-title { display: flex; align-items: center; }
+        .brand-badge {
+            display: inline-block; padding: 4px 10px; border-radius: 6px; 
+            color: #fff; font-size: 0.8rem; margin-right: 10px; min-width: 80px; text-align: center;
+        }
         .accordion-body { display: none; padding: 0; background: #fafafa; border-top: 1px solid #eee; }
-        .accordion-body.open { display: block; }
+        .accordion-body.open { display: block; animation: slideDown 0.3s; }
         .benefit-row { padding: 12px 16px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+        .benefit-row:last-child { border-bottom: none; }
+        .benefit-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .benefit-desc { font-size: 0.85rem; color: #666; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* === Modal 彈窗 === */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.6); z-index: 2000;
             display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px); padding: 20px;
+            backdrop-filter: blur(5px);
+            padding: 20px;
         }
         .modal-overlay.show { display: flex; }
         .modal-content {
             background: #fff; width: 100%; max-width: 500px;
             border-radius: 16px; max-height: 80vh; display: flex; flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: popIn 0.3s;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: popIn 0.3s;
         }
         @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
@@ -247,7 +345,8 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px; background: #f9f9f9; border-radius: 8px; margin-bottom: 8px;
         }
-        .detail-row.best { background: #f0f7ff; border: 1px solid #cce5ff; }
+        .detail-row.best { background: #e3f2fd; border: 1px solid #90caf9; }
+        .badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; background: #eee; color: #555; margin-left: 5px; }
 
     </style>
 </head>
@@ -355,13 +454,13 @@
     </div>
 
     <script>
-        // === 資料庫設定 (品牌色更新) ===
+        // === 資料庫設定 ===
         const brandConfig = {
-            'richart': { color: '#e01a22', class: 'theme-richart' }, /* 紅 */
-            'cube':    { color: '#00AA4F', class: 'theme-cube' },    /* 國泰綠 (更新) */
-            'unicard': { color: '#1890ff', class: 'theme-unicard' }, /* 玉山藍 (更新) */
-            'ubear':   { color: '#e6b800', class: 'theme-ubear' },   /* 黃 */
-            'dawho':   { color: '#2d3436', class: 'theme-dawho' }    /* 黑 */
+            'richart': { color: '#e01a22', class: 'theme-richart' },
+            'cube': { color: '#636e72', class: 'theme-cube' },
+            'unicard': { color: '#69c3a7', class: 'theme-unicard' },
+            'ubear': { color: '#e6b800', class: 'theme-ubear' },
+            'dawho': { color: '#2d3436', class: 'theme-dawho' }
         };
 
         const cardData = [
@@ -412,7 +511,7 @@
             }
         ];
 
-        // 關鍵字對應
+        // 關鍵字對應 (簡化版)
         const aliasMap = {
             '小七': '7-11', 'uber': 'Uber', 'ubereats': 'Uber Eats', '熊貓': 'foodpanda',
             'line': 'LINE Pay', '全聯': '全聯', '家樂福': '家樂福', '高鐵': '高鐵', '台鐵': '台鐵',
@@ -436,6 +535,7 @@
             renderOverview();
             renderQuickTags();
 
+            // 綁定事件
             setupInput('searchMerchant', 'searchSuggestion', 'clearSearchBtn', (val) => {
                 if(!val && !activeTag) document.getElementById('searchResults').innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">👇 輸入商家名稱或點擊上方分類</div>';
                 else if (val) {
@@ -492,7 +592,10 @@
                 }
             });
 
-            input.addEventListener('keyup', (e) => { if(e.key === 'Enter') input.blur(); });
+            // 按 Enter 收起鍵盤
+            input.addEventListener('keyup', (e) => {
+                if(e.key === 'Enter') input.blur();
+            });
         }
 
         function pickSuggest(inputId, val) {
@@ -505,9 +608,12 @@
 
         function clearInput(inputId) {
             const input = document.getElementById(inputId);
-            input.value = ''; input.focus(); input.dispatchEvent(new Event('input'));
+            input.value = '';
+            input.focus();
+            input.dispatchEvent(new Event('input')); // 觸發清空邏輯
         }
 
+        // === 搜尋邏輯 ===
         function renderQuickTags() {
             document.getElementById('quickTags').innerHTML = quickCategories.map(c => 
                 `<div class="tag" onclick="filterTag(this, '${c.name}')">${c.name}</div>`
@@ -523,7 +629,7 @@
                 activeTag = tagName;
                 document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
                 el.classList.add('active');
-                input.value = ''; 
+                input.value = ''; // 清空搜尋
                 renderSearchResults(null, tagName);
             }
         }
@@ -549,6 +655,7 @@
             const key = merchantName ? merchantName.toLowerCase() : '';
             let rawData = merchantIndex[key];
             
+            // 模糊搜尋補救
             if (!rawData && merchantName) {
                 const fuzzy = Object.keys(merchantIndex).find(k => k.includes(key) || key.includes(k));
                 if (fuzzy) rawData = merchantIndex[fuzzy];
@@ -557,6 +664,7 @@
             let cards = rawData ? JSON.parse(JSON.stringify(rawData.cards)) : [];
             const isForeign = ['國外','日本','韓國','海外'].some(k => merchantName.includes(k));
 
+            // 補上通用卡
             if (!cards.find(c => c.id === 'dawho')) {
                 cards.push({ id: 'dawho', name: '永豐 DAWHO', rate: isForeign?0.045:0.035, scheme: isForeign?'國外消費':'國內消費', tag: isForeign?'foreign':'all' });
             }
@@ -567,17 +675,21 @@
                 cards.push({ id: 'cube', name: '國泰 CUBE', rate: 0.003, scheme: '一般消費', tag: 'gen' });
             }
 
+            // 動態調整回饋率
             cards.forEach(c => {
+                // Unicard 邏輯
                 if (c.id === 'unicard' && c.tag === 'list') {
                     let rate = 0.035, txt = '任意選';
                     if (uniScheme === 'simple') { rate = 0.03; txt = '簡單選'; }
                     if (uniScheme === 'up') { rate = 0.045; txt = 'UP選'; }
+                    // 新戶加碼
                     const newBonusList = ['line pay','uber eats','家樂福','韓國','全盈'];
                     if (isNewUser && newBonusList.some(kw => merchantName.toLowerCase().includes(kw))) {
                         rate += 0.03; txt += ' + 新戶';
                     }
                     c.rate = rate; c.scheme = txt;
                 }
+                // UBear 新戶邏輯
                 if (c.id === 'ubear' && c.tag === 'net' && isNewUser) {
                     c.rate = 0.10; c.scheme = '網購/Pay + 新戶';
                 }
@@ -613,6 +725,8 @@
                 const best = cards[0];
                 const color = brandConfig[best.id]?.color || '#ccc';
                 const theme = brandConfig[best.id]?.class || '';
+                
+                // 將卡片資料存入 onclick
                 const cleanCards = JSON.stringify(cards).replace(/"/g, '&quot;');
                 
                 return `
@@ -623,8 +737,9 @@
                         </div>
                         <div class="rate-block">
                             <div class="rate-val">${(best.rate*100).toFixed(1)}%</div>
-                            <div class="card-name-row">
-                                <span class="brand-dot" style="background:${color}"></span>${best.name}
+                            <div class="card-hint">
+                                <span class="color-dot" style="background:${color}"></span>
+                                ${best.name}
                             </div>
                         </div>
                     </div>
@@ -632,6 +747,7 @@
             }).join('');
         }
 
+        // === 試算邏輯 ===
         function calculateRewards() {
             const amount = parseFloat(document.getElementById('calcAmount').value);
             const merchant = document.getElementById('calcMerchant').value;
@@ -642,10 +758,18 @@
 
             const cards = getCardListForMerchant(merchant, isNew, uniScheme);
             
+            // 計算實際金額 (含上限邏輯簡化版)
             const results = cards.map(c => {
                 let reward = Math.floor(amount * c.rate);
                 let note = `全額 ${(c.rate*100).toFixed(1)}%`;
-                if (c.id === 'dawho' && amount > 16000 && !c.tag.includes('foreign')) note += ' (注意上限)';
+                
+                // 簡單處理幾個主要上限
+                if (c.id === 'dawho' && amount > 16000 && !c.tag.includes('foreign')) {
+                   // 大戶簡易防呆: 超過部分僅 1%
+                   // 這邊邏輯可以更細，但為了 UI 簡潔先做概算
+                   note += ' (注意上限)';
+                }
+                
                 return { ...c, reward, note };
             }).sort((a,b) => b.reward - a.reward);
 
@@ -670,6 +794,7 @@
             }).join('');
         }
 
+        // === UI 輔助 ===
         function switchTab(id) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`tab-${id}`).classList.add('active');
@@ -682,13 +807,11 @@
             const container = document.getElementById('overviewContainer');
             container.innerHTML = cardData.map(card => {
                 const color = brandConfig[card.id].color;
-                const theme = brandConfig[card.id].class;
                 return `
-                    <div class="accordion-item ${theme}">
+                    <div class="accordion-item">
                         <div class="accordion-header" onclick="this.nextElementSibling.classList.toggle('open')">
-                            <div class="accordion-title">
-                                <span class="brand-dot" style="background:${color}"></span>
-                                <span>${card.name}</span>
+                            <div>
+                                <span class="brand-badge" style="background:${color}">${card.name}</span>
                             </div>
                             <span>▼</span>
                         </div>
@@ -696,11 +819,11 @@
                             <div class="benefit-row" style="background:#fffcf5; color:#856404; font-size:0.85rem;">💡 ${card.note}</div>
                             ${card.benefits.map(b => `
                                 <div class="benefit-row">
-                                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                    <div class="benefit-top">
                                         <strong>${b.name}</strong>
                                         <strong style="color:${color}">${(b.rate*100).toFixed(1)}%</strong>
                                     </div>
-                                    <div style="font-size:0.85rem; color:#666;">${b.desc}</div>
+                                    <div class="benefit-desc">${b.desc}</div>
                                 </div>
                             `).join('')}
                         </div>
@@ -719,15 +842,18 @@
                         <div style="font-size:0.85rem; color:#666;">${c.scheme}</div>
                     </div>
                     <div style="text-align:right">
-                        <div style="font-weight:800; color:${i===0? brandConfig[c.id].color :'#333'}">${(c.rate*100).toFixed(1)}%</div>
+                        <div style="font-weight:800; color:${i===0?'var(--color-primary)':'#333'}">${(c.rate*100).toFixed(1)}%</div>
                     </div>
                 </div>
             `).join('');
             document.getElementById('detailModal').classList.add('show');
         }
 
-        function closeModal() { document.getElementById('detailModal').classList.remove('show'); }
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('show');
+        }
 
+        // 啟動
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
