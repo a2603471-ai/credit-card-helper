@@ -220,11 +220,9 @@
         .detail-card-header { 
             padding: 10px 15px; background: #f9f9f9; 
             font-weight: 600; display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.95em; /* 縮小 */
+            font-size: 0.95em;
         }
         .detail-card-body { padding: 12px 15px; font-size: 0.9em; }
-        
-        /* 微調標籤在彈窗內的大小 */
         .detail-card-body .scheme-badge { font-size: 0.8em; padding: 2px 8px; }
 
         .plan-warning { color: var(--color-danger); font-weight: 600; font-size: 0.85em; margin-top: 6px; display: flex; align-items: center; padding-top: 6px; border-top: 1px dashed rgba(0,0,0,0.1); }
@@ -252,7 +250,6 @@
             border: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* 修正：強制金額靠右且不換行 */
         .calc-header { 
             display: flex; justify-content: space-between; align-items: flex-start;
             margin-bottom: 6px; 
@@ -270,7 +267,17 @@
         .calc-result-item.winner.card-theme-dawho .calc-money { color: var(--brand-dawho); }
 
         .calc-detail { font-size: 0.85em; color: #666; background: rgba(0,0,0,0.03); padding: 8px; border-radius: 6px; margin-top: 8px; font-family: monospace; }
-        .upgrade-tip { background-color: #fff3e0; color: #e65100; padding: 8px 12px; border-radius: 8px; font-size: 0.85em; margin-top: 8px; font-weight: 600; border: 1px solid #ffe0b2; }
+        
+        /* 拆單建議樣式 */
+        .split-recommendation {
+            margin-top: 12px; padding: 10px;
+            background-color: #f1f8e9; border: 1px dashed #aed581; border-radius: 8px;
+            color: #33691e; font-size: 0.9em;
+        }
+        .split-title { font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; }
+        .split-step { margin-left: 14px; margin-bottom: 4px; position: relative; }
+        .split-step::before { content: '•'; position: absolute; left: -12px; color: #689f38; }
+        .split-total { margin-top: 6px; font-weight: 700; border-top: 1px dotted #c5e1a5; padding-top: 4px; }
 
         .action-btn { width:100%; padding:14px; background:var(--color-primary); color:white; border:none; border-radius:12px; font-weight:700; margin-top:10px; font-size:1.1em; box-shadow: 0 4px 10px rgba(33, 128, 160, 0.3); transition: transform 0.1s; }
         .action-btn:active { transform: scale(0.98); }
@@ -408,34 +415,34 @@
 
         const cardBenefitsData = [
             {
-                id: 'richart', name: '台新 Richart', note: '需每日 App 切換權益 (各權益組別上限不同)',
+                id: 'richart', name: '台新 Richart', note: '需每日 App 切換權益 (一般消無上限/權益上限本身額度+30萬)',
                 benefits: [
-                    { name: '一般消費', rate: 0.003, desc: '國內外一般消費', type: 'text', note: '0.3%', categories: {} },
-                    { name: 'Pay著刷', rate: 0.038, desc: '綁定台新Pay', note: '3.8%', tag: 'pay', categories: { '台新Pay':['7-11', '全家便利商店', '新光三越', 'Richart Mart', '康是美', 'IKEA', 'NET'], '台灣Pay':['神腦', '燦坤', '全國電子', '麥當勞', '美廉社', '大樹藥局', '杏一醫療'], '交通':['台灣大車隊'] } },
-                    { name: 'LINE Pay', rate: 0.023, desc: 'LINE Pay 綁定支付', note: '2.3%', tag: 'line', categories: { '行動支付':['LINE Pay'] } },
-                    { name: '假日刷', rate: 0.02, desc: '國內節假日消費', note: '2%', tag: 'holiday', type: 'text', categories: {} },
-                    { name: '數趣刷', rate: 0.033, desc: '網購 | 遊戲 | AI服務', note: '3.3%', tag: 'digital', categories: { '網購平台':['蝦皮購物', 'momo購物網', '酷澎(Coupang)', 'PChome', '淘寶', 'Amazon', '東森', '博客來', 'Richart Mart', 'PayEasy', 'iHerb', 'SHEIN', 'Farfetch', 'Olive Young'], '線上課程':['知識衛星', 'Amazing Talker', 'Tutor ABC', 'Hahow', 'PressPlay'], '遊戲影音':['MyCard', '遊戲橘子', 'Steam', 'PlayStation', 'Nintendo', 'Netfilx', 'Disney+'], 'AI服務':['ChatGPT', 'Notion', 'Canva', 'Perplexity', 'Claude'] } },
-                    { name: '玩旅刷', rate: 0.033, desc: '海外 | 航空 | 訂房 | 旅行社', note: '3.3%', tag: 'travel', categories: { '海外消費':['海外消費(含實體)'], '訂房平台':['Klook', 'KKday', 'Agoda', 'Booking.com', 'Trip.com', 'Airbnb', 'Hotels.com', 'Expedia'], '海外交通':['Uber', 'Grab', 'SUICA', 'ICOCA', 'PASMO', 'WOWPASS', 'AIRSIM'], '旅行社':['雄獅旅遊', '易遊網', '東南旅遊', '可樂旅遊', '長汎假期', '五福旅遊', '喜鴻假期', '易飛旅遊', '燦星旅遊', '加利利旅行社', '鳳凰國際旅行社', '山富旅遊', '行健旅遊'], '航空公司':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '華信航空', '立榮航空', '樂桃航空', '阿聯酋航空', '亞洲航空', '酷航', '捷星航空', '新加坡航空', '日本航空', '越捷航空'] } },
-                    { name: '天天刷', rate: 0.033, desc: '超商量販 | 交通 | 停車', note: '3.3%', tag: 'daily', categories: { '超商量販(台新Pay)':['7-11', '全家', '家樂福', '大買家', '唐吉軻德', 'LOPIA'], '通勤交通':['台灣鐵路', '台灣高鐵', '台灣大車隊', 'Yoxi', 'Uber'], '停車租車':['嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車'], '藥妝藥局':['寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'] } },
-                    { name: '大筆刷', rate: 0.033, desc: '百貨 | Outlet | 居家', note: '3.3%', tag: 'big', categories: { '指定百貨':['新光三越', '遠東百貨', '遠東SOGO', '漢神巨蛋', '漢神百貨', '微風', '台北101', '遠東巨城', '廣三SOGO', '南紡購物中心', '誠品生活', '京站', '三創生活', '夢時代', '統一時代', '中友百貨', 'LaLaport'], '指定Outlet':['MITSUI OUTLET PARK', '華泰名品城', 'SKM Park Outlets'], '居家裝修':['IKEA', '特力屋', 'HOLA', '宜得利', '瑪黑家居'], '時尚品味':['UNIQLO', 'GU', 'ZARA', 'NET', 'lululemon'] } },
-                    { name: '好饗刷', rate: 0.033, desc: '餐飲 | 外送 | 加油', note: '3.3%', tag: 'fun', categories: { '餐飲外送':['國內餐飲', '王品瘋Pay', 'Uber Eats', 'Foodpanda'], '加油充電':['台灣中油-直營站', '台亞直營', '全國加油', 'EVOASIS', 'EVALUE'], '展演購票':['拓元售票', 'KKTIX', '年代售票', '寬宏售票', 'OPENTIX', 'FunNow'], '指定KTV':['錢櫃', '好樂迪', 'ONCOR', 'sing!go', '享溫馨'], '指定樂園':['義大遊樂世界', '麗寶樂園', '六福村', '九族文化村', '劍湖山', 'X-Park', '國立海洋生物博物館', '遠雄海洋公園', '小人國'], '指定飯店':['晶華', '雲朗', '萬豪', '煙波', '老爺', '福華', '漢來', '君悅', '洲際', '寒沐'] } }
+                    { name: '一般消費', rate: 0.003, desc: '國內外一般消費', type: 'text', note: '0.3%', categories: {}, cap: Infinity },
+                    { name: 'Pay著刷', rate: 0.038, desc: '綁定台新Pay', note: '3.8%', tag: 'pay', categories: { '台新Pay':['7-11', '全家便利商店', '新光三越', 'Richart Mart', '康是美', 'IKEA', 'NET'], '台灣Pay':['神腦', '燦坤', '全國電子', '麥當勞', '美廉社', '大樹藥局', '杏一醫療'], '交通':['台灣大車隊'] }, cap: Infinity },
+                    { name: 'LINE Pay', rate: 0.023, desc: 'LINE Pay 綁定支付', note: '2.3%', tag: 'line', categories: { '行動支付':['LINE Pay'] }, cap: Infinity },
+                    { name: '假日刷', rate: 0.02, desc: '國內節假日消費', note: '2%', tag: 'holiday', type: 'text', categories: {}, cap: Infinity },
+                    { name: '數趣刷', rate: 0.033, desc: '網購 | 遊戲 | AI服務', note: '3.3%', tag: 'digital', categories: { '網購平台':['蝦皮購物', 'momo購物網', '酷澎(Coupang)', 'PChome', '淘寶', 'Amazon', '東森', '博客來', 'Richart Mart', 'PayEasy', 'iHerb', 'SHEIN', 'Farfetch', 'Olive Young'], '線上課程':['知識衛星', 'Amazing Talker', 'Tutor ABC', 'Hahow', 'PressPlay'], '遊戲影音':['MyCard', '遊戲橘子', 'Steam', 'PlayStation', 'Nintendo', 'Netfilx', 'Disney+'], 'AI服務':['ChatGPT', 'Notion', 'Canva', 'Perplexity', 'Claude'] }, cap: Infinity },
+                    { name: '玩旅刷', rate: 0.033, desc: '海外 | 航空 | 訂房 | 旅行社', note: '3.3%', tag: 'travel', categories: { '海外消費':['海外消費(含實體)'], '訂房平台':['Klook', 'KKday', 'Agoda', 'Booking.com', 'Trip.com', 'Airbnb', 'Hotels.com', 'Expedia'], '海外交通':['Uber', 'Grab', 'SUICA', 'ICOCA', 'PASMO', 'WOWPASS', 'AIRSIM'], '旅行社':['雄獅旅遊', '易遊網', '東南旅遊', '可樂旅遊', '長汎假期', '五福旅遊', '喜鴻假期', '易飛旅遊', '燦星旅遊', '加利利旅行社', '鳳凰國際旅行社', '山富旅遊', '行健旅遊'], '航空公司':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '華信航空', '立榮航空', '樂桃航空', '阿聯酋航空', '亞洲航空', '酷航', '捷星航空', '新加坡航空', '日本航空', '越捷航空'] }, cap: Infinity },
+                    { name: '天天刷', rate: 0.033, desc: '超商量販 | 交通 | 停車', note: '3.3%', tag: 'daily', categories: { '超商量販(台新Pay)':['7-11', '全家', '家樂福', '大買家', '唐吉軻德', 'LOPIA'], '通勤交通':['台灣鐵路', '台灣高鐵', '台灣大車隊', 'Yoxi', 'Uber'], '停車租車':['嘟嘟房', '車麻吉', '城市車旅', 'ViViPark', 'USPACE', 'UDRIVE', 'iRent', '和運租車', '格上租車'], '藥妝藥局':['寶雅', '康是美', '屈臣氏', '杏一醫療', '大樹藥局', '丁丁藥局', '佑全保健', '健康人生'] }, cap: Infinity },
+                    { name: '大筆刷', rate: 0.033, desc: '百貨 | Outlet | 居家', note: '3.3%', tag: 'big', categories: { '指定百貨':['新光三越', '遠東百貨', '遠東SOGO', '漢神巨蛋', '漢神百貨', '微風', '台北101', '遠東巨城', '廣三SOGO', '南紡購物中心', '誠品生活', '京站', '三創生活', '夢時代', '統一時代', '中友百貨', 'LaLaport'], '指定Outlet':['MITSUI OUTLET PARK', '華泰名品城', 'SKM Park Outlets'], '居家裝修':['IKEA', '特力屋', 'HOLA', '宜得利', '瑪黑家居'], '時尚品味':['UNIQLO', 'GU', 'ZARA', 'NET', 'lululemon'] }, cap: Infinity },
+                    { name: '好饗刷', rate: 0.033, desc: '餐飲 | 外送 | 加油', note: '3.3%', tag: 'fun', categories: { '餐飲外送':['國內餐飲', '王品瘋Pay', 'Uber Eats', 'Foodpanda'], '加油充電':['台灣中油-直營站', '台亞直營', '全國加油', 'EVOASIS', 'EVALUE'], '展演購票':['拓元售票', 'KKTIX', '年代售票', '寬宏售票', 'OPENTIX', 'FunNow'], '指定KTV':['錢櫃', '好樂迪', 'ONCOR', 'sing!go', '享溫馨'], '指定樂園':['義大遊樂世界', '麗寶樂園', '六福村', '九族文化村', '劍湖山', 'X-Park', '國立海洋生物博物館', '遠雄海洋公園', '小人國'], '指定飯店':['晶華', '雲朗', '萬豪', '煙波', '老爺', '福華', '漢來', '君悅', '洲際', '寒沐'] }, cap: Infinity }
                 ]
             },
             {
                 id: 'cube', name: '國泰 CUBE', note: '需每日 App 切換方案 (一般消費/權益無上限)',
                 benefits: [
-                    { name: '一般消費', rate: 0.003, desc: '一般消費 (無上限)', type: 'text', note: '0.3%', categories: {} },
-                    { name: '瘋大港', rate: 0.035, desc: '高雄住宿 | Klook | 高鐵台鐵', note: '3.5%', tag: 'crazy', categories: { '指定高雄住宿':['城市商旅', '和逸飯店', '旅居文旅', '秝芯旅店', '夏優旅居', '華園大飯店', '捷絲旅', '麗尊酒店', '帕可麗酒店', '鈞怡大飯店'], '旅遊平台':['Klook'], '指定交通':['台灣高鐵', '台灣鐵路局'] } },
-                    { name: '玩數位', rate: 0.03, desc: '網購 | 影音 | AI', note: '3%', tag: 'digital', categories: { 'AI工具':['ChatGPT', 'Canva', 'Claude', 'Cursor', 'Duolingo', 'Gamma', 'Gemini', 'Notion', 'Perplexity', 'Speak'], '國際電商':['淘寶', '天貓', 'Coupang 酷澎'], '網購平台':['蝦皮購物', 'momo購物網', 'PChome 24h購物', '小樹購'], '數位串流':['Apple 媒體服務', 'Google Play', 'Disney+', 'Netflix', 'Spotify', 'YouTube Premium', 'Max'] } },
-                    { name: '樂響購', rate: 0.03, desc: '百貨 | 餐飲 | 外送 | 藥妝', note: '3%', tag: 'fun', categories: { '國內百貨':['遠東SOGO', '遠東Garden City', '新光三越', '遠東百貨', '台北101', 'BELLAVITA', '微風廣場', '統一時代', '誠品生活', 'ATT 4 FUN', '京站', '美麗華', 'NOKE忠泰樂生活', '大葉高島屋', 'Mitsui Shopping Park LaLaport', '宏匯廣場', '台茂', '大江', 'Big City', '中友', '廣三SOGO', '南紡', '耐斯廣場', '夢時代', '漢神百貨', '漢神巨蛋', '新月廣場', 'CITYLINK', '秀泰生活', '環球購物中心', '太平洋百貨', '華泰名品城', 'SKM Park', 'MITSUI OUTLET PARK'], '國內餐飲':['國內餐飲', '麥當勞'], '外送平台':['Uber Eats', 'foodpanda'], '國內藥妝':['屈臣氏', '康是美'] } },
-                    { name: '趣旅行', rate: 0.03, desc: '海外 | 訂房 | 航空 | 交通', note: '3%', tag: 'travel', categories: { '海外消費':['海外實體消費'], '海外交通':['SUICA', 'PASMO', 'ICOCA', 'Uber', 'Grab'], '指定樂園':['東京迪士尼', '哈利波特影城', '大阪環球影城'], '旅遊訂房':['Klook', 'KKday', 'Agoda', 'Airbnb', 'Booking.com', 'Trip.com'], '國內旅行社':['雄獅', '易遊網', '可樂', '東南', '五福', '燦星', '山富', '長汎假期', '鳳凰', '易飛網', '理想旅遊', '永利', '三賀'], '國內交通':['台灣高鐵', '台灣大車隊', 'yoxi', 'iRent', '和運租車', '格上租車', 'Uber'], '指定航空':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '樂桃航空', '阿聯酋航空', '酷航', '捷星航空', '日本航空', '亞洲航空', '聯合航空', '新加坡航空', 'ANA全日空', '越捷航空', '大韓航空', '達美航空', '土耳其航空', '法國航空', '卡達航空'], '指定住宿':['國內飯店', '星野集團', '全球迪士尼飯店', '東橫INN'] } },
-                    { name: '集精選', rate: 0.02, desc: '超商 | 量販 | 加油 | IKEA', note: '2%', tag: 'base', categories: { '充電停車':['U-POWER', 'EVOASIS', 'EVALUE', 'TAIL', 'iCharging', '車麻吉', 'uTagGo'], '生活居家':['IKEA'], '量販超市':['家樂福', '全聯福利中心', 'LOPIA台灣'], '指定加油':['台灣中油-直營站'], '指定超商':['7-ELEVEN', '全家便利商店'] } }
+                    { name: '一般消費', rate: 0.003, desc: '一般消費 (無上限)', type: 'text', note: '0.3%', categories: {}, cap: Infinity },
+                    { name: '瘋大港', rate: 0.035, desc: '高雄住宿 | Klook | 高鐵台鐵', note: '3.5%', tag: 'crazy', categories: { '指定高雄住宿':['城市商旅', '和逸飯店', '旅居文旅', '秝芯旅店', '夏優旅居', '華園大飯店', '捷絲旅', '麗尊酒店', '帕可麗酒店', '鈞怡大飯店'], '旅遊平台':['Klook'], '指定交通':['台灣高鐵', '台灣鐵路局'] }, cap: Infinity },
+                    { name: '玩數位', rate: 0.03, desc: '網購 | 影音 | AI', note: '3%', tag: 'digital', categories: { 'AI工具':['ChatGPT', 'Canva', 'Claude', 'Cursor', 'Duolingo', 'Gamma', 'Gemini', 'Notion', 'Perplexity', 'Speak'], '國際電商':['淘寶', '天貓', 'Coupang 酷澎'], '網購平台':['蝦皮購物', 'momo購物網', 'PChome 24h購物', '小樹購'], '數位串流':['Apple 媒體服務', 'Google Play', 'Disney+', 'Netflix', 'Spotify', 'YouTube Premium', 'Max'] }, cap: Infinity },
+                    { name: '樂響購', rate: 0.03, desc: '百貨 | 餐飲 | 外送 | 藥妝', note: '3%', tag: 'fun', categories: { '國內百貨':['遠東SOGO', '遠東Garden City', '新光三越', '遠東百貨', '台北101', 'BELLAVITA', '微風廣場', '統一時代', '誠品生活', 'ATT 4 FUN', '京站', '美麗華', 'NOKE忠泰樂生活', '大葉高島屋', 'Mitsui Shopping Park LaLaport', '宏匯廣場', '台茂', '大江', 'Big City', '中友', '廣三SOGO', '南紡', '耐斯廣場', '夢時代', '漢神百貨', '漢神巨蛋', '新月廣場', 'CITYLINK', '秀泰生活', '環球購物中心', '太平洋百貨', '華泰名品城', 'SKM Park', 'MITSUI OUTLET PARK'], '國內餐飲':['國內餐飲', '麥當勞'], '外送平台':['Uber Eats', 'foodpanda'], '國內藥妝':['屈臣氏', '康是美'] }, cap: Infinity },
+                    { name: '趣旅行', rate: 0.03, desc: '海外 | 訂房 | 航空 | 交通', note: '3%', tag: 'travel', categories: { '海外消費':['海外實體消費'], '海外交通':['SUICA', 'PASMO', 'ICOCA', 'Uber', 'Grab'], '指定樂園':['東京迪士尼', '哈利波特影城', '大阪環球影城'], '旅遊訂房':['Klook', 'KKday', 'Agoda', 'Airbnb', 'Booking.com', 'Trip.com'], '國內旅行社':['雄獅', '易遊網', '可樂', '東南', '五福', '燦星', '山富', '長汎假期', '鳳凰', '易飛網', '理想旅遊', '永利', '三賀'], '國內交通':['台灣高鐵', '台灣大車隊', 'yoxi', 'iRent', '和運租車', '格上租車', 'Uber'], '指定航空':['中華航空', '長榮航空', '星宇航空', '台灣虎航', '國泰航空', '樂桃航空', '阿聯酋航空', '酷航', '捷星航空', '日本航空', '亞洲航空', '聯合航空', '新加坡航空', 'ANA全日空', '越捷航空', '大韓航空', '達美航空', '土耳其航空', '法國航空', '卡達航空'], '指定住宿':['國內飯店', '星野集團', '全球迪士尼飯店', '東橫INN'] }, cap: Infinity },
+                    { name: '集精選', rate: 0.02, desc: '超商 | 量販 | 加油 | IKEA', note: '2%', tag: 'base', categories: { '充電停車':['U-POWER', 'EVOASIS', 'EVALUE', 'TAIL', 'iCharging', '車麻吉', 'uTagGo'], '生活居家':['IKEA'], '量販超市':['家樂福', '全聯福利中心', 'LOPIA台灣'], '指定加油':['台灣中油-直營站'], '指定超商':['7-ELEVEN', '全家便利商店'] }, cap: Infinity }
                 ]
             },
             {
                 id: 'unicard', name: '玉山 Unicard', note: '當月月底最後一天切方案',
                 benefits: [
-                    { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '1%', categories: {} },
+                    { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '1%', categories: {}, cap: Infinity },
                     { 
                         name: '百大特店', rate: 0, tag: 'list', type: 'modal',
                         desc: '點擊查看完整名單', 
@@ -451,24 +458,26 @@
                             '國外實體': ['日本', '韓國', '泰國', '越南', '新加坡', '馬來西亞', '菲律賓', '中國', '香港', '澳門', '美國', '加拿大', '英國', '法國', '德國', '義大利', '澳洲'],
                             'ESG消費': ['特斯拉', 'Gogoro', 'YouBike']
                         },
-                        note: '回饋依方案'
+                        note: '回饋依方案',
+                        cap: Infinity
                     },
-                    { name: 'UP選', rate: 0.045, desc: '百大特店 (需149點訂閱)', type: 'text', note: '一般1% + UP選3.5% (上限刷$142,857)' },
-                    { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '一般1% + 任意選2.5% (上限刷$400,000)' },
-                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '一般1% + 簡單選2% (上限刷$500,000)' },
+                    { name: 'UP選', rate: 0.045, desc: '百大特店 (需149點訂閱)', type: 'text', note: '一般1% + UP選3.5% (上限刷$142,857)', cap: 142857 },
+                    { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '一般1% + 任意選2.5% (上限刷$400,000)', cap: 400000 },
+                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '一般1% + 簡單選2% (上限刷$500,000)', cap: 500000 },
                     { 
                         name: '新戶回饋', rate: 0.03, tag: 'new', type: 'modal',
                         desc: '指定通路', 
                         categories: { '指定通路': ['LINE Pay', 'Uber Eats', '家樂福', '韓國', '全盈+PAY'] },
-                        note: '<span class="urgent-text">指定通路 + 3% (上限刷$14,667) 最高7.5%</span>' 
+                        note: '<span class="urgent-text">指定通路 + 3% (上限刷$14,667) 最高7.5%</span>',
+                        cap: 14667 
                     }
                 ]
             },
             {
                 id: 'ubear', name: '玉山 UBear', note: '娛樂10% / 網購3% (網購上限刷 $7,500)',
                 benefits: [
-                    { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '1%', categories: {} },
-                    { name: '影音娛樂', rate: 0.10, tag: 'ent', desc: 'Netflix | Disney+ | Nintendo', categories: { '影音娛樂': ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes', 'Google Play', 'Funnow'] }, note: '10% (上限刷$1000)' },
+                    { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '1%', categories: {}, cap: Infinity },
+                    { name: '影音娛樂', rate: 0.10, tag: 'ent', desc: 'Netflix | Disney+ | Nintendo', categories: { '影音娛樂': ['Netflix', 'Disney+', 'Nintendo', 'PlayStation', 'KKBOX', 'iTunes', 'Google Play', 'Funnow'] }, note: '10% (上限刷$1000)', cap: 1000 },
                     { name: '網購/Pay', rate: 0.03, tag: 'net', desc: '網購 | 行動支付 | 訂房 | 外送', 
                       categories: { 
                         '行動支付': ['LINE Pay', '街口支付', '悠遊付', 'OPEN錢包', 'icash Pay', '全盈+PAY', '全支付', '橘子支付', 'skm pay', '中油Pay', '玉山Wallet', 'Pi 拍錢包', '歐付寶', 'PayPal', 'Hami Pay'],
@@ -476,18 +485,18 @@
                         '交通訂房': ['55688', 'Uber', '台灣高鐵T-EX', '台灣鐵路線上', '易遊網', 'Agoda', 'Hotels.com', 'Expedia', 'Klook', 'KKday', 'Booking.com', 'Airbnb', '中華航空', '長榮航空', '台灣虎航'],
                         '外送平台': ['Uber Eats', 'foodpanda', 'foodomo', 'lalamove', '你訂']
                       },
-                      note: '一般1% + 網購2% (上限刷$7500)' 
+                      note: '一般1% + 網購2% (上限刷$7500)', cap: 7500 
                     },
-                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '同網購/Pay通路', note: '網購/Pay加碼 + 7% (上限刷$2142) 最高10%', categories: {} }
+                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '同網購/Pay通路', note: '網購/Pay加碼 + 7% (上限刷$2142) 最高10%', categories: {}, cap: 2142 }
                 ]
             },
             {
                 id: 'dawho', name: '永豐 DAWHO', note: '大戶等級：國內3.5%/國外4.5% (上限刷 1.6 萬)',
                 benefits: [
-                    { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '國內1%/國外2%', categories: {} },
-                    { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷', tag: 'all', type: 'text', note: '一般1% + 任務2.5% (上限刷$16,000)' },
-                    { name: '國外全通路', rate: 0.045, desc: '國外消費)', tag: 'foreign', type: 'text', note: '一般2% + 任務2.5% (上限刷$16,000)' },
-                    { name: '悠遊卡自動加值', rate: 0.03, desc: '不含一般消費回饋', tag: 'easy', type: 'text', note: '3% (上限刷$3333)' }
+                    { name: '一般消費', rate: 0.01, desc: '一般消費 (無上限)', type: 'text', note: '國內1%/國外2%', categories: {}, cap: Infinity },
+                    { name: '國內全通路', rate: 0.035, desc: '全通路無腦刷', tag: 'all', type: 'text', note: '一般1% + 任務2.5% (上限刷$16,000)', cap: 16000 },
+                    { name: '國外全通路', rate: 0.045, desc: '國外消費)', tag: 'foreign', type: 'text', note: '一般2% + 任務2.5% (上限刷$16,000)', cap: 16000 },
+                    { name: '悠遊卡自動加值', rate: 0.03, desc: '不含一般消費回饋', tag: 'easy', type: 'text', note: '3% (上限刷$3333)', cap: 3333 }
                 ]
             }
         ];
@@ -675,16 +684,15 @@
                     if (uniScheme === 'simple') { rate = 0.03; bonus = 0.02; txt = '簡單選'; }
                     if (uniScheme === 'up') { rate = 0.045; bonus = 0.035; txt = 'UP選'; }
                     
-                    // 修正：Unicard 新戶直接疊加，不重複顯示
                     if (isNew) {
                         const newBonusList = ['line pay', 'uber eats', '家樂福', '韓國', '全盈'];
                         if (newBonusList.some(kw => name.toLowerCase().includes(kw))) { 
                             rate += 0.03; 
-                            txt += ' + 新戶'; // 更新方案名稱
+                            txt += ' + 新戶'; 
                         }
                     }
                     c.rate = rate; 
-                    c.scheme = txt; // 更新後的方案名
+                    c.scheme = txt; 
                     c.note = `一般1% + ${txt.replace(' ','').replace('簡單選','簡單選2% (上限刷$500,000)').replace('任意選','任意選2.5% (上限刷$400,000)').replace('UP選','UP選3.5% (上限刷$142,857)')}`;
                     if(txt.includes('新戶')) c.note += ' + 新戶3%';
                 }
@@ -722,7 +730,6 @@
             const html = cards.map((c, idx) => {
                 const isBest = idx === 0;
                 let badgeClass = 'scheme-badge';
-                // 只有包含 "新戶" 字串的標籤才套用橘色樣式
                 if (c.scheme.includes('新戶') || c.rate >= 0.07) badgeClass += ' new-user';
                 
                 const warningHtml = (isBest && c.tag === 'pay' && c.cardId === 'richart') ? `<div class="plan-warning">限台新Pay/台灣Pay</div>` : '';
@@ -793,46 +800,141 @@
             }
 
             const results = cards.map(c => {
-                let reward = 0, detailText = '', upgradeTip = '';
+                // 回饋金額計算 (基本邏輯)
+                let reward = 0, detailText = '';
+                
                 if (c.cardId === 'richart') {
-                    // 修正：Richart 不再拆分 "Base + Bonus"，直接顯示總回饋
-                    reward = Math.floor(amount * c.rate); 
+                    // Richart 修正為：直接乘總回饋率，且無上限 (cap:Infinity)
+                    reward = Math.floor(amount * c.rate);
                     detailText = `${formatMoney(reward)} (${formatRate(c.rate*100)}%)`;
                 }
                 else if (c.cardId === 'cube') {
                     reward = Math.floor(amount * c.rate); detailText = `${formatMoney(reward)} (方案${formatRate(c.rate*100)}%)`;
                 }
                 else if (c.cardId === 'dawho') {
-                    const cap = 16000; let baseRate = (c.tag === 'foreign') ? 0.02 : 0.01; let bonusRate = 0.025;
-                    if (amount <= cap) { let base = Math.floor(amount * baseRate); let bonus = Math.floor(amount * bonusRate); reward = base + bonus; detailText = `${formatMoney(base)} (基本${formatRate(baseRate*100)}%) + ${formatMoney(bonus)} (任務加碼${formatRate(bonusRate*100)}%)`; } 
-                    else { let base = Math.floor(amount * baseRate); let bonus = Math.floor(cap * bonusRate); reward = base + bonus; detailText = `${formatMoney(base)} (基本${formatRate(baseRate*100)}%) + ${formatMoney(bonus)} (任務加碼2.5%)`; }
+                    // 大戶上限邏輯 (16000後變1%)
+                    const cap = c.cap || 16000;
+                    if (amount <= cap) { reward = Math.floor(amount * c.rate); }
+                    else { reward = Math.floor(cap * c.rate) + Math.floor((amount - cap) * 0.01); } // 超過部分1%
+                    detailText = `${formatMoney(reward)} (平均${formatRate(reward/amount*100)}%)`;
                 }
                 else if (c.cardId === 'ubear' && c.tag === 'net') {
-                    const newUserCap = 2142, bonusCap = 7500; let base = Math.floor(amount * 0.01);
-                    if (isNewUser) { let bAmount = Math.min(amount, bonusCap); let bonus = Math.floor(bAmount * 0.02); let nAmount = Math.min(amount, newUserCap); let newBonus = Math.floor(nAmount * 0.07); reward = base + bonus + newBonus; detailText = `${formatMoney(base)} (基本1%) + ${formatMoney(bonus)} (網購2%) + ${formatMoney(newBonus)} (新戶7%)`; } 
-                    else { let bAmount = Math.min(amount, bonusCap); let bonus = Math.floor(bAmount * 0.02); reward = base + bonus; detailText = `${formatMoney(base)} (基本1%) + ${formatMoney(bonus)} (網購2%)`; }
+                    // UBear 網購上限邏輯
+                    const cap = c.cap || 7500;
+                    if (isNewUser) {
+                        // 新戶邏輯：加碼 7% 上限 2142
+                        const newCap = 2142; // 約30000多，實際是 2142/0.07 ≈ 30600
+                        // 這裡簡化：新戶加碼直接疊加
+                        let baseReward = 0;
+                        if (amount <= cap) baseReward = Math.floor(amount * 0.03);
+                        else baseReward = Math.floor(cap * 0.03) + Math.floor((amount - cap) * 0.01);
+                        
+                        let newBonus = 0;
+                        // 新戶 7% 上限 $2142 (刷 30600)
+                        let newBonusBase = Math.min(amount, 30600);
+                        newBonus = Math.floor(newBonusBase * 0.07);
+                        
+                        reward = baseReward + newBonus;
+                    } else {
+                        // 舊戶：3% 上限 7500
+                        if (amount <= cap) reward = Math.floor(amount * 0.03);
+                        else reward = Math.floor(cap * 0.03) + Math.floor((amount - cap) * 0.01);
+                    }
+                    detailText = `${formatMoney(reward)} (平均${formatRate(reward/amount*100)}%)`;
                 }
                 else if (c.cardId === 'unicard' && c.tag === 'list') {
-                    let baseRate = 0.01, bonusRate = 0.025, schemeName = '任意選', cap = 40000;
-                    if (unicardScheme === 'simple') { bonusRate = 0.02; schemeName = '簡單選'; cap = 50000; }
-                    if (unicardScheme === 'up') { bonusRate = 0.035; schemeName = 'UP選'; cap = 142857; } 
-                    let base = Math.floor(amount * baseRate);
-                    let bonusAmount = Math.min(amount, cap);
-                    let bonus = Math.floor(bonusAmount * bonusRate);
-                    let newBonus = 0;
+                    // Unicard 上限邏輯
+                    const cap = c.cap || 500000;
+                    let baseRate = 0.01;
+                    let schemeRate = 0.01; // 預設
+                    if (unicardScheme === 'simple') schemeRate = 0.02;
+                    if (unicardScheme === 'any') schemeRate = 0.025;
+                    if (unicardScheme === 'up') schemeRate = 0.035;
+                    
+                    let totalRate = baseRate + schemeRate;
+                    // 新戶 +3%
                     const newBonusList = ['line pay', 'uber eats', '家樂福', '韓國', '全盈'];
-                    if (isNewUser && newBonusList.some(kw => merchantInput.toLowerCase().includes(kw))) {
-                        let nAmount = Math.min(amount, 16666); newBonus = Math.floor(nAmount * 0.03); detailText = `${formatMoney(base)} (基本1%) + ${formatMoney(bonus)} (${schemeName}${formatRate(bonusRate*100)}%) + ${formatMoney(newBonus)} (新戶3%)`; c.scheme = schemeName + "+新戶";
-                    } else { detailText = `${formatMoney(base)} (基本1%) + ${formatMoney(bonus)} (${schemeName}${formatRate(bonusRate*100)}%)`; c.scheme = schemeName; }
-                    reward = base + bonus + newBonus;
-                    if (unicardScheme !== 'up' && amount > 15000) upgradeTip = '<div class="upgrade-tip">💡 消費滿 1.5 萬，建議訂閱升級 [UP選] 回饋最高！</div>';
+                    let isNewTarget = isNewUser && newBonusList.some(kw => merchantInput.toLowerCase().includes(kw));
+                    
+                    if (amount <= cap) {
+                        reward = Math.floor(amount * totalRate);
+                    } else {
+                        reward = Math.floor(cap * totalRate) + Math.floor((amount - cap) * 0.01);
+                    }
+                    
+                    if (isNewTarget) {
+                        // 新戶 3% 上限 14667
+                        let newCap = 14667;
+                        let newBase = Math.min(amount, newCap);
+                        reward += Math.floor(newBase * 0.03);
+                    }
+                    detailText = `${formatMoney(reward)} (平均${formatRate(reward/amount*100)}%)`;
                 }
-                else { reward = Math.floor(amount * c.rate); detailText = `${formatMoney(reward)} (全額${formatRate(c.rate*100)}%)`; }
-                return { ...c, reward: Math.floor(reward), detail: detailText, upgradeTip };
+                else { 
+                    // 其他無上限卡片
+                    reward = Math.floor(amount * c.rate); 
+                    detailText = `${formatMoney(reward)} (全額${formatRate(c.rate*100)}%)`; 
+                }
+                
+                return { ...c, reward, detail: detailText };
             });
 
+            // 排序
             results.sort((a, b) => b.reward - a.reward);
             
+            // --- 拆單建議邏輯 (Split Logic) ---
+            const winner = results[0];
+            let splitHtml = '';
+            
+            // 只有當冠軍有設定上限，且消費金額超過上限時，才計算拆單
+            if (winner.cap && winner.cap < amount && winner.cap !== Infinity) {
+                const cap = winner.cap;
+                const remaining = amount - cap;
+                
+                // 計算冠軍刷滿的回饋
+                // 注意：這裡要精確計算冠軍在 Cap 內的回饋率
+                // 為了簡化，重新計算一次 winner 在 cap 內的 reward
+                let winnerCapReward = 0;
+                // 簡易判斷 winner 回饋率 (大略值，若要精確需重構，目前用 rate 近似)
+                // 實際上這部分邏輯較複雜，這裡做一個簡單的優化版本
+                
+                // 尋找第二張卡 (排除冠軍自己)
+                const candidates = results.filter(r => r.cardId !== winner.cardId);
+                // 計算每張候選卡刷 remaining 的回饋
+                const bestBackup = candidates.map(c => {
+                    return { ...c, backupReward: Math.floor(remaining * c.rate) }; // 假設第二張卡無上限或夠用
+                }).sort((a,b) => b.backupReward - a.backupReward)[0];
+                
+                if (bestBackup) {
+                    // 冠軍刷滿的回饋 (約略)
+                    const winnerSoloReward = winner.reward; // 單刷到底
+                    
+                    // 拆單總回饋 = 冠軍刷滿 + 第二張刷餘額
+                    // 這裡需要知道冠軍刷滿 cap 拿多少 (Max Bonus)
+                    // 簡易算法：
+                    let winnerMaxBonus = 0;
+                    if (winner.cardId === 'ubear') winnerMaxBonus = Math.floor(cap * 0.03); // 3% part
+                    else if (winner.cardId === 'dawho') winnerMaxBonus = Math.floor(cap * winner.rate);
+                    else if (winner.cardId === 'unicard') winnerMaxBonus = Math.floor(cap * winner.rate); // 忽略新戶複雜度
+                    else winnerMaxBonus = Math.floor(cap * winner.rate);
+                    
+                    const splitTotal = winnerMaxBonus + bestBackup.backupReward;
+                    
+                    // 只有當「拆單」比「單刷」賺更多時，才顯示建議
+                    if (splitTotal > winnerSoloReward + 10) { // 至少多賺10元才建議
+                        const diff = splitTotal - winnerSoloReward;
+                        splitHtml = `
+                            <div class="split-recommendation">
+                                <div class="split-title">💡 建議拆單 (多賺 ${formatMoney(diff)})</div>
+                                <div class="split-step">先刷 <b>${winner.cardName}</b>：${formatMoney(cap)}</div>
+                                <div class="split-step">餘額 <b>${bestBackup.cardName}</b>：${formatMoney(remaining)}</div>
+                                <div class="split-total">預期總回饋：${formatMoney(splitTotal)}</div>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
             container.innerHTML = results.map((res, idx) => {
                 const isWinner = idx === 0;
                 const themeClass = brandColorMap[res.cardId]?.class || '';
@@ -844,10 +946,10 @@
                         <span class="calc-money">${trophy}${formatMoney(res.reward)}</span>
                     </div>
                     <div style="font-size:0.9em; color:${isWinner?'var(--color-success)':'#555'};">
-                        平均回饋率：${formatRate((res.reward/amount)*100)}%
+                        ${res.detail.split('(')[1] ? '平均回饋率：' + res.detail.split('(')[1].replace(')', '') : ''}
                     </div>
                     <div class="calc-detail">${res.detail}</div>
-                    ${res.upgradeTip || ''}
+                    ${isWinner ? splitHtml : ''}
                 </div>
             `}).join('');
         }
