@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>信用卡回饋查詢助手 2026 (完整版)</title>
+    <title>信用卡回饋查詢助手 2026</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -315,6 +315,16 @@
             font-size: 1.6em;
             font-weight: 800;
             color: #2180a0;
+        }
+
+        .combo-diff {
+            font-size: 0.85em;
+            color: #e65100;
+            background: #fff3e0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+            font-weight: 600;
         }
 
         .combo-step {
@@ -836,7 +846,9 @@
                 baseRate = 0.003;
             } else if (cardId === 'ubear') {
                 baseRate = 0.01;
-                if (scheme.includes('網購') || scheme.includes('影音')) cap = 7500;
+                if (scheme.includes('網購')) cap = 7500;
+                // 新增娛樂 10% 上限 1000
+                if (scheme.includes('影音')) cap = 1000;
                 if (isNew && scheme.includes('新戶')) cap = 2142; 
             } else if (cardId === 'dawho') {
                 cap = 16000;
@@ -872,16 +884,21 @@
 
             // 補上通用卡片
             const isForeign = ['國外', '日本', '韓國', '海外'].some(k => merchantInput.includes(k));
-            if (!cards.find(c => c.cardId === 'dawho')) {
-                if (isForeign) cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', scheme: '國外消費', tag: 'foreign' });
-                else cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', scheme: '國內全通路', tag: 'all' });
-            }
-            if (!data) {
-                cards.push({ cardId: 'ubear', cardName: '玉山 UBear', scheme: '一般消費', tag: 'gen', rate: 0.01 });
-                cards.push({ cardId: 'unicard', cardName: '玉山 Unicard', scheme: '一般消費', tag: 'gen', rate: 0.01 });
-                cards.push({ cardId: 'richart', cardName: '台新 Richart', scheme: '一般消費', tag: 'gen', rate: 0.003 });
-                cards.push({ cardId: 'cube', cardName: '國泰 CUBE', scheme: '一般消費', tag: 'gen', rate: 0.003 });
-            }
+            
+            // 修正：無論搜尋結果如何，強制檢查並補齊所有主力卡的一般消費版本
+            const ensureCardExists = (targetId, defaultName, defaultRate, defaultScheme, defaultTag) => {
+                if (!cards.find(c => c.cardId === targetId)) {
+                    cards.push({ cardId: targetId, cardName: defaultName, rate: defaultRate, scheme: defaultScheme, tag: defaultTag });
+                }
+            };
+
+            if (isForeign) ensureCardExists('dawho', '永豐 DAWHO', 0.02, '國外消費', 'foreign');
+            else ensureCardExists('dawho', '永豐 DAWHO', 0.01, '國內全通路', 'all');
+
+            ensureCardExists('ubear', '玉山 UBear', 0.01, '一般消費', 'gen');
+            ensureCardExists('unicard', '玉山 Unicard', 0.01, '一般消費', 'gen');
+            ensureCardExists('richart', '台新 Richart', 0.003, '一般消費', 'gen');
+            ensureCardExists('cube', '國泰 CUBE', 0.003, '一般消費', 'gen');
 
             // 2. 計算「單張刷到底」的結果
             const singleCardResults = cards.map(c => {
@@ -919,45 +936,72 @@
                         detailText = `${formatMoney(base)} (全額基本) + ${formatMoney(bonus)} (任務上限)`;
                     }
                 } 
-                else if (c.cardId === 'ubear' && c.tag === 'net') {
-                    const bonusCap = 7500;
+                else if (c.cardId === 'ubear') {
                     let base = Math.floor(amount * 0.01);
-                    let bAmount = Math.min(amount, bonusCap);
-                    let bonus = Math.floor(bAmount * 0.02);
-                    let newBonus = 0;
                     
-                    if (isNewUser) {
-                        let nAmount = Math.min(amount, 2142);
-                        newBonus = Math.floor(nAmount * 0.07);
-                        detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (網購) + ${formatMoney(newBonus)} (新戶)`;
-                    } else {
-                        detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (網購)`;
+                    if (c.tag === 'net') {
+                        const bonusCap = 7500;
+                        let bAmount = Math.min(amount, bonusCap);
+                        let bonus = Math.floor(bAmount * 0.02);
+                        let newBonus = 0;
+                        if (isNewUser) {
+                            let nAmount = Math.min(amount, 2142);
+                            newBonus = Math.floor(nAmount * 0.07);
+                            detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (網購) + ${formatMoney(newBonus)} (新戶)`;
+                        } else {
+                            detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (網購)`;
+                        }
+                        reward = base + bonus + newBonus;
+                    } 
+                    else if (c.tag === 'ent') { // 新增：處理影音娛樂 Tag
+                        const bonusCap = 1000;
+                        let bAmount = Math.min(amount, bonusCap);
+                        // 10% 回饋 (含原1% + 加碼9%)，超過變1%
+                        let totalReward = Math.floor(bAmount * 0.10); 
+                        if (amount > bonusCap) {
+                            totalReward += Math.floor((amount - bonusCap) * 0.01);
+                            detailText = `${formatMoney(Math.floor(bonusCap * 0.1))} (10%上限) + ${formatMoney(Math.floor((amount - bonusCap) * 0.01))} (超額1%)`;
+                        } else {
+                            detailText = `${formatMoney(totalReward)} (全額10%)`;
+                        }
+                        reward = totalReward;
                     }
-                    reward = base + bonus + newBonus;
+                    else { // 一般消費
+                        reward = base;
+                        detailText = `${formatMoney(reward)} (一般1%)`;
+                    }
                 } 
-                else if (c.cardId === 'unicard' && c.tag === 'list') {
+                else if (c.cardId === 'unicard') {
                     let baseRate = 0.01, bonusRate = 0.025, schemeName = '任意選', cap = 40000;
                     if (unicardScheme === 'simple') { bonusRate = 0.02; schemeName = '簡單選'; cap = 50000; }
                     if (unicardScheme === 'up') { bonusRate = 0.035; schemeName = 'UP選'; cap = 142857; }
 
                     let base = Math.floor(amount * baseRate);
-                    let bonusAmount = Math.min(amount, cap);
-                    let bonus = Math.floor(bonusAmount * bonusRate);
+                    // 只有當 tag 是 list (特店) 時才有加碼，否則只有一般回饋
+                    let bonus = 0;
                     let newBonus = 0;
-                    
-                    const newBonusList = ['line pay', 'uber eats', '家樂福', '韓國', '全盈'];
-                    if (isNewUser && newBonusList.some(kw => merchantInput.toLowerCase().includes(kw))) {
-                        let nAmount = Math.min(amount, 16666);
-                        newBonus = Math.floor(nAmount * 0.03);
-                        c.scheme = schemeName + "+新戶";
-                        detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (${schemeName}) + ${formatMoney(newBonus)} (新戶)`;
+
+                    if (c.tag === 'list') {
+                        let bonusAmount = Math.min(amount, cap);
+                        bonus = Math.floor(bonusAmount * bonusRate);
+                        
+                        const newBonusList = ['line pay', 'uber eats', '家樂福', '韓國', '全盈'];
+                        if (isNewUser && newBonusList.some(kw => merchantInput.toLowerCase().includes(kw))) {
+                            let nAmount = Math.min(amount, 16666);
+                            newBonus = Math.floor(nAmount * 0.03);
+                            c.scheme = schemeName + "+新戶";
+                            detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (${schemeName}) + ${formatMoney(newBonus)} (新戶)`;
+                        } else {
+                            c.scheme = schemeName;
+                            detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (${schemeName})`;
+                        }
+                        if (unicardScheme !== 'up' && amount > 15000) upgradeTip = '<div class="upgrade-tip">💡 滿 1.5 萬建議訂閱 [UP選]</div>';
                     } else {
-                        c.scheme = schemeName;
-                        detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (${schemeName})`;
+                        // 如果沒有被判定為特店，就是一般消費
+                        detailText = `${formatMoney(base)} (一般1%)`;
                     }
                     
                     reward = base + bonus + newBonus;
-                    if (unicardScheme !== 'up' && amount > 15000) upgradeTip = '<div class="upgrade-tip">💡 滿 1.5 萬建議訂閱 [UP選]</div>';
                 } 
                 else {
                     reward = Math.floor(amount * c.rate);
@@ -972,18 +1016,31 @@
 
             // 3. 計算「聰明組合 (Combo)」
             let bestCombo = null;
-            if (amount > 2000) {
+            if (amount > 1000) { // UBear 娛樂上限 1000，所以門檻降為 1000
                 singleCardResults.forEach(cardA => {
                     const { cap, baseRate } = getCardCapInfo(cardA.cardId, cardA.scheme, isNewUser);
                     if (cap < amount) {
-                        let rewardA_Cap = Math.floor(cap * cardA.rate); 
+                        // 重新精算 CardA 在 Cap 內的真實回饋
+                        // 注意：這裡簡化處理，直接呼叫前面的邏輯會太複雜，採用費率估算
+                        // 但為了精準，UBear 10% 必須手動處理
+                        let rewardA_Cap = 0;
+                        if (cardA.cardId === 'ubear' && cardA.tag === 'ent') rewardA_Cap = 100; // 1000 * 10%
+                        else rewardA_Cap = Math.floor(cap * cardA.rate); 
+
                         const remainingAmount = amount - cap;
                         let bestCardB = null;
                         let maxRewardB = -1;
 
                         singleCardResults.forEach(cardB => {
                             if (cardB.cardId === cardA.cardId) return; 
-                            let rateB = cardB.rate; 
+                            
+                            // 估算 Card B 的回饋 (假設 Card B 沒爆)
+                            // 這裡需要用 cardB 在 remainingAmount 下的表現
+                            // 簡單起見，用它的費率 * 金額
+                            let rateB = cardB.rate;
+                            // 如果 Card B 是 Unicard 一般消費 (非特店)，rate 只有 1%
+                            // 如果 Card B 也是特店 (理論上不可能，因為一次搜尋只有一個特店結果)，則用特店費率
+                            
                             let rewardB = Math.floor(remainingAmount * rateB);
                             if (rewardB > maxRewardB) {
                                 maxRewardB = rewardB;
@@ -1022,12 +1079,12 @@
                         </div>
                         <div class="combo-step">
                             <div class="combo-step-num">1</div>
-                            <div class="combo-step-text">先刷 <b>${bestCombo.cardA.cardName}</b></div>
+                            <div class="combo-step-text">先刷 <b>${bestCombo.cardA.cardName}</b> (${bestCombo.cardA.scheme})</div>
                             <div class="combo-step-money">${formatMoney(bestCombo.amountA)}</div>
                         </div>
                         <div class="combo-step">
                             <div class="combo-step-num">2</div>
-                            <div class="combo-step-text">餘額刷 <b>${bestCombo.cardB.cardName}</b></div>
+                            <div class="combo-step-text">餘額刷 <b>${bestCombo.cardB.cardName}</b> (${bestCombo.cardB.scheme})</div>
                             <div class="combo-step-money">${formatMoney(bestCombo.amountB)}</div>
                         </div>
                     </div>
