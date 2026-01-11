@@ -779,6 +779,7 @@
 
             if (!amount || !merchantInput) { return; }
 
+            // 1. 取得通路與卡片資料
             const key = merchantInput.toLowerCase();
             let data = globalMerchantDB[key];
             if (!data) {
@@ -787,10 +788,11 @@
             }
             let cards = data ? JSON.parse(JSON.stringify(data.cards)) : [];
             
+            // 補上通用卡片 (大戶/CUBE/Unicard/UBear)
             const isForeign = ['國外','日本','韓國','海外'].some(k => merchantInput.includes(k));
             if (!cards.find(c => c.cardId === 'dawho')) {
-                if (isForeign) cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', scheme: '國外消費', tag: 'foreign' });
-                else cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', scheme: '國內全通路', tag: 'all' });
+                if (isForeign) cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', scheme: '國外消費', tag: 'foreign', rate: 0.045, note: '一般2%+任務2.5%' });
+                else cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', scheme: '國內全通路', tag: 'all', rate: 0.035, note: '一般1%+任務2.5%' });
             }
             if (!data) {
                 cards.push({ cardId: 'ubear', cardName: '玉山 UBear', scheme: '一般消費', tag: 'gen', rate: 0.01 });
@@ -799,134 +801,199 @@
                 cards.push({ cardId: 'cube', cardName: '國泰 CUBE', scheme: '一般消費', tag: 'gen', rate: 0.003 });
             }
 
+            // 2. 計算每張卡片的回饋 (含詳細邏輯)
             const results = cards.map(c => {
-                // 回饋金額計算 (基本邏輯)
                 let reward = 0, detailText = '';
-                
+                // 用來給拆單邏輯判斷的參數
+                let actualCap = c.cap || Infinity; 
+                let rateAfterCap = 0.01; // 超過上限後的費率 (預設1%)
+
                 if (c.cardId === 'richart') {
-                    // Richart 修正為：直接乘總回饋率，且無上限 (cap:Infinity)
+                    // Richart 3.3% ~ 3.8% 無上限
                     reward = Math.floor(amount * c.rate);
                     detailText = `${formatMoney(reward)} (${formatRate(c.rate*100)}%)`;
+                    rateAfterCap = c.rate; // 因為無上限，所以後續費率不變
                 }
                 else if (c.cardId === 'cube') {
-                    reward = Math.floor(amount * c.rate); detailText = `${formatMoney(reward)} (方案${formatRate(c.rate*100)}%)`;
+                    // CUBE 3% 無上限
+                    reward = Math.floor(amount * c.rate);
+                    detailText = `${formatMoney(reward)} (方案${formatRate(c.rate*100)}%)`;
+                    rateAfterCap = c.rate;
                 }
                 else if (c.cardId === 'dawho') {
-                    // 大戶上限邏輯 (16000後變1%)
-                    const cap = c.cap || 16000;
+                    // 大戶 3.5% / 4.5% 上限 16000，之後變 1% (或2%國外)
+                    const cap = 16000;
+                    actualCap = cap;
+                    const baseRate = c.tag === 'foreign' ? 0.02 : 0.01;
+                    rateAfterCap = baseRate;
+
                     if (amount <= cap) { reward = Math.floor(amount * c.rate); }
-                    else { reward = Math.floor(cap * c.rate) + Math.floor((amount - cap) * 0.01); } // 超過部分1%
+                    else { reward = Math.floor(cap * c.rate) + Math.floor((amount - cap) * baseRate); }
                     detailText = `${formatMoney(reward)} (平均${formatRate(reward/amount*100)}%)`;
                 }
                 else if (c.cardId === 'ubear' && c.tag === 'net') {
-                    // UBear 網購上限邏輯
-                    const cap = c.cap || 7500;
+                    // UBear 網購
+                    const baseCap = 7500;
+                    actualCap = baseCap;
+                    rateAfterCap = 0.01;
+
                     if (isNewUser) {
-                        // 新戶邏輯：加碼 7% 上限 2142
-                        const newCap = 2142; // 約30000多，實際是 2142/0.07 ≈ 30600
-                        // 這裡簡化：新戶加碼直接疊加
-                        let baseReward = 0;
-                        if (amount <= cap) baseReward = Math.floor(amount * 0.03);
-                        else baseReward = Math.floor(cap * 0.03) + Math.floor((amount - cap) * 0.01);
+                        // 新戶: 網購3% + 加碼7%(上限2142, 刷30600)
+                        // 但通常 7500 之後 3% 就沒了，只剩加碼的 7%? 
+                        // 依照條款：新戶加碼是額外的。
+                        // 簡化邏輯：3% (up to 7500) + 7% (up to 2142/0.07=30600)
+                        // 實際上因為 7500 就沒了 3%，所以通常建議 7500 為拆單點，除非加碼極強
+                        // 這裡維持原邏輯，但加上新戶計算
                         
-                        let newBonus = 0;
-                        // 新戶 7% 上限 $2142 (刷 30600)
-                        let newBonusBase = Math.min(amount, 30600);
-                        newBonus = Math.floor(newBonusBase * 0.07);
+                        let baseReward = (amount <= 7500) ? Math.floor(amount * 0.03) : (Math.floor(7500 * 0.03) + Math.floor((amount - 7500) * 0.01));
                         
+                        // 新戶加碼部分 (7% 上限 2142)
+                        let newBonusCapAmt = 14667 * 2; // 約 30600
+                        let newBonusBase = Math.min(amount, 30600); // 概抓
+                        // 修正：新戶上限是回饋 2142，所以是刷 30600
+                        // 但是 UBear 本身 3% 在 7500 就停了。
+                        // 7500 內: 10%
+                        // 7500 ~ 30600: 1% + 7% = 8%
+                        // > 30600: 1%
+                        // 為了拆單邏輯準確，我們設定 "最強區間"
+                        if (amount > 7500) {
+                             // 這裡標記給拆單邏輯：過 7500 後還有 8% 其實很強，不應該在 7500 拆
+                             // 但為了保險，這裡暫定 cap 為 7500
+                             // *進階修正*：如果新戶，UBear 其實在 3萬以內都超強，不用拆
+                             rateAfterCap = 0.08; 
+                        }
+                        let newBonus = Math.floor(Math.min(amount, 30600) * 0.07);
                         reward = baseReward + newBonus;
                     } else {
-                        // 舊戶：3% 上限 7500
-                        if (amount <= cap) reward = Math.floor(amount * 0.03);
-                        else reward = Math.floor(cap * 0.03) + Math.floor((amount - cap) * 0.01);
+                        // 舊戶
+                        if (amount <= baseCap) reward = Math.floor(amount * 0.03);
+                        else reward = Math.floor(baseCap * 0.03) + Math.floor((amount - baseCap) * 0.01);
                     }
                     detailText = `${formatMoney(reward)} (平均${formatRate(reward/amount*100)}%)`;
                 }
                 else if (c.cardId === 'unicard' && c.tag === 'list') {
-                    // Unicard 上限邏輯
-                    const cap = c.cap || 500000;
+                    // Unicard 複雜邏輯
                     let baseRate = 0.01;
-                    let schemeRate = 0.01; // 預設
-                    if (unicardScheme === 'simple') schemeRate = 0.02;
-                    if (unicardScheme === 'any') schemeRate = 0.025;
-                    if (unicardScheme === 'up') schemeRate = 0.035;
+                    let schemeAdd = 0.02; // simple
+                    if (unicardScheme === 'any') schemeAdd = 0.025;
+                    if (unicardScheme === 'up') schemeAdd = 0.035;
                     
-                    let totalRate = baseRate + schemeRate;
-                    // 新戶 +3%
+                    let totalSchemeRate = baseRate + schemeAdd; // 3% ~ 4.5%
+                    
+                    // 方案上限
+                    let schemeCap = 500000;
+                    if (unicardScheme === 'any') schemeCap = 400000;
+                    if (unicardScheme === 'up') schemeCap = 142857;
+                    actualCap = schemeCap;
+                    rateAfterCap = 0.01;
+
+                    // 新戶判斷
                     const newBonusList = ['line pay', 'uber eats', '家樂福', '韓國', '全盈'];
                     let isNewTarget = isNewUser && newBonusList.some(kw => merchantInput.toLowerCase().includes(kw));
-                    
-                    if (amount <= cap) {
-                        reward = Math.floor(amount * totalRate);
+
+                    if (amount <= schemeCap) {
+                        reward = Math.floor(amount * totalSchemeRate);
                     } else {
-                        reward = Math.floor(cap * totalRate) + Math.floor((amount - cap) * 0.01);
+                        reward = Math.floor(schemeCap * totalSchemeRate) + Math.floor((amount - schemeCap) * 0.01);
                     }
                     
                     if (isNewTarget) {
-                        // 新戶 3% 上限 14667
+                        // 新戶額外 +3% (上限 14667)
                         let newCap = 14667;
                         let newBase = Math.min(amount, newCap);
                         reward += Math.floor(newBase * 0.03);
+
+                        // **關鍵修正**：告知拆單邏輯，在 14667 之後，費率會變成 totalSchemeRate (例如 3%)
+                        // 而不是一直維持高費率直到 schemeCap
+                        c.specialSplitThreshold = newCap; 
+                        c.rateAfterSpecialThreshold = totalSchemeRate;
                     }
+                    
                     detailText = `${formatMoney(reward)} (平均${formatRate(reward/amount*100)}%)`;
                 }
                 else { 
-                    // 其他無上限卡片
+                    // 其他無上限卡
                     reward = Math.floor(amount * c.rate); 
                     detailText = `${formatMoney(reward)} (全額${formatRate(c.rate*100)}%)`; 
+                    rateAfterCap = c.rate;
                 }
                 
-                return { ...c, reward, detail: detailText };
+                return { ...c, reward, detail: detailText, actualCap, rateAfterCap };
             });
 
-            // 排序
+            // 3. 排序找出冠軍
             results.sort((a, b) => b.reward - a.reward);
-            
-            // --- 拆單建議邏輯 (Split Logic) ---
             const winner = results[0];
+            
+            // 4. 拆單建議邏輯 (修正版)
             let splitHtml = '';
             
-            // 只有當冠軍有設定上限，且消費金額超過上限時，才計算拆單
-            if (winner.cap && winner.cap < amount && winner.cap !== Infinity) {
-                const cap = winner.cap;
-                const remaining = amount - cap;
-                
-                // 計算冠軍刷滿的回饋
-                // 注意：這裡要精確計算冠軍在 Cap 內的回饋率
-                // 為了簡化，重新計算一次 winner 在 cap 內的 reward
-                let winnerCapReward = 0;
-                // 簡易判斷 winner 回饋率 (大略值，若要精確需重構，目前用 rate 近似)
-                // 實際上這部分邏輯較複雜，這裡做一個簡單的優化版本
-                
-                // 尋找第二張卡 (排除冠軍自己)
-                const candidates = results.filter(r => r.cardId !== winner.cardId);
-                // 計算每張候選卡刷 remaining 的回饋
-                const bestBackup = candidates.map(c => {
-                    return { ...c, backupReward: Math.floor(remaining * c.rate) }; // 假設第二張卡無上限或夠用
-                }).sort((a,b) => b.backupReward - a.backupReward)[0];
-                
-                if (bestBackup) {
-                    // 冠軍刷滿的回饋 (約略)
-                    const winnerSoloReward = winner.reward; // 單刷到底
+            // 找出第二名 (排除冠軍自己)
+            const candidates = results.filter(r => r.cardId !== winner.cardId);
+            // 找出單刷餘額最強的副卡
+            // 我們需要一個動態的比較基準，這裡簡化：取副卡的基本回饋率來比較
+            const bestBackup = candidates[0]; // 既然已排序，第二名通常是最佳副卡
+
+            if (bestBackup && amount > 100) {
+                // 決定拆單點 (Split Point)
+                let splitPoint = null;
+                let reason = '';
+
+                // Case A: Unicard 新戶特殊斷點 ($14,667)
+                if (winner.specialSplitThreshold && amount > winner.specialSplitThreshold) {
+                    // 如果「過新戶門檻後的費率」 < 「副卡費率」
+                    // 例如: Unicard 剩 3% < Richart 3.8% -> 應該拆
+                    if (winner.rateAfterSpecialThreshold < bestBackup.rate) {
+                        splitPoint = winner.specialSplitThreshold;
+                        reason = `超過新戶額度 ${formatMoney(splitPoint)} 後回饋下降`;
+                    }
+                }
+                // Case B: 一般上限斷點 (例如 UBear $7500, 大戶 $16000)
+                else if (winner.actualCap && amount > winner.actualCap && winner.actualCap !== Infinity) {
+                    // 如果「過上限後的費率」 < 「副卡費率」
+                    // 例如: 大戶 剩 1% < Cube 3% -> 應該拆
+                    if (winner.rateAfterCap < bestBackup.rate) {
+                        splitPoint = winner.actualCap;
+                        reason = `超過上限 ${formatMoney(splitPoint)} 後回饋下降`;
+                    }
+                }
+
+                // 如果有找到適合的拆單點
+                if (splitPoint) {
+                    // 計算拆單後的總回饋
+                    // 1. 冠軍卡刷到 splitPoint 的回饋 (需重新精算，不能只用比例，因為可能有加碼)
+                    // 這裡為了不寫太複雜的遞迴，我們用 "總回饋 - 超出部分的回饋" 來反推，或者簡單重算
+                    // 簡單重算 Winner Part:
+                    let winnerPartReward = 0;
+                    // 為了方便，我們重新呼叫一次邏輯太麻煩，這裡用簡易估算：
+                    // Winner Reward at SplitPoint (通常是高費率滿額)
+                    // 這裡用 "比例" 近似會有誤差，我們用 "總回饋" 扣掉 "超出部分用低費率算的回饋"
                     
-                    // 拆單總回饋 = 冠軍刷滿 + 第二張刷餘額
-                    // 這裡需要知道冠軍刷滿 cap 拿多少 (Max Bonus)
-                    // 簡易算法：
-                    let winnerMaxBonus = 0;
-                    if (winner.cardId === 'ubear') winnerMaxBonus = Math.floor(cap * 0.03); // 3% part
-                    else if (winner.cardId === 'dawho') winnerMaxBonus = Math.floor(cap * winner.rate);
-                    else if (winner.cardId === 'unicard') winnerMaxBonus = Math.floor(cap * winner.rate); // 忽略新戶複雜度
-                    else winnerMaxBonus = Math.floor(cap * winner.rate);
+                    // 為了精準，我們手動算一下 SplitPoint 內的 Winner Reward
+                    // 這種寫法有點髒但有效：
+                    if (winner.cardId === 'unicard' && winner.specialSplitThreshold) {
+                         // Unicard 新戶滿額: (Scheme% + 3%) * 14667
+                         winnerPartReward = Math.floor(splitPoint * (winner.rateAfterSpecialThreshold + 0.03));
+                    } else if (winner.cardId === 'ubear') {
+                        winnerPartReward = Math.floor(splitPoint * 0.03); // UBear 7500 內
+                        if (isNewUser) winnerPartReward += Math.floor(splitPoint * 0.07);
+                    } else {
+                        winnerPartReward = Math.floor(splitPoint * winner.rate);
+                    }
+
+                    // 2. 副卡刷剩餘金額
+                    const remaining = amount - splitPoint;
+                    const backupPartReward = Math.floor(remaining * bestBackup.rate);
                     
-                    const splitTotal = winnerMaxBonus + bestBackup.backupReward;
-                    
-                    // 只有當「拆單」比「單刷」賺更多時，才顯示建議
-                    if (splitTotal > winnerSoloReward + 10) { // 至少多賺10元才建議
-                        const diff = splitTotal - winnerSoloReward;
+                    const splitTotal = winnerPartReward + backupPartReward;
+                    const diff = splitTotal - winner.reward;
+
+                    if (diff > 10) { // 至少多賺 10 元才建議
                         splitHtml = `
                             <div class="split-recommendation">
                                 <div class="split-title">💡 建議拆單 (多賺 ${formatMoney(diff)})</div>
-                                <div class="split-step">先刷 <b>${winner.cardName}</b>：${formatMoney(cap)}</div>
+                                <div style="font-size:0.85em; color:#558b2f; margin-bottom:5px;">${reason}</div>
+                                <div class="split-step">先刷 <b>${winner.cardName}</b>：${formatMoney(splitPoint)}</div>
                                 <div class="split-step">餘額 <b>${bestBackup.cardName}</b>：${formatMoney(remaining)}</div>
                                 <div class="split-total">預期總回饋：${formatMoney(splitTotal)}</div>
                             </div>
@@ -1009,3 +1076,4 @@
     </script>
 </body>
 </html>
+
