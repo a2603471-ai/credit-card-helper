@@ -82,13 +82,26 @@
             background: #e3f2fd; padding: 12px; border-radius: 8px; color: #0d47a1;
             margin-bottom: 15px; font-size: 0.9em; line-height: 1.5; border-left: 4px solid #2196f3;
         }
-        .form-group { margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; position: relative; } /* 確保層級 */
         label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--color-text); font-size: 0.95em; }
-        .input-wrapper { position: relative; display: flex; align-items: center; }
-        input[type="text"], input[type="number"], select {
+        
+        /* 修正 Input Wrapper，確保不會被遮擋 */
+        .input-wrapper { position: relative; display: flex; align-items: center; z-index: 10; }
+        
+        input[type="text"], input[type="number"] {
             width: 100%; padding: 12px 40px 12px 14px; border: 1px solid var(--color-border);
-            border-radius: 8px; font-size: 16px; background: #fff; appearance: none;
+            border-radius: 8px; font-size: 16px; background: #fff; 
+            appearance: none; -webkit-appearance: none;
         }
+        
+        /* 修正 Select 顯示問題 */
+        select {
+            width: 100%; padding: 12px 30px 12px 14px; border: 1px solid var(--color-border);
+            border-radius: 8px; font-size: 16px; background: #fff;
+            appearance: auto; -webkit-appearance: auto; /* 恢復預設箭頭 */
+            cursor: pointer;
+        }
+
         input:focus, select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(33, 128, 160, 0.1); }
         
         .clear-btn {
@@ -96,10 +109,14 @@
             width: 30px; height: 30px; cursor: pointer; color: #666; display: none; align-items: center; justify-content: center;
         }
         
+        /* 關鍵字下拉選單修正：提高 Z-Index */
         .suggestion-dropdown {
             position: absolute; top: 100%; left: 0; right: 0; background: var(--color-surface);
             border: 1px solid var(--color-border); border-radius: 0 0 8px 8px;
-            max-height: 250px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none;
+            max-height: 250px; overflow-y: auto; 
+            z-index: 2000; /* 提高層級 */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+            display: none;
         }
         .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
         .suggestion-item:hover { background-color: #f5f9ff; }
@@ -168,7 +185,7 @@
         /* === 彈窗 === */
         .detail-modal {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; padding: 20px; backdrop-filter: blur(4px); 
+            background: rgba(0,0,0,0.6); z-index: 3000; justify-content: center; padding: 20px; backdrop-filter: blur(4px); 
         }
         .detail-modal.show { display: flex; align-items: center; }
         .detail-content {
@@ -383,7 +400,6 @@
             'dawho': { class: 'card-theme-dawho', color: '#2d3436' }
         };
 
-        // 核心資料：所有的查詢和試算都基於此資料
         const cardBenefitsData = [
             {
                 id: 'richart', name: '台新 Richart', note: '需每日 App 切換權益 (上限 30萬)',
