@@ -81,7 +81,6 @@
         .form-section {
             background: var(--color-surface); padding: 20px;
             border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            /* 已移除 Sticky 相關屬性 */
         }
  
         .info-text {
@@ -112,8 +111,8 @@
         .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
         .suggestion-item:hover { background-color: #f5f9ff; }
         
-        /* 修正：加強高亮樣式的權重，確保顯示 */
-        .suggestion-highlight { color: var(--color-highlight) !important; font-weight: 900; }
+        /* 修正：高亮顏色保留，但移除粗體 */
+        .suggestion-highlight { color: var(--color-highlight) !important; font-weight: normal; }
         
         /* 熱門搜尋區塊 */
         .popular-search-group { padding: 10px 15px; background: #fafafa; border-bottom: 1px solid #eee; }
@@ -155,9 +154,9 @@
         .merchant-type { font-size: 0.85em; color: #888; background: #eee; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
         .merchant-best-info { text-align: right; }
         
-        /* 優化：回饋率放大 */
+        /* 回饋率放大 */
         .best-rate { 
-            color: var(--color-primary); font-weight: 800; font-size: 1.8em; /* 放大字體 */
+            color: var(--color-primary); font-weight: 800; font-size: 1.8em;
             line-height: 1.1;
         }
         
@@ -271,7 +270,7 @@
             transition: transform 0.2s;
         }
         
-        /* 修正：移除冠軍金框特效，恢復簡潔樣式 */
+        /* 冠軍樣式 (簡潔版) */
         .calc-result-item.winner { 
             background: #ffffff; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
@@ -447,7 +446,7 @@
                 <div class="form-group">
                     <label>消費通路</label>
                     <div class="input-wrapper">
-                        <input type="text" id="calcMerchant" placeholder="輸入通路 (如：蝦皮購物)" autocomplete="off">
+                        <input type="text" id="calcMerchant" placeholder="輸入通路 (如：蝦皮購物)" autocomplete="off" onfocus="handleCalcSearchInput({target:this})">
                         <button id="clearCalcBtn" class="clear-btn" onclick="clearSearch('calcMerchant', 'clearCalcBtn', false)">✕</button>
                         <div id="calcSuggestionDropdown" class="suggestion-dropdown"></div>
                     </div>
@@ -737,6 +736,7 @@
             document.getElementById('merchantContainer').innerHTML = matched.length ? matched.map(d => generateMerchantCardHTML(d.name)).join('') : '<div style="text-align:center; padding:20px; color:#999;">無資料</div>';
         }
  
+        /* 通路搜尋 Input 處理 */
         function handleSearchInput(e) {
             const val = e.target.value.trim().toLowerCase();
             const dropdown = document.getElementById('suggestionDropdown');
@@ -767,6 +767,44 @@
                 const highlightedName = n.replace(regex, '<span class="suggestion-highlight">$1</span>');
                 return `<div class="suggestion-item" onclick="selectMerchant('${n}')"><span>${highlightedName}</span></div>`;
             }).join('') : '<div class="suggestion-item" style="color:#999;">無相關資料</div>';
+            
+            dropdown.style.display = 'block';
+        }
+ 
+        /* 回饋試算 Input 處理 (新增功能) */
+        function handleCalcSearchInput(e) {
+            const val = e.target.value.trim().toLowerCase();
+            const dropdown = document.getElementById('calcSuggestionDropdown');
+            document.getElementById('clearCalcBtn').style.display = val ? 'flex' : 'none';
+ 
+            // 1. 空狀態：顯示熱門搜尋
+            if (!val) { 
+                const popularKeywords = ['Netflix', '全家', '高鐵', 'LINE Pay', '麥當勞', '蝦皮'];
+                let html = `
+                    <div class="popular-search-group">
+                        <div class="popular-title">🔥 熱門搜尋</div>
+                        <div class="popular-tags">
+                            ${popularKeywords.map(k => `<span class="popular-tag" onclick="selectCalcMerchant('${k}')">${k}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                dropdown.innerHTML = html;
+                dropdown.style.display = 'block';
+                return; 
+            }
+ 
+            // 2. 正常搜尋
+            let matches = new Set();
+            for (const [alias, real] of Object.entries(aliasMap)) if (alias.includes(val)) matches.add(real);
+            Object.keys(globalMerchantDB).forEach(k => { if(k.includes(val)) matches.add(globalMerchantDB[k].name); });
+            const results = Array.from(matches).slice(0, 5);
+            
+            dropdown.innerHTML = results.length ? results.map(n => {
+                // 關鍵字高亮
+                const regex = new RegExp(`(${val})`, 'gi');
+                const highlightedName = n.replace(regex, '<span class="suggestion-highlight">$1</span>');
+                return `<div class="suggestion-item" onclick="selectCalcMerchant('${n}')"><span>${highlightedName}</span></div>`;
+            }).join('') : ''; // 試算頁若無結果不顯示 "無相關資料" 保持版面乾淨
             
             dropdown.style.display = 'block';
         }
@@ -883,18 +921,6 @@
             document.getElementById('detailModal').classList.add('show');
         }
  
-        function handleCalcSearchInput(e) {
-            const val = e.target.value.trim().toLowerCase();
-            const dropdown = document.getElementById('calcSuggestionDropdown');
-            document.getElementById('clearCalcBtn').style.display = val ? 'flex' : 'none';
-            if (!val) { dropdown.style.display = 'none'; return; }
-            let matches = new Set();
-            for (const [alias, real] of Object.entries(aliasMap)) if (alias.includes(val)) matches.add(real);
-            Object.keys(globalMerchantDB).forEach(k => { if(k.includes(val)) matches.add(globalMerchantDB[k].name); });
-            const results = Array.from(matches).slice(0, 5);
-            dropdown.innerHTML = results.map(n => `<div class="suggestion-item" onclick="selectCalcMerchant('${n}')">${n}</div>`).join('');
-            dropdown.style.display = 'block';
-        }
         function selectCalcMerchant(name) {
             document.getElementById('calcMerchant').value = name;
             document.getElementById('calcSuggestionDropdown').style.display = 'none';
