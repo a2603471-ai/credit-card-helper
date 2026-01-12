@@ -82,10 +82,9 @@
             background: #e3f2fd; padding: 12px; border-radius: 8px; color: #0d47a1;
             margin-bottom: 15px; font-size: 0.9em; line-height: 1.5; border-left: 4px solid #2196f3;
         }
-        .form-group { margin-bottom: 15px; position: relative; } /* 確保層級 */
+        .form-group { margin-bottom: 15px; position: relative; } 
         label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--color-text); font-size: 0.95em; }
         
-        /* 修正 Input Wrapper，確保不會被遮擋 */
         .input-wrapper { position: relative; display: flex; align-items: center; z-index: 10; }
         
         input[type="text"], input[type="number"] {
@@ -94,11 +93,10 @@
             appearance: none; -webkit-appearance: none;
         }
         
-        /* 修正 Select 顯示問題 */
         select {
             width: 100%; padding: 12px 30px 12px 14px; border: 1px solid var(--color-border);
             border-radius: 8px; font-size: 16px; background: #fff;
-            appearance: auto; -webkit-appearance: auto; /* 恢復預設箭頭 */
+            appearance: auto; -webkit-appearance: auto;
             cursor: pointer;
         }
 
@@ -109,12 +107,11 @@
             width: 30px; height: 30px; cursor: pointer; color: #666; display: none; align-items: center; justify-content: center;
         }
         
-        /* 關鍵字下拉選單修正：提高 Z-Index */
         .suggestion-dropdown {
             position: absolute; top: 100%; left: 0; right: 0; background: var(--color-surface);
             border: 1px solid var(--color-border); border-radius: 0 0 8px 8px;
             max-height: 250px; overflow-y: auto; 
-            z-index: 2000; /* 提高層級 */
+            z-index: 2000;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
             display: none;
         }
@@ -597,7 +594,19 @@
 
         /* === 搜尋與列表顯示邏輯 === */
         function renderMerchantResult(name) {
-            document.getElementById('merchantContainer').innerHTML = generateMerchantCardHTML(name);
+            // 嘗試解析別名 (例如 "小七" -> "7-ELEVEN")
+            let resolvedName = name;
+            const searchKey = name.toLowerCase();
+            // 如果輸入的名字直接在別名表中，就用別名
+            if (aliasMap[name]) resolvedName = aliasMap[name]; 
+            // 模糊搜尋別名
+            else {
+                for (const [alias, real] of Object.entries(aliasMap)) {
+                    if (alias.includes(searchKey)) { resolvedName = real; break; }
+                }
+            }
+
+            document.getElementById('merchantContainer').innerHTML = generateMerchantCardHTML(resolvedName);
         }
 
         function generateMerchantCardHTML(name) {
@@ -877,8 +886,6 @@
                     if (cap < amount) {
                         // 計算 Card A 在 Cap 內的極限回饋
                         let rewardA_Cap = 0;
-                        // 為了準確，這裡手動模擬 Card A 在 Cap 金額下的回饋，因為上面的 singleCardResults 已經是全額了
-                        // 簡化模擬：
                         if (cardA.cardId === 'ubear' && cardA.tag === 'ent') rewardA_Cap = 100; // 1000 * 10%
                         else if (cardA.cardId === 'richart') rewardA_Cap = Math.floor(cap * cardA.rate);
                         else if (cardA.cardId === 'ubear' && cardA.tag === 'net') {
@@ -1011,6 +1018,16 @@
         function handleSearchInput(e) {
             const val = e.target.value.trim().toLowerCase();
             const dropdown = document.getElementById('suggestionDropdown');
+            
+            // 關鍵修正：打字時直接更新列表，不一定要點選選單
+            if (val) {
+                document.getElementById('clearSearchBtn').style.display = 'flex';
+                renderMerchantResult(val); // 即時更新列表
+            } else {
+                document.getElementById('clearSearchBtn').style.display = 'none';
+                document.getElementById('merchantContainer').innerHTML = ''; // 清空
+            }
+
             if (!val) { dropdown.style.display = 'none'; return; }
             let matches = new Set();
             for (const [alias, real] of Object.entries(aliasMap)) if (alias.includes(val)) matches.add(real);
