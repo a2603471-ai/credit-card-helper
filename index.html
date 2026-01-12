@@ -14,7 +14,7 @@
             --color-border: #e0e0e0;
             --color-success: #2e7d32;
             --color-danger: #d32f2f;
-            --color-highlight: #ff5722; /* 搜尋高亮色 */
+            --color-highlight: #ff5722; /* 搜尋高亮色：橘紅 */
             
             /* === 品牌色定義 === */
             --brand-richart: #e01a22; /* 台新紅 */
@@ -81,14 +81,7 @@
         .form-section {
             background: var(--color-surface); padding: 20px;
             border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            /* 手機版 Sticky Search 優化 */
-            position: sticky;
-            top: 75px; /* 避開 Nav Bar (如果是 Desktop) 或 頂部 (Mobile) */
-            z-index: 800;
-        }
-        
-        @media (max-width: 768px) {
-            .form-section { top: 10px; } /* 手機版導覽列在下方，所以搜尋框置頂 */
+            /* 已移除 Sticky 相關屬性 */
         }
  
         .info-text {
@@ -118,7 +111,9 @@
         }
         .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
         .suggestion-item:hover { background-color: #f5f9ff; }
-        .suggestion-highlight { color: var(--color-highlight); font-weight: 700; }
+        
+        /* 修正：加強高亮樣式的權重，確保顯示 */
+        .suggestion-highlight { color: var(--color-highlight) !important; font-weight: 900; }
         
         /* 熱門搜尋區塊 */
         .popular-search-group { padding: 10px 15px; background: #fafafa; border-bottom: 1px solid #eee; }
@@ -276,12 +271,11 @@
             transition: transform 0.2s;
         }
         
-        /* 優化：冠軍卡片樣式增強 */
+        /* 修正：移除冠軍金框特效，恢復簡潔樣式 */
         .calc-result-item.winner { 
             background: #ffffff; 
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.15); /* 金色光暈 */
-            border: 2px solid rgba(255, 193, 7, 0.4);
-            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
         }
  
         .calc-header { 
@@ -607,7 +601,6 @@
             '全聯': '全聯福利中心', '家樂福': '家樂福', 'momo': 'momo購物網',
             'pchome': 'PChome 24h購物', 'klook': 'Klook', 'kkday': 'KKday',
             'uniqlo': 'UNIQLO', 'ikea': 'IKEA',
-            // 英文通路標準化
             'netflix': 'Netflix', 'disney+': 'Disney+', 'disney': 'Disney+',
             'spotify': 'Spotify', 'nintendo': 'Nintendo', '任天堂': 'Nintendo',
             'playstation': 'PlayStation', 'psn': 'PlayStation', 'kkbox': 'KKBOX',
@@ -744,13 +737,11 @@
             document.getElementById('merchantContainer').innerHTML = matched.length ? matched.map(d => generateMerchantCardHTML(d.name)).join('') : '<div style="text-align:center; padding:20px; color:#999;">無資料</div>';
         }
  
-        /* 優化：搜尋處理邏輯 */
         function handleSearchInput(e) {
             const val = e.target.value.trim().toLowerCase();
             const dropdown = document.getElementById('suggestionDropdown');
             document.getElementById('clearSearchBtn').style.display = val ? 'flex' : 'none';
  
-            // 1. 空狀態：顯示熱門搜尋
             if (!val) { 
                 const popularKeywords = ['Netflix', '全家', '高鐵', 'LINE Pay', '麥當勞', '蝦皮'];
                 let html = `
@@ -766,14 +757,12 @@
                 return; 
             }
  
-            // 2. 正常搜尋：加入 Highlight
             let matches = new Set();
             for (const [alias, real] of Object.entries(aliasMap)) if (alias.includes(val)) matches.add(real);
             Object.keys(globalMerchantDB).forEach(k => { if(k.includes(val)) matches.add(globalMerchantDB[k].name); });
             const results = Array.from(matches).slice(0, 10);
             
             dropdown.innerHTML = results.length ? results.map(n => {
-                // Highlighting Logic
                 const regex = new RegExp(`(${val})`, 'gi');
                 const highlightedName = n.replace(regex, '<span class="suggestion-highlight">$1</span>');
                 return `<div class="suggestion-item" onclick="selectMerchant('${n}')"><span>${highlightedName}</span></div>`;
