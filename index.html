@@ -5,195 +5,204 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>信用卡回饋查詢助手 2026</title>
     <style>
-        /* === 基礎樣式 === */
+        /* === 基礎樣式與全域變數 === */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --color-primary: #2180a0;
-            --color-bg: #f5f5f5;
+            --color-bg: #f8f9fa;
             --color-surface: #ffffff;
-            --color-text: #333333;
-            --color-border: #e0e0e0;
-            --color-success: #2e7d32;
-            --color-danger: #d32f2f;
-            --color-highlight: #ff5722;
+            --color-text: #2d3436;
+            --color-text-light: #636e72;
+            --color-border: #dfe6e9;
+            --color-success: #00b894;
+            --color-danger: #d63031;
+            --color-highlight: #e17055;
             
+            /* 銀行品牌代表色 */
             --brand-richart: #e01a22;
             --brand-cube: #00AA4F;
             --brand-unicard: #1890ff;
             --brand-ubear: #e6b800;
             --brand-dawho: #2d3436;
             
-            --tag-bg: #f0f0f0;
-            --tag-text: #555;
+            --tag-bg: #f1f2f6;
+            --tag-text: #2f3542;
         }
  
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background-color: var(--color-bg);
             color: var(--color-text);
             padding: 20px;
             line-height: 1.6;
-            padding-bottom: 90px;
+            padding-bottom: 100px;
             -webkit-tap-highlight-color: transparent;
         }
         
         .container { max-width: 800px; margin: 0 auto; }
-        h1 { text-align: center; margin-bottom: 15px; color: var(--color-primary); font-size: 1.6em; }
+        h1 { text-align: center; margin-bottom: 25px; color: var(--color-primary); font-size: 1.8em; font-weight: 800; letter-spacing: -0.5px; }
  
         /* === 讀取中畫面 === */
         #loadingOverlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: white; z-index: 9999;
+            background: rgba(255, 255, 255, 0.95); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .spinner {
-            width: 40px; height: 40px; border: 4px solid #f3f3f3;
+            width: 45px; height: 45px; border: 4px solid #f1f2f6;
             border-top: 4px solid var(--color-primary); border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 10px;
+            animation: spin 0.8s linear infinite; margin-bottom: 15px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
  
-        /* === 導覽列 === */
+        /* === 導覽列 (分頁標籤) === */
         .nav-tabs {
-            display: flex; background: var(--color-surface); padding: 5px;
-            border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 20px; position: sticky; top: 10px; z-index: 900;
-            transition: all 0.3s;
+            display: flex; background: var(--color-surface); padding: 6px;
+            border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px; position: sticky; top: 15px; z-index: 900;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .nav-item {
-            flex: 1; text-align: center; padding: 12px; cursor: pointer;
-            border-radius: 8px; font-weight: 600; color: #888; transition: all 0.2s;
+            flex: 1; text-align: center; padding: 12px 5px; cursor: pointer;
+            border-radius: 12px; font-weight: 600; color: var(--color-text-light); transition: all 0.2s ease;
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
         }
-        .nav-icon { font-size: 1.2em; margin-bottom: 2px; display: none; }
-        .nav-item.active { background-color: var(--color-primary); color: white; box-shadow: 0 2px 4px rgba(33, 128, 160, 0.3); }
+        .nav-icon { font-size: 1.3em; margin-bottom: 2px; display: none; }
+        .nav-item.active { background-color: var(--color-primary); color: white; box-shadow: 0 4px 12px rgba(33, 128, 160, 0.3); }
  
         @media (max-width: 768px) {
             .nav-tabs {
                 position: fixed; bottom: 0; top: auto; left: 0; right: 0;
-                margin-bottom: 0; border-radius: 0; padding: 8px 5px 20px 5px;
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(10px);
+                margin-bottom: 0; border-radius: 0; padding: 10px 5px 30px 5px;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
                 border-top: 1px solid #eee;
-                box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
                 z-index: 2000;
             }
-            .nav-item { background: transparent !important; color: #999; padding: 4px; font-size: 0.75rem; }
-            .nav-item.active { color: var(--color-primary); box-shadow: none; }
-            .nav-icon { display: block; font-size: 1.4rem; }
-            .nav-text { margin-top: 2px; }
-            h1 { margin-top: 10px; font-size: 1.4em; }
+            .nav-item { background: transparent !important; color: #a4b0be; padding: 6px; font-size: 0.75rem; }
+            .nav-item.active { color: var(--color-primary); box-shadow: none; font-weight: 700; }
+            .nav-icon { display: block; }
+            h1 { margin-top: 10px; font-size: 1.5em; }
             body { padding-top: 10px; }
         }
  
-        .tab-content { display: none; animation: fadeIn 0.3s ease-out; }
+        .tab-content { display: none; animation: fadeIn 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
  
-        /* === 區塊樣式 === */
+        /* === 表單與搜尋元件 === */
         .form-section {
-            background: var(--color-surface); padding: 20px;
-            border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: var(--color-surface); padding: 24px;
+            border-radius: 20px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.04);
         }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--color-text); font-size: 0.95em; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--color-text); font-size: 0.95em; }
         .input-wrapper { position: relative; display: flex; align-items: center; }
         input[type="text"], input[type="number"], select {
-            width: 100%; padding: 12px 40px 12px 14px; border: 1px solid var(--color-border);
-            border-radius: 8px; font-size: 16px; background: #fff; appearance: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%; padding: 14px 45px 14px 16px; border: 1.5px solid var(--color-border);
+            border-radius: 12px; font-size: 16px; background: #fff; appearance: none;
+            transition: all 0.25s ease;
         }
-        input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(33, 128, 160, 0.1); }
+        input:focus, select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 4px rgba(33, 128, 160, 0.08); }
         
         .clear-btn {
-            position: absolute; right: 5px; background: #eee; border: none; border-radius: 50%;
-            width: 30px; height: 30px; cursor: pointer; color: #666; display: none; align-items: center; justify-content: center;
+            position: absolute; right: 8px; background: #f1f2f6; border: none; border-radius: 50%;
+            width: 30px; height: 30px; cursor: pointer; color: #747d8c; display: none; align-items: center; justify-content: center;
+            transition: background 0.2s;
         }
+        .clear-btn:hover { background: #dfe4ea; }
         
         .suggestion-dropdown {
-            position: absolute; top: 100%; left: 0; right: 0; background: var(--color-surface);
-            border: 1px solid var(--color-border); border-radius: 0 0 8px 8px;
-            max-height: 300px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none;
+            position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: var(--color-surface);
+            border: 1px solid var(--color-border); border-radius: 12px;
+            max-height: 300px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none;
         }
-        .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-        .suggestion-item:hover { background-color: #f5f9ff; }
+        .suggestion-item { padding: 14px 18px; cursor: pointer; border-bottom: 1px solid #f1f2f6; display: flex; justify-content: space-between; align-items: center; }
+        .suggestion-item:hover { background-color: #f7fbff; }
         
         .category-tag {
-            padding: 6px 14px; background: var(--color-surface);
-            border: 1px solid var(--color-border); border-radius: 20px;
-            cursor: pointer; font-size: 0.9em; color: var(--color-text); font-weight: 500;
-            transition: all 0.2s; margin-bottom: 5px;
+            padding: 8px 16px; background: #fff;
+            border: 1.5px solid var(--color-border); border-radius: 50px;
+            cursor: pointer; font-size: 0.88em; color: var(--color-text-light); font-weight: 600;
+            transition: all 0.2s ease; margin-bottom: 6px;
         }
-        .category-tag:hover { border-color: var(--color-primary); color: var(--color-primary); background: #e3f2fd; }
-        .category-tag.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+        .category-tag:hover { border-color: var(--color-primary); color: var(--color-primary); background: #f0faff; }
+        .category-tag.active { background: var(--color-primary); color: white; border-color: var(--color-primary); box-shadow: 0 4px 10px rgba(33, 128, 160, 0.2); }
 
-        /* === 列表結果 === */
+        /* === 列表卡片樣式 === */
         .merchant-list {
-            background: var(--color-surface); padding: 16px; border-radius: 12px; margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer;
-            border: 1px solid transparent; display: flex; justify-content: space-between; align-items: center;
-            border-left: 5px solid #ccc;
+            background: var(--color-surface); padding: 18px 22px; border-radius: 18px; margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.25s ease; cursor: pointer;
+            border: 1px solid #f1f2f6; display: flex; justify-content: space-between; align-items: center;
+            border-left: 6px solid #ccc;
         }
-        .card-theme-richart { border-left-color: var(--brand-richart) !important; }
-        .card-theme-cube { border-left-color: var(--brand-cube) !important; }
-        .card-theme-unicard { border-left-color: var(--brand-unicard) !important; }
-        .card-theme-ubear { border-left-color: var(--brand-ubear) !important; }
-        .card-theme-dawho { border-left-color: var(--brand-dawho) !important; }
+        .merchant-list:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); border-color: transparent; }
 
-        .merchant-name { font-size: 1.1em; font-weight: 700; color: var(--color-text); }
-        .merchant-type { font-size: 0.85em; color: #888; background: #eee; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
-        .best-rate { color: var(--color-primary); font-weight: 800; font-size: 1.8em; line-height: 1.1; }
-        .best-card-name { font-size: 0.85em; color: #666; display: flex; align-items: center; justify-content: flex-end; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
-        .card-icon-shape { width: 12px; height: 12px; border-radius: 50%; display: inline-block; vertical-align: middle; margin-right: 6px; }
+        .merchant-name { font-size: 1.2em; font-weight: 800; color: var(--color-text); }
+        .merchant-type { font-size: 0.82em; color: var(--color-text-light); background: #f1f2f6; padding: 3px 10px; border-radius: 8px; margin-top: 5px; display: inline-block; }
+        .best-rate { color: var(--color-primary); font-weight: 900; font-size: 2em; line-height: 1; letter-spacing: -1px; }
+        .best-card-name { font-size: 0.88em; color: var(--color-text-light); display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-top: 6px; }
+        .card-icon-shape { width: 14px; height: 14px; border-radius: 50%; display: inline-block; vertical-align: middle; border: 2px solid rgba(255,255,255,0.8); }
 
-        /* === Accordion (原本的摺疊清單) === */
+        /* === 權益總覽 (Accordion 美化版) === */
         .card-accordion-item {
-            background: var(--color-surface); border-radius: 12px; margin-bottom: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid var(--color-border);
-            border-left: 5px solid #ccc;
+            background: var(--color-surface); border-radius: 18px; margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; border: 1.5px solid #f1f2f6;
+            border-left-width: 8px; transition: box-shadow 0.3s ease;
         }
+        .card-accordion-item:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+        
         .accordion-header {
-            padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
             background: white; transition: background 0.2s;
         }
-        .card-title-row { display: flex; align-items: center; }
-        .card-title-text { font-weight: 700; font-size: 1.1em; color: var(--color-text); }
-        .chevron { transition: transform 0.3s; color: #999; }
-        .accordion-header.active .chevron { transform: rotate(180deg); }
-        .accordion-body { display: none; padding: 0; background: #fff; border-top: 1px solid #eee; }
-        .accordion-body.open { display: block; animation: slideDown 0.3s ease-out; }
-        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 3000px; } }
+        .accordion-header:active { background: #f8f9fa; }
+        .card-title-row { display: flex; align-items: center; gap: 12px; }
+        .card-title-text { font-weight: 800; font-size: 1.25em; color: var(--color-text); letter-spacing: -0.3px; }
+        .chevron { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #b2bec3; font-size: 0.8em; }
+        .accordion-header.active .chevron { transform: rotate(180deg); color: var(--color-primary); }
         
-        .benefit-row { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; flex-direction: column; position: relative; }
-        /* 僅針對有 class no-action 的項目移除 hover 與指標效果 */
-        .benefit-row:not(.no-action):hover { background-color: #f8fbff; cursor: pointer; }
+        .accordion-body { display: none; padding: 0; background: #fff; border-top: 1px solid #f1f2f6; }
+        .accordion-body.open { display: block; animation: slideDown 0.4s ease-out; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 5000px; } }
+        
+        .benefit-row { padding: 16px 24px; border-bottom: 1px solid #f8f9fa; display: flex; flex-direction: column; position: relative; transition: background 0.2s; }
+        .benefit-row:last-child { border-bottom: none; }
+        
+        /* 僅針對有明細的項目顯示指標與 hover */
+        .benefit-row:not(.no-action):hover { background-color: #f0faff; cursor: pointer; }
         .benefit-row.no-action { cursor: default; }
         
-        .benefit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-        .benefit-name { font-weight: 600; font-size: 1em; color: #444; }
-        .benefit-rate { font-weight: 700; color: var(--color-primary); font-size: 1.1em; }
-        .benefit-desc { font-size: 0.85em; color: #666; margin-top: 2px; }
+        .benefit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .benefit-name { font-weight: 700; font-size: 1.05em; color: var(--color-text); }
+        .benefit-rate { font-weight: 800; color: var(--color-primary); font-size: 1.2em; }
+        .benefit-desc { font-size: 0.88em; color: var(--color-text-light); margin-top: 2px; line-height: 1.4; }
 
         /* === 試算結果 === */
-        .calc-result-item { margin-bottom: 12px; padding: 15px; background: white; border: 1px solid #eee; border-radius: 12px; border-left: 5px solid #ccc; transition: 0.2s; }
-        .calc-result-item.winner { background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); }
-        .calc-money { font-size: 1.5em; font-weight: 800; color: #333; float: right; }
-        .calc-detail { font-size: 0.85em; color: #666; background: rgba(0,0,0,0.03); padding: 8px; border-radius: 6px; margin-top: 8px; font-family: monospace; }
+        .calc-result-item { margin-bottom: 16px; padding: 20px; background: white; border-radius: 18px; border: 1.5px solid #f1f2f6; border-left-width: 8px; transition: 0.25s; }
+        .calc-result-item.winner { background: #ffffff; box-shadow: 0 10px 30px rgba(33, 128, 160, 0.1); border-color: rgba(33, 128, 160, 0.1); }
+        .calc-money { font-size: 1.8em; font-weight: 900; color: var(--color-text); float: right; letter-spacing: -1px; }
+        .calc-detail { font-size: 0.85em; color: var(--color-text-light); background: #f8f9fa; padding: 10px 14px; border-radius: 10px; margin-top: 12px; font-family: 'SFMono-Regular', Consolas, monospace; }
 
-        /* === 彈窗 === */
-        .detail-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+        /* === 彈窗 (Modal) === */
+        .detail-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(45, 52, 54, 0.6); z-index: 2000; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
         .detail-modal.show { display: flex; align-items: center; }
-        .detail-content { background: var(--color-surface); border-radius: 16px; width: 100%; max-width: 500px; display: flex; flex-direction: column; max-height: 85vh; overflow: hidden; }
-        .detail-header { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .detail-body { padding: 20px; overflow-y: auto; }
-        .scheme-list-item { background: var(--tag-bg); padding: 4px 10px; border-radius: 20px; font-size: 0.85em; color: var(--tag-text); border: 1px solid #e0e0e0; display: inline-block; margin: 3px; }
-        .action-btn { width:100%; padding:14px; background:var(--color-primary); color:white; border:none; border-radius:12px; font-weight:700; margin-top:10px; font-size:1.1em; cursor: pointer; box-shadow: 0 4px 10px rgba(33, 128, 160, 0.3); }
+        .detail-content { background: var(--color-surface); border-radius: 24px; width: 100%; max-width: 500px; display: flex; flex-direction: column; max-height: 85vh; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .detail-header { padding: 20px 24px; border-bottom: 1px solid #f1f2f6; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .detail-header h2 { font-weight: 800; color: var(--color-primary); font-size: 1.3em; }
+        .detail-body { padding: 24px; overflow-y: auto; background: #fbfbfb; }
+        .scheme-list-item { background: white; padding: 6px 14px; border-radius: 50px; font-size: 0.88em; color: var(--color-text); border: 1px solid var(--color-border); display: inline-block; margin: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        
+        .action-btn { width:100%; padding:16px; background:var(--color-primary); color:white; border:none; border-radius:14px; font-weight:800; margin-top:15px; font-size:1.1em; cursor: pointer; box-shadow: 0 8px 20px rgba(33, 128, 160, 0.25); transition: all 0.2s ease; }
+        .action-btn:hover { background: #1a6d8a; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(33, 128, 160, 0.3); }
+        .action-btn:active { transform: translateY(0); }
     </style>
 </head>
 <body>
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <div id="loadingStatus" style="color:#666; font-weight:bold;">同步雲端資料中...</div>
+        <div id="loadingStatus" style="color:#636e72; font-weight:700; font-size: 0.95em;">同步雲端權益資料中...</div>
     </div>
 
     <div class="container">
@@ -221,18 +230,18 @@
                         <div id="suggestionDropdown" class="suggestion-dropdown"></div>
                     </div>
                 </div>
-                <div class="controls-row" style="display:flex; gap:10px; align-items:center;">
+                <div class="controls-row" style="display:flex; gap:12px; align-items:center;">
                     <select id="searchUnicardScheme" onchange="debouncedReSearch()" style="flex:1;">
                         <option value="any">Unicard: 任意選 (3.5%)</option>
                         <option value="simple">Unicard: 簡單選 (3.0%)</option>
                         <option value="up">Unicard: UP選 (4.5%)</option>
                     </select>
-                    <div class="toggle-btn" id="searchNewUserBtn" onclick="toggleSearchNewUser()" style="padding:12px; border:1px solid #ddd; border-radius:8px; cursor:pointer; background: white; font-size: 0.9em; min-width: 90px; text-align: center;">
+                    <div class="toggle-btn" id="searchNewUserBtn" onclick="toggleSearchNewUser()" style="padding:14px; border:1.5px solid var(--color-border); border-radius:12px; cursor:pointer; background: white; font-size: 0.9em; min-width: 100px; text-align: center; font-weight: 700; color: var(--color-text-light);">
                         我是新戶
                     </div>
                     <input type="checkbox" id="searchNewUser" style="display:none;">
                 </div>
-                <div id="quickCategoryTags" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:15px;"></div>
+                <div id="quickCategoryTags" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;"></div>
             </div>
             <div id="merchantContainer"></div>
         </div>
@@ -245,26 +254,26 @@
         <!-- 回饋試算 -->
         <div id="tab-calculator" class="tab-content">
             <div class="form-section">
-                <div class="form-group"><label>消費金額</label><input type="number" id="calcAmount" placeholder="輸入金額" inputmode="numeric"></div>
+                <div class="form-group"><label>消費金額</label><input type="number" id="calcAmount" placeholder="輸入預計消費金額" inputmode="numeric"></div>
                 <div class="form-group"><label>消費通路</label>
                     <div class="input-wrapper">
-                        <input type="text" id="calcMerchant" placeholder="輸入通路" autocomplete="off">
+                        <input type="text" id="calcMerchant" placeholder="輸入消費地點或通路" autocomplete="off">
                         <button id="clearCalcBtn" class="clear-btn" onclick="clearSearch('calcMerchant', 'clearCalcBtn', false)">✕</button>
                         <div id="calcSuggestionDropdown" class="suggestion-dropdown"></div>
                     </div>
                 </div>
-                <div class="controls-row" style="display:flex; gap:10px;">
+                <div class="controls-row" style="display:flex; gap:12px;">
                     <select id="calcUnicardScheme" style="flex:1;">
                         <option value="any">Unicard: 任意選 (3.5%)</option>
                         <option value="simple">Unicard: 簡單選 (3.0%)</option>
                         <option value="up">Unicard: UP選 (4.5%)</option>
                     </select>
-                    <div class="toggle-btn" id="calcNewUserBtn" onclick="toggleCalcNewUser()" style="padding:12px; border:1px solid #ddd; border-radius:8px; cursor:pointer; background: white; font-size: 0.9em; min-width: 90px; text-align: center;">
+                    <div class="toggle-btn" id="calcNewUserBtn" onclick="toggleCalcNewUser()" style="padding:14px; border:1.5px solid var(--color-border); border-radius:12px; cursor:pointer; background: white; font-size: 0.9em; min-width: 100px; text-align: center; font-weight: 700; color: var(--color-text-light);">
                         我是新戶
                     </div>
                     <input type="checkbox" id="calcNewUser" style="display:none;">
                 </div>
-                <button onclick="calculateRewards()" class="action-btn">開始試算</button>
+                <button onclick="calculateRewards()" class="action-btn">開始試算回饋</button>
             </div>
             <div id="calcResults"></div>
         </div>
@@ -272,7 +281,7 @@
  
     <div id="detailModal" class="detail-modal" onclick="if(event.target === this) closeDetailModal()">
         <div class="detail-content">
-            <div class="detail-header"><h2 id="modalTitle">方案詳情</h2><button onclick="closeDetailModal()" style="border:none; background:none; font-size:24px; cursor:pointer;">✕</button></div>
+            <div class="detail-header"><h2 id="modalTitle">方案詳情</h2><button onclick="closeDetailModal()" style="border:none; background:none; font-size:24px; cursor:pointer; color: #b2bec3;">✕</button></div>
             <div id="detailBody" class="detail-body"></div>
         </div>
     </div>
@@ -408,11 +417,9 @@
                         <span class="chevron">▼</span>
                     </div>
                     <div class="accordion-body">
-                        <div class="benefit-row no-action" style="background:#fffcec;"><div class="benefit-desc">${card.note}</div></div>
+                        <div class="benefit-row no-action" style="background:#fffcf0; border-bottom: 1.5px solid #fdf2cd;"><div class="benefit-desc" style="color: #856404; font-weight: 600;">ℹ️ ${card.note}</div></div>
                         ${card.benefits.map((b, bIdx) => {
-                            // 判斷該權益是否有明細資料 (categories)
                             const hasDetails = b.categories && Object.keys(b.categories).length > 0;
-                            // 如果沒有資料，加入 no-action class 並移除 onclick
                             return `
                             <div class="benefit-row ${hasDetails ? '' : 'no-action'}" ${hasDetails ? `onclick="openBenefitDetails(${cIdx}, ${bIdx})"` : ''}>
                                 <div class="benefit-header">
@@ -454,7 +461,8 @@
         
         function generateMerchantCardHTML(name) {
             const key = name.toLowerCase();
-            let cards = globalMerchantDB[key] ? JSON.parse(JSON.stringify(globalMerchantDB[key].cards)) : [];
+            let data = globalMerchantDB[key];
+            let cards = data ? JSON.parse(JSON.stringify(data.cards)) : [];
             const isNew = document.getElementById('searchNewUser').checked;
             cards.forEach(c => { if (isNew && (c.cardId === 'ubear' || c.cardId === 'unicard')) c.rate += 0.03; });
             cards.sort((a, b) => b.rate - a.rate);
@@ -462,7 +470,7 @@
             const brand = brandColorMap[best.cardId] || { color: '#ccc' };
             return `
                 <div class="merchant-list" style="border-left-color: ${brand.color}">
-                    <div><div class="merchant-name">${name}</div><span class="merchant-type">推薦卡片</span></div>
+                    <div><div class="merchant-name">${name}</div><span class="merchant-type">${data ? data.category : '一般消費'}</span></div>
                     <div class="merchant-best-info">
                         <div class="best-rate">${(best.rate * 100).toFixed(1)}%</div>
                         <div class="best-card-name"><span class="card-icon-shape" style="background:${brand.color}"></span>${best.cardName}</div>
@@ -496,7 +504,7 @@
             document.getElementById('modalTitle').innerText = benefit.name;
             let html = `<div style="margin-bottom:20px; font-weight:bold; color:var(--color-primary);">${benefit.note}</div>`;
             Object.entries(benefit.categories).forEach(([cat, list]) => {
-                html += `<div style="margin-bottom:15px;"><div style="font-size:0.9em; font-weight:bold; border-left:3px solid var(--color-primary); padding-left:8px; margin-bottom:5px;">${cat}</div><div>${list.map(m => `<span class="scheme-list-item">${m}</span>`).join('')}</div></div>`;
+                html += `<div style="margin-bottom:15px;"><div style="font-size:0.95em; font-weight:bold; border-left:4px solid var(--color-primary); padding-left:10px; margin-bottom:8px; color: var(--color-text);">${cat}</div><div style="display:flex; flex-wrap:wrap; gap:5px;">${list.map(m => `<span class="scheme-list-item">${m}</span>`).join('')}</div></div>`;
             });
             document.getElementById('detailBody').innerHTML = html;
             document.getElementById('detailModal').classList.add('show');
@@ -504,8 +512,26 @@
 
         function toggleAccordion(header) { const body = header.nextElementSibling; body.classList.toggle('open'); header.classList.toggle('active'); }
         function switchTab(e, id) { document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active')); e.currentTarget.classList.add('active'); document.getElementById('tab-' + id).classList.add('active'); }
-        function toggleSearchNewUser() { const btn = document.getElementById('searchNewUserBtn'); const chk = document.getElementById('searchNewUser'); chk.checked = !chk.checked; btn.classList.toggle('active', chk.checked); if(document.getElementById('searchMerchant').value) renderMerchantResult(document.getElementById('searchMerchant').value); }
-        function toggleCalcNewUser() { const btn = document.getElementById('calcNewUserBtn'); const chk = document.getElementById('calcNewUser'); chk.checked = !chk.checked; btn.classList.toggle('active', chk.checked); }
+        
+        function toggleSearchNewUser() { 
+            const btn = document.getElementById('searchNewUserBtn'); 
+            const chk = document.getElementById('searchNewUser'); 
+            chk.checked = !chk.checked; 
+            btn.style.backgroundColor = chk.checked ? 'var(--color-primary)' : 'white';
+            btn.style.color = chk.checked ? 'white' : 'var(--color-text-light)';
+            btn.style.borderColor = chk.checked ? 'var(--color-primary)' : 'var(--color-border)';
+            if(document.getElementById('searchMerchant').value) renderMerchantResult(document.getElementById('searchMerchant').value); 
+        }
+        
+        function toggleCalcNewUser() { 
+            const btn = document.getElementById('calcNewUserBtn'); 
+            const chk = document.getElementById('calcNewUser'); 
+            chk.checked = !chk.checked; 
+            btn.style.backgroundColor = chk.checked ? 'var(--color-primary)' : 'white';
+            btn.style.color = chk.checked ? 'white' : 'var(--color-text-light)';
+            btn.style.borderColor = chk.checked ? 'var(--color-primary)' : 'var(--color-border)';
+        }
+
         function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
         function clearSearch(i, b, s) { document.getElementById(i).value = ''; document.getElementById(b).style.display = 'none'; if(s) document.getElementById('merchantContainer').innerHTML = ''; }
         function debouncedReSearch() { if(document.getElementById('searchMerchant').value) renderMerchantResult(document.getElementById('searchMerchant').value); }
