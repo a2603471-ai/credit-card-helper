@@ -1337,8 +1337,126 @@
         }
         function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
  
-        // 當瀏覽器把 HTML 載入完成後，執行 init() 開始運作
-        window.addEventListener('DOMContentLoaded', init);
+// ====== Google Sheets 讀取模組 ======
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1FYBb6Mjt5dzRqkPknVVRxyEOYeBOuM_i-y0Tc_5ty1E/gviz/tq?tqx=out:csv&sheet=工作表1';
+
+// 解析 CSV 文字，轉成二維陣列
+function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    return lines.map(line => {
+        // 處理逗號在引號內的情況
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            if (line[i] === '"') {
+                inQuotes = !inQuotes;
+            } else if (line[i] === ',' && !inQuotes) {
+                result.push(current.trim());
+                current = '';
+            } else {
+                current += line[i];
+            }
+        }
+        result.push(current.trim());
+        return result;
+    });
+}
+
+// 把 CSV 二維陣列轉換成 cardBenefitsData 格式
+function buildCardData(rows) {
+    const header = rows[0]; // 第一行是標題
+    const data = rows.slice(1).filter(r => r[0]); // 跳過空行
+
+    const cardMap = {}; // 暫存，用 cardId 當 key
+
+    data.forEach(row => {
+        const cardId     = row[0];
+        const cardName   = row[1];
+        const cardNote   = row[2];
+        const benefitName = row[3];
+        const benefitRate = parseFloat(row[4]) || 0;
+        const benefitTag  = row[5];
+        const benefitNote = row[6];
+        const categoryName = row[7];
+        const merchantsRaw = row[8];
+
+        // 建立卡片基本資料
+        if (!cardMap[cardId]) {
+            cardMap[cardId] = { id: cardId, name: cardName, note: cardNote, benefits: [] };
+        }
+
+        const card = cardMap[cardId];
+
+        // 找到或建立對應的 benefit
+        let benefit = card.benefits.find(b => b.name === benefitName);
+        if (!benefit) {
+            benefit = {
+                name: benefitName,
+                rate: benefitRate,
+                tag: benefitTag,
+                note: benefitNote,
+                desc: benefitNote, // 用 note 當 desc
+                categories: {}
+            };
+            // 如果沒有 categoryName，代表是純文字說明 (type: text)
+            if (!categoryName) benefit.type = 'text';
+            card.benefits.push(benefit);
+        }
+
+        // 把商家加入對應的類別
+        if (categoryName && merchantsRaw) {
+            const merchants = merchantsRaw.split(',').map(m => m.trim()).filter(Boolean);
+            if (!benefit.categories[categoryName]) {
+                benefit.categories[categoryName] = [];
+            }
+            benefit.categories[categoryName].push(...merchants);
+        }
+    });
+
+    return Object.values(cardMap);
+}
+
+// 顯示/隱藏載入中提示
+function showLoading(show) {
+    let el = document.getElementById('loadingIndicator');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'loadingIndicator';
+        el.style.cssText = 'text-align:center;padding:40px;color:#999;font-size:1.1em;';
+        document.querySelector('.container').prepend(el);
+    }
+    el.style.display = show ? 'block' : 'none';
+    el.innerHTML = show ? '⏳ 正在載入最新回饋資料...' : '';
+}
+
+// 主要初始化：先抓 Sheets 資料，再啟動 app
+async function loadAndInit() {
+    showLoading(true);
+    try {
+        // 嘗試讀取 Google Sheets
+        const res = await fetch(SHEET_CSV_URL);
+        if (!res.ok) throw new Error('無法讀取試算表');
+        const text = await res.text();
+        const rows = parseCSV(text);
+        
+        // 成功的話，用 Sheets 資料覆蓋硬寫的資料
+        const freshData = buildCardData(rows);
+        if (freshData.length > 0) {
+            cardBenefitsData.length = 0; // 清空原本硬寫的資料
+            freshData.forEach(card => cardBenefitsData.push(card));
+            console.log('✅ 已從 Google Sheets 載入最新資料');
+        }
+    } catch (err) {
+        // 如果讀取失敗，用硬寫的資料當備援，不影響使用者
+        console.warn('⚠️ 無法讀取 Sheets，使用備援資料：', err.message);
+    } finally {
+        showLoading(false);
+        init(); // 不管成功失敗，都正常啟動
+    }
+}
+
+window.addEventListener('DOMContentLoaded', loadAndInit);
     </script>
 </body>
 </html>
