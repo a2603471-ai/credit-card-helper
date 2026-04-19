@@ -14,7 +14,7 @@
         /* :root 定義 CSS 變數，方便之後統一管理顏色 */
         :root {
             --color-primary: #2180a0;       /* 主色調：藍色 */
-            --color-bg: #f5f5f5;            /* 背景色：淺灰 */
+            --color-bg: #f5f6f8;            /* 背景色：淺灰 */
             --color-surface: #ffffff;       /* 卡片/區塊背景：白色 */
             --color-text: #333333;          /* 文字顏色：深灰 */
             --color-border: #e0e0e0;        /* 邊框顏色 */
@@ -46,27 +46,29 @@
         }
         
         /* 限制內容最大寬度，避免在大螢幕上太寬很難看 */
-        .container { max-width: 800px; margin: 0 auto; }
-        h1 { text-align: center; margin-bottom: 15px; color: var(--color-primary); font-size: 1.6em; }
+        .container { max-width: 760px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 4px; color: var(--color-text); font-size: 1.25em; font-weight: 900; letter-spacing: 0.01em; }
+        .hero-subtitle { text-align: center; color: #999; font-size: 0.82em; margin-bottom: 20px; }
  
         /* === 導覽列 (Tabs) === */
         .nav-tabs {
-            display: flex; /* 使用 Flexbox 排版，讓選項橫向排列 */
-            background: var(--color-surface); padding: 5px;
-            border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 20px; position: sticky; top: 10px; z-index: 900; /* sticky: 捲動時會黏在頂部 */
-            transition: all 0.3s;
+            display: flex;
+            background: var(--color-surface); padding: 0;
+            border-radius: 0; box-shadow: none;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 20px; position: sticky; top: 0; z-index: 900;
         }
         .nav-item {
-            flex: 1; /* 平均分配寬度 */
-            text-align: center; padding: 12px; cursor: pointer;
-            border-radius: 8px; font-weight: 600; color: #888; transition: all 0.2s;
+            flex: 1;
+            text-align: center; padding: 13px 12px 11px; cursor: pointer;
+            font-weight: 600; color: #aaa; transition: all 0.2s;
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+            border-bottom: 2px solid transparent; margin-bottom: -1px;
         }
-        .nav-icon { font-size: 1.2em; margin-bottom: 2px; display: none; } /* 電腦版預設隱藏圖示 */
-        
-        /* 當導覽列被選中時的樣式 (變成藍色背景、白字) */
-        .nav-item.active { background-color: var(--color-primary); color: white; box-shadow: 0 2px 4px rgba(33, 128, 160, 0.3); }
+        .nav-icon { font-size: 1.2em; margin-bottom: 2px; display: none; }
+
+        /* 選中時：底線 + 藍色文字（無背景） */
+        .nav-item.active { background-color: transparent; color: var(--color-primary); border-bottom-color: var(--color-primary); box-shadow: none; }
  
         /* === 手機版響應式設計 (RWD) === */
         /* 當螢幕寬度小於 768px (通常是平板或手機) 時，執行這裡的樣式 */
@@ -80,11 +82,11 @@
                 box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
                 z-index: 2000; /* 確保浮在最上層 */
             }
-            .nav-item { background: transparent !important; color: #999; padding: 4px; font-size: 0.75rem; }
+            .nav-item { background: transparent !important; color: #aaa; padding: 4px; font-size: 0.75rem; border-bottom: none !important; }
             .nav-item.active { color: var(--color-primary); box-shadow: none; }
-            .nav-icon { display: block; font-size: 1.4rem; } /* 手機版顯示圖示 */
+            .nav-icon { display: block; font-size: 1.4rem; }
             .nav-text { margin-top: 2px; }
-            h1 { margin-top: 10px; font-size: 1.4em; }
+            h1 { margin-top: 10px; font-size: 1.2em; }
             body { padding-top: 10px; }
         }
  
@@ -100,6 +102,11 @@
             background: var(--color-surface); padding: 20px;
             border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
+        /* 搜尋 Tab 用扁平版本，不要白卡浮起效果 */
+        .search-form-section {
+            background: transparent; box-shadow: none; padding: 12px 0 16px;
+        }
+        .search-form-section .info-text { border-radius: 10px; }
  
         .info-text {
             background: #e3f2fd; padding: 12px; border-radius: 8px; color: #0d47a1;
@@ -119,8 +126,8 @@
         
         /* 輸入框樣式 */
         input[type="text"], input[type="number"], select {
-            width: 100%; padding: 12px 40px 12px 14px; border: 1px solid var(--color-border);
-            border-radius: 8px; font-size: 16px; background: #fff; appearance: none;
+            width: 100%; padding: 13px 44px 13px 16px; border: 1.5px solid var(--color-border);
+            border-radius: 12px; font-size: 16px; background: #fff; appearance: none;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
         /* 當輸入框被點擊時，邊框變藍色 */
@@ -168,12 +175,12 @@
  
         /* === 搜尋結果列表卡片 === */
         .merchant-list {
-            background: var(--color-surface); padding: 16px; border-radius: 12px; margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer;
-            border: 1px solid transparent; display: flex; justify-content: space-between; align-items: center;
-            border-left: 5px solid #ccc; /* 左側有一條顏色線 */
+            background: var(--color-surface); padding: 16px 18px; border-radius: 14px; margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;
+            border: 1.5px solid transparent; display: flex; justify-content: space-between; align-items: center;
+            border-left: 5px solid #ccc;
         }
-        .merchant-list:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        .merchant-list:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
         
         /* 根據不同銀行套用不同左側邊框顏色 */
         .card-theme-richart { border-left-color: var(--brand-richart) !important; }
@@ -186,10 +193,16 @@
         .merchant-type { font-size: 0.85em; color: #888; background: #eee; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
         .merchant-best-info { text-align: right; }
         
-        .best-rate { 
-            color: var(--color-primary); font-weight: 800; font-size: 1.8em;
+        .best-rate {
+            color: var(--color-primary); font-weight: 900; font-size: 1.9em;
             line-height: 1.1;
         }
+        /* 各銀行品牌色 */
+        .card-theme-richart .best-rate { color: var(--brand-richart); }
+        .card-theme-cube .best-rate { color: var(--brand-cube); }
+        .card-theme-unicard .best-rate { color: var(--brand-unicard); }
+        .card-theme-ubear .best-rate { color: #b8860b; }
+        .card-theme-dawho .best-rate { color: var(--brand-dawho); }
         
         .best-card-name { font-size: 0.85em; color: #666; display: flex; align-items: center; justify-content: flex-end; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
         
@@ -433,6 +446,7 @@
 <body>
     <div class="container">
         <h1>💳 信用卡回饋查詢 2026</h1>
+        <div class="hero-subtitle">輸入商家或選分類，秒找最高回饋</div>
  
         <div class="nav-tabs">
             <div class="nav-item active" onclick="switchTab('search')" role="button" aria-label="通路搜尋" tabindex="0">
@@ -447,7 +461,7 @@
         </div>
  
         <div id="tab-search" class="tab-content active">
-            <div class="form-section">
+            <div class="form-section search-form-section">
                 <div class="info-text">
                     ✨ <strong>2026 新戶加碼</strong>：Unicard 最高 7.5%、UBear 網購 10%。
                 </div>
