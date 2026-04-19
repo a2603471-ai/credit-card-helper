@@ -671,7 +671,8 @@
             { name: '🚄 交通旅遊', keywords: ['交通', '旅遊', '訂房', '航空', '旅行社', '高鐵', '台鐵', '國外'] },
             { name: '💳 行動支付', keywords: ['行動支付', 'Pay'] },
             { name: '🎬 影音娛樂', keywords: ['影音', '娛樂', '遊戲', 'KTV', '樂園'] },
-            { name: '🏬 百貨藥妝', keywords: ['百貨', 'Outlet', '藥妝', '藥局'] }
+            { name: '🏬 百貨藥妝', keywords: ['百貨', 'Outlet', '藥妝', '藥局'] },
+            { name: '🤖 AI 工具', keywords: ['AI', 'AI工具', 'AI服務', '線上課程'] }
         ];
  
         let globalMerchantDB = {}; // 存放所有商家的搜尋索引
@@ -702,7 +703,9 @@
                 }
             });
             
-            // 按下 Enter 鍵也可以觸發計算
+            // 金額輸入後自動試算（debounce 500ms）；Enter 鍵也可觸發
+            const debouncedCalc = debounce(calculateRewards, 500);
+            document.getElementById('calcAmount').addEventListener('input', debouncedCalc);
             document.getElementById('calcAmount').addEventListener('keyup', (e) => { if(e.key === 'Enter') calculateRewards(); });
             document.getElementById('calcMerchant').addEventListener('keyup', (e) => { if(e.key === 'Enter') calculateRewards(); });
             
@@ -1055,7 +1058,7 @@
                 baseRate = 0.01;
                 if (scheme.includes('UP選')) cap = 142857;
                 else if (scheme.includes('簡單選')) cap = 50000;
-                else if (scheme.includes('任意選')) cap = 40000;
+                else if (scheme.includes('任意選')) cap = 400000;
             } else if (cardId === 'cube') {
                 baseRate = 0.003; 
             }
@@ -1173,7 +1176,7 @@
                 } 
                 // Unicard 邏輯：根據選擇的方案 (任意/簡單/UP) 計算上限
                 else if (c.cardId === 'unicard') {
-                    let baseRate = 0.01, bonusRate = 0.025, schemeName = '任意選', cap = 40000;
+                    let baseRate = 0.01, bonusRate = 0.025, schemeName = '任意選', cap = 400000;
                     if (unicardScheme === 'simple') { bonusRate = 0.02; schemeName = '簡單選'; cap = 50000; }
                     if (unicardScheme === 'up') { bonusRate = 0.035; schemeName = 'UP選'; cap = 142857; }
  
@@ -1363,6 +1366,7 @@
             document.getElementById(`tab-${tabId}`).classList.add('active');
         }
         function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDetailModal(); });
  
 // ====== Google Sheets 讀取模組 ======
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1FYBb6Mjt5dzRqkPknVVRxyEOYeBOuM_i-y0Tc_5ty1E/gviz/tq?tqx=out:csv&sheet=工作表1';
