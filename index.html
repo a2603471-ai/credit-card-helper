@@ -105,6 +105,14 @@
             background: #e3f2fd; padding: 12px; border-radius: 8px; color: #0d47a1;
             margin-bottom: 15px; font-size: 0.9em; line-height: 1.5; border-left: 4px solid #2196f3;
         }
+        .fallback-notice {
+            background: #fff8e1; border-left: 4px solid #ffc107; border-radius: 8px;
+            padding: 10px 14px; margin-bottom: 8px; font-size: 0.88em; color: #7a5800;
+        }
+        .cap-warning {
+            margin-top: 6px; padding: 6px 10px; background: #fff3e0; border-radius: 6px;
+            font-size: 0.85em; color: #e65100;
+        }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--color-text); font-size: 0.95em; }
         .input-wrapper { position: relative; display: flex; align-items: center; }
@@ -987,7 +995,8 @@
             const dotColor = brandColorMap[best.cardId]?.color || '#ccc';
  
             // 回傳 HTML 字串
-            return `
+            const fallbackHtml = !data ? `<div class="fallback-notice">⚠️ <strong>${name}</strong> 不在特店名單，以下為一般消費回饋排行</div>` : '';
+            return fallbackHtml + `
                 <div class="merchant-list ${brandClass}" onclick='openRankingModal(${JSON.stringify(cards)}, "${data ? data.name : name}")'>
                     <div><div class="merchant-name">${data ? data.name : name}</div>${data ? `<span class="merchant-type">${data.category}</span>` : '<span class="merchant-type">一般消費排行</span>'}</div>
                     <div class="merchant-best-info">
@@ -1137,8 +1146,9 @@
                         let bonus = Math.floor(cap * bonusRate);
                         reward = base + bonus;
                         detailText = `${formatMoney(base)} (全額基本) + ${formatMoney(bonus)} (任務上限)`;
+                        upgradeTip = `<div class="cap-warning">⚠️ 超過上限 $16,000，超額部分僅計基本回饋，建議超額改刷 Unicard</div>`;
                     }
-                } 
+                }
                 // UBear 邏輯：網購上限7500，影音上限1000
                 else if (c.cardId === 'ubear') {
                     let base = Math.floor(amount * 0.01);
@@ -1156,7 +1166,8 @@
                             detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (網購)`;
                         }
                         reward = base + bonus + newBonus;
-                    } 
+                        if (amount > bonusCap) upgradeTip = `<div class="cap-warning">⚠️ 超過網購加碼上限 $7,500，超額部分僅計基本 1%，建議超額改刷 DAWHO</div>`;
+                    }
                     else if (c.tag === 'ent') {
                         const bonusCap = 1000;
                         let bAmount = Math.min(amount, bonusCap);
