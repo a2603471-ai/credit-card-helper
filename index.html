@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -876,7 +876,9 @@
             dropdown.innerHTML = results.length ? results.map(n => {
                 const regex = new RegExp(`(${val})`, 'gi');
                 const highlightedName = n.replace(regex, '<span class="suggestion-highlight">$1</span>');
-                return `<div class="suggestion-item" onclick="selectMerchant('${n}')"><span>${highlightedName}</span></div>`;
+                const merchantData = globalMerchantDB[n.toLowerCase()];
+                const categoryTag = merchantData ? `<span class="merchant-type">${merchantData.category}</span>` : '';
+                return `<div class="suggestion-item" onclick="selectMerchant('${n}')"><span>${highlightedName}</span>${categoryTag}</div>`;
             }).join('') : '<div class="suggestion-item" style="color:#999;">無相關資料</div>';
             
             dropdown.style.display = 'block';
@@ -1329,11 +1331,11 @@
                         <span style="font-weight:700;">${idx + 1}. ${res.cardName} (${res.scheme})</span>
                         <span class="calc-money">${trophy}${formatMoney(res.reward)}</span>
                     </div>
+                    ${res.upgradeTip || ''}
                     <div style="font-size:0.9em; color:${isWinner ? 'var(--color-success)' : '#555'};">
                         平均回饋率：${formatRate((res.reward / amount) * 100)}%
                     </div>
                     <div class="calc-detail">${res.detail}</div>
-                    ${res.upgradeTip || ''}
                 </div>
             `}).join('');
  
@@ -1516,3 +1518,4 @@ window.addEventListener('DOMContentLoaded', loadAndInit);
     </script>
 </body>
 </html>
+
