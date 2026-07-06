@@ -631,7 +631,7 @@
                     },
                     { name: 'UP選', rate: 0.045, desc: '百大特店 (需149點訂閱)', type: 'text', note: '一般1% + UP選3.5% (上限刷$142,857)' },
                     { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '一般1% + 任意選2.5% (上限刷$400,000)' },
-                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '一般1% + 簡單選2% (上限刷$500,000)' },
+                    { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '一般1% + 簡單選2% (上限刷$50,000)' },
                     { 
                         name: '新戶回饋', rate: 0.03, tag: 'new', type: 'modal',
                         desc: '指定通路', 
@@ -989,7 +989,7 @@
                     }
                     c.rate = rate; 
                     c.scheme = txt;
-                    c.note = `一般1% + ${txt.replace(' ','').replace('簡單選','簡單選2% (上限刷$500,000)').replace('任意選','任意選2.5% (上限刷$400,000)').replace('UP選','UP選3.5% (上限刷$142,857)')}`;
+                    c.note = `一般1% + ${txt.replace(' ','').replace('簡單選','簡單選2% (上限刷$50,000)').replace('任意選','任意選2.5% (上限刷$400,000)').replace('UP選','UP選3.5% (上限刷$142,857)')}`;
                     if(txt.includes('新戶')) c.note += ' + 新戶3%';
                 }
                 // UBear 新戶邏輯
