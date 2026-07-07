@@ -1126,7 +1126,7 @@
             ensureCardExists('cube', '國泰 CUBE', 0.003, '一般消費', 'gen');
  
             // 計算每一張卡的回饋金額
-            const singleCardResults = cards.map(c => {
+            const computeReward = (c, amount) => {
                 let reward = 0, detailText = '', upgradeTip = '';
                 
                 // Richart 邏輯：30萬以內高回饋，超過變 0.3%
@@ -1238,7 +1238,9 @@
                 }
  
                 return { ...c, reward: Math.floor(reward), detail: detailText, upgradeTip };
-            });
+            };
+
+            const singleCardResults = cards.map(c => computeReward(c, amount));
  
             // 排序單卡結果
             singleCardResults.sort((a, b) => b.reward - a.reward);
@@ -1254,10 +1256,8 @@
                     
                     // 只有當消費金額超過這張卡的上限時，才需要考慮拆單
                     if (cap < amount) {
-                        let rewardA_Cap = 0;
-                        // 特殊處理固定上限
-                        if (cardA.cardId === 'ubear' && cardA.tag === 'ent') rewardA_Cap = 100; 
-                        else rewardA_Cap = Math.floor(cap * cardA.rate); 
+                        // 用單卡主計算邏輯算「刷到上限」的回饋，不再用名目費率×上限（會忽略分層與該卡自身上限）
+                        const rewardA_Cap = computeReward(cardA, cap).reward;
  
                         const remainingAmount = amount - cap;
                         let bestCardB = null;
@@ -1266,8 +1266,8 @@
                         // 找第二張卡來刷剩下的錢
                         singleCardResults.forEach(cardB => {
                             if (cardB.cardId === cardA.cardId) return; // 不能跟第一張同一張卡
-                            let rateB = cardB.rate;
-                            let rewardB = Math.floor(remainingAmount * rateB);
+                            // 用單卡主計算邏輯算「刷餘額」的回饋，涵蓋 cardB 自身上限與 rate=0 的分層卡（如 Unicard 百大特店）
+                            let rewardB = computeReward(cardB, remainingAmount).reward;
                             if (rewardB > maxRewardB) {
                                 maxRewardB = rewardB;
                                 bestCardB = cardB;
