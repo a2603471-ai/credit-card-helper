@@ -164,15 +164,6 @@
         .controls-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
         .control-group { flex: 1; }
         
-        /* 新戶切換按鈕 */
-        .toggle-btn {
-            display: flex; align-items: center; justify-content: center; padding: 10px;
-            background: #fff; border: 1px solid var(--color-border); border-radius: 8px;
-            cursor: pointer; user-select: none; font-size: 0.9em; height: 46px; white-space: nowrap; transition: all 0.2s;
-        }
-        .toggle-btn.active { background: #e3f2fd; border-color: var(--color-primary); color: var(--color-primary); font-weight: 700; transform: scale(1.02); }
-        .toggle-checkbox { margin-right: 6px; width: 16px; height: 16px; pointer-events: none; }
- 
         /* === 搜尋結果列表卡片 === */
         .merchant-list {
             background: var(--color-surface); padding: 16px 18px; border-radius: 14px; margin-bottom: 10px;
@@ -222,8 +213,6 @@
         .list-badge {
             padding: 1px 8px; border-radius: 10px; font-size: 0.8em; margin-left: 6px; vertical-align: middle;
         }
-        
-        .scheme-badge.new-user { background-color: #fff3e0; color: #e65100; border-color: #ffe0b2; }
         
         /* === Accordion (權益總覽的手風琴效果) === */
         .card-accordion-item {
@@ -462,10 +451,6 @@
  
         <div id="tab-search" class="tab-content active">
             <div class="form-section search-form-section">
-                <div class="info-text">
-                    ✨ <strong>2026 新戶加碼</strong>：Unicard 最高 7.5%、UBear 網購 10%。
-                </div>
-                
                 <div class="form-group">
                     <div class="input-wrapper">
                         <input type="text" id="searchMerchant" placeholder="輸入商家 (如：全家、Netflix)..." autocomplete="off" onfocus="handleSearchInput({target:this})">
@@ -481,10 +466,6 @@
                             <option value="simple">Unicard: 簡單選 (3.0%)</option>
                             <option value="up">Unicard: UP選 (4.5%)</option>
                         </select>
-                    </div>
-                    <div class="toggle-btn" id="searchNewUserBtn" onclick="toggleSearchNewUser()">
-                        <input type="checkbox" id="searchNewUser" class="toggle-checkbox" readonly>
-                        <span>我是新戶</span>
                     </div>
                 </div>
                 
@@ -525,10 +506,6 @@
                             <option value="simple">Unicard: 簡單選 (3.0%)</option>
                             <option value="up">Unicard: UP選 (4.5%)</option>
                         </select>
-                    </div>
-                    <div class="toggle-btn" id="calcNewUserBtn" onclick="toggleCalcNewUser()">
-                        <input type="checkbox" id="calcNewUser" class="toggle-checkbox" readonly>
-                        <span>我是新戶</span>
                     </div>
                 </div>
                 <button onclick="calculateRewards()" class="action-btn">開始試算</button>
@@ -633,7 +610,7 @@
                     { name: '任意選', rate: 0.035, desc: '百大特店 (需設定8家)', type: 'text', note: '一般1% + 任意選2.5% (上限刷$400,000)' },
                     { name: '簡單選', rate: 0.03, desc: '百大特店 (預設方案)', type: 'text', note: '一般1% + 簡單選2% (上限刷$50,000)' },
                     { 
-                        name: '新戶回饋', rate: 0.03, tag: 'new', type: 'modal',
+                        name: '新戶回饋', rate: 0.03, tag: 'new', type: 'modal', hidden: true,
                         desc: '指定通路', 
                         categories: { '指定通路': ['LINE Pay', 'Uber Eats', '家樂福', '韓國', '全盈+PAY'] },
                         note: '<span class="urgent-text">指定通路 + 3% (上限刷$16,666) 最高7.5%</span>' 
@@ -654,7 +631,7 @@
                       },
                       note: '一般1% + 網購2% (上限刷$7500)' 
                     },
-                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', desc: '同網購/Pay通路', note: '網購/Pay加碼 + 7% (上限刷$2142) 最高10%', categories: {} }
+                    { name: '新戶加碼', rate: 0.07, tag: 'bonus', type: 'text', hidden: true, desc: '同網購/Pay通路', note: '網購/Pay加碼 + 7% (上限刷$2142) 最高10%', categories: {} }
                 ]
             },
             {
@@ -733,33 +710,6 @@
             
             // 當條件改變時，自動重新計算
             document.getElementById('calcUnicardScheme').addEventListener('change', calculateRewards);
-            document.getElementById('calcNewUser').addEventListener('change', calculateRewards);
-        }
- 
-        // 切換「我是新戶」按鈕狀態
-        function toggleSearchNewUser() {
-            const btn = document.getElementById('searchNewUserBtn');
-            const chk = document.getElementById('searchNewUser');
-            chk.checked = !chk.checked;
-            btn.classList.toggle('active', chk.checked);
-            
-            // 如果搜尋框有字，重新搜尋；如果有點分類，重新篩選
-            const val = document.getElementById('searchMerchant').value.trim();
-            if (val) {
-                renderMerchantResult(val);
-            } else if (activeFilter) {
-                const currentFilter = activeFilter;
-                activeFilter = null;
-                applyCategoryFilter(currentFilter);
-            } 
-        }
- 
-        function toggleCalcNewUser() {
-            const btn = document.getElementById('calcNewUserBtn');
-            const chk = document.getElementById('calcNewUser');
-            chk.checked = !chk.checked;
-            btn.classList.toggle('active', chk.checked);
-            calculateRewards();
         }
  
         // 重新搜尋 (當切換方案時觸發)
@@ -767,26 +717,19 @@
              const val = document.getElementById('searchMerchant').value;
              if (val) renderMerchantResult(val);
         }, 300);
- 
-        // 取得 Unicard 新戶加碼的關鍵字列表
-        function getUnicardNewUserKeywords() {
-            const card = cardBenefitsData.find(c => c.id === 'unicard');
-            const benefit = card?.benefits.find(b => b.tag === 'new');
-            if (!benefit || !benefit.categories) return [];
-            let keywords = [];
-            Object.values(benefit.categories).forEach(list => {
-                keywords.push(...list.map(k => k.toLowerCase()));
-            });
-            return keywords;
+
+        // 保留原始資料，但不讓新戶限定優惠顯示或加入計算。
+        function isNewUserBenefit(benefit) {
+            return benefit.hidden || benefit.tag === 'new' || (benefit.name || '').includes('新戶');
         }
- 
+
         // === 建立商家資料庫 ===
         // 將 cardBenefitsData 的巢狀結構攤平，變成「商家名稱 -> 對應卡片」的索引
         function generateMerchantDB() {
             globalMerchantDB = {};
             cardBenefitsData.forEach(card => {
                 card.benefits.forEach(benefit => {
-                    if (card.id === 'unicard' && benefit.tag === 'new') return; // 跳過純新戶規則，後面另外算
+                    if (isNewUserBenefit(benefit)) return;
  
                     if (benefit.categories) {
                         Object.entries(benefit.categories).forEach(([catName, list]) => {
@@ -968,10 +911,8 @@
                 else cards.push({ cardId: 'dawho', cardName: '永豐 DAWHO', rate: 0.035, scheme: '國內全通路', note: '一般1% + 任務2.5% (上限刷$16,000)', tag: 'all' });
             }
             
-            // 取得目前的開關狀態 (新戶、方案)
+            // 取得目前的方案選擇
             const uniScheme = document.getElementById('searchUnicardScheme').value;
-            const isNew = document.getElementById('searchNewUser').checked;
-            const newBonusList = getUnicardNewUserKeywords();
  
             // 計算動態回饋率 (根據方案調整)
             cards.forEach(c => {
@@ -981,19 +922,10 @@
                     if (uniScheme === 'simple') { rate = 0.03; bonus = 0.02; txt = '簡單選'; }
                     if (uniScheme === 'up') { rate = 0.045; bonus = 0.035; txt = 'UP選'; }
                     
-                    if (isNew) {
-                        if (newBonusList.some(kw => name.toLowerCase().includes(kw))) { 
-                            rate += 0.03; 
-                            txt += ' + 新戶'; 
-                        }
-                    }
-                    c.rate = rate; 
+                    c.rate = rate;
                     c.scheme = txt;
                     c.note = `一般1% + ${txt.replace(' ','').replace('簡單選','簡單選2% (上限刷$50,000)').replace('任意選','任意選2.5% (上限刷$400,000)').replace('UP選','UP選3.5% (上限刷$142,857)')}`;
-                    if(txt.includes('新戶')) c.note += ' + 新戶3%';
                 }
-                // UBear 新戶邏輯
-                if (c.cardId === 'ubear' && c.tag === 'net' && isNew) { c.rate = 0.10; c.scheme = '網購/Pay + 新戶'; c.note = '網購/Pay加碼 + 7% (上限刷$2142) 最高10%'; }
             });
  
             // 如果都沒對應到，加入所有卡的「一般消費」當作保底
@@ -1033,8 +965,7 @@
             document.getElementById('modalTitle').innerText = `${merchantName} 回饋排名`;
             const html = cards.map((c, idx) => {
                 const isBest = idx === 0;
-                let badgeClass = 'scheme-badge';
-                if (c.scheme.includes('新戶') || c.rate >= 0.07) badgeClass += ' new-user';
+                const badgeClass = 'scheme-badge';
                 
                 const warningHtml = (isBest && c.tag === 'pay' && c.cardId === 'richart') ? `<div class="plan-warning">限台新Pay/台灣Pay</div>` : '';
                 const themeClass = brandColorMap[c.cardId]?.class || '';
@@ -1064,7 +995,7 @@
         }
  
         // 取得卡片上限設定 (Helper function)
-        const getCardCapInfo = (cardId, scheme, isNew) => {
+        const getCardCapInfo = (cardId, scheme) => {
             let cap = Infinity;
             let baseRate = 0.003; 
  
@@ -1075,7 +1006,6 @@
                 baseRate = 0.01;
                 if (scheme.includes('網購')) cap = 7500;
                 if (scheme.includes('影音')) cap = 1000;
-                if (isNew && scheme.includes('新戶')) cap = 2142; 
             } else if (cardId === 'dawho') {
                 cap = 16000;
                 baseRate = scheme.includes('國外') ? 0.02 : 0.01;
@@ -1094,7 +1024,6 @@
         function calculateRewards() {
             const amount = parseFloat(document.getElementById('calcAmount').value);
             const merchantInput = document.getElementById('calcMerchant').value.trim();
-            const isNewUser = document.getElementById('calcNewUser').checked;
             const unicardScheme = document.getElementById('calcUnicardScheme').value;
             const container = document.getElementById('calcResults');
  
@@ -1173,15 +1102,8 @@
                         const bonusCap = 7500;
                         let bAmount = Math.min(amount, bonusCap);
                         let bonus = Math.floor(bAmount * 0.02);
-                        let newBonus = 0;
-                        if (isNewUser) {
-                            let nAmount = Math.min(amount, 2142);
-                            newBonus = Math.floor(nAmount * 0.07);
-                            detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (網購) + ${formatMoney(newBonus)} (新戶)`;
-                        } else {
-                            detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (網購)`;
-                        }
-                        reward = base + bonus + newBonus;
+                        detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (網購)`;
+                        reward = base + bonus;
                         if (amount > bonusCap) upgradeTip = `<div class="cap-warning">⚠️ 超過網購加碼上限 $7,500，超額部分僅計基本 1%，建議超額改刷 DAWHO</div>`;
                     }
                     else if (c.tag === 'ent') {
@@ -1209,28 +1131,17 @@
  
                     let base = Math.floor(amount * baseRate);
                     let bonus = 0;
-                    let newBonus = 0;
- 
                     if (c.tag === 'list') {
                         let bonusAmount = Math.min(amount, cap);
                         bonus = Math.floor(bonusAmount * bonusRate);
-                        
-                        const newBonusList = getUnicardNewUserKeywords();
-                        if (isNewUser && newBonusList.some(kw => merchantInput.toLowerCase().includes(kw))) {
-                            let nAmount = Math.min(amount, 16666);
-                            newBonus = Math.floor(nAmount * 0.03);
-                            c.scheme = schemeName + "+新戶";
-                            detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (${schemeName}) + ${formatMoney(newBonus)} (新戶)`;
-                        } else {
-                            c.scheme = schemeName;
-                            detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (${schemeName})`;
-                        }
+                        c.scheme = schemeName;
+                        detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (${schemeName})`;
                         if (unicardScheme !== 'up' && amount > 15000) upgradeTip = '<div class="upgrade-tip">💡 滿 1.5 萬建議訂閱 [UP選]</div>';
                     } else {
                         detailText = `${formatMoney(base)} (一般1%)`;
                     }
                     
-                    reward = base + bonus + newBonus;
+                    reward = base + bonus;
                 } 
                 else {
                     reward = Math.floor(amount * c.rate);
@@ -1252,7 +1163,7 @@
             let bestCombo = null;
             if (amount > 1000) { 
                 singleCardResults.forEach(cardA => {
-                    const { cap, baseRate } = getCardCapInfo(cardA.cardId, cardA.scheme, isNewUser);
+                    const { cap, baseRate } = getCardCapInfo(cardA.cardId, cardA.scheme);
                     
                     // 只有當消費金額超過這張卡的上限時，才需要考慮拆單
                     if (cap < amount) {
@@ -1365,6 +1276,7 @@
         }
         function renderBenefits(card, cardIndex) {
             return card.benefits.map((b, bIndex) => {
+                if (isNewUserBenefit(b)) return '';
                 if (b.type === 'text') return `<div class="benefit-row no-action"><div class="benefit-header"><span class="benefit-name">${b.name}</span><span class="benefit-rate">${(b.rate > 0 ? (b.rate * 100).toFixed(1) + '%' : '')}</span></div><div class="benefit-desc">${b.desc}</div>${b.note ? `<div class="benefit-note">💡 ${b.note}</div>` : ''}</div>`;
                 return `<div class="benefit-row" onclick="openSchemeList(${cardIndex}, ${bIndex})"><div class="benefit-header"><span class="benefit-name">${b.name}</span><span class="benefit-rate">${(b.rate * 100).toFixed(1)}%</span></div><div class="benefit-desc">${b.desc}</div>${b.note ? `<div class="benefit-note">💡 ${b.note}</div>` : ''}</div>`;
             }).join('');
