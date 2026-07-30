@@ -427,6 +427,208 @@
             margin-right: 8px;
         }
 
+        /* === 2026 視覺整理：保留原功能，統一金融工具風格 === */
+        :root {
+            --color-primary: #155e75;
+            --color-bg: #f4f7fb;
+            --color-surface: #ffffff;
+            --color-text: #172033;
+            --color-border: #dce4ee;
+            --color-highlight: #c2410c;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 50% -18%, rgba(14, 116, 144, 0.13), transparent 32rem),
+                var(--color-bg);
+            letter-spacing: 0.01em;
+        }
+        .container { max-width: 800px; }
+        h1 {
+            color: #102a43;
+            font-size: clamp(1.35rem, 4vw, 1.7rem);
+            letter-spacing: -0.02em;
+            margin: 12px 0 6px;
+        }
+        .hero-subtitle { color: #667085; margin-bottom: 24px; }
+
+        .nav-tabs {
+            background: rgba(255,255,255,0.82);
+            border: 1px solid rgba(220,228,238,0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 28px rgba(16,42,67,0.06);
+            overflow: hidden;
+        }
+        .nav-item {
+            color: #64748b;
+            min-height: 52px;
+            border-bottom: 3px solid transparent;
+        }
+        .nav-item:hover { color: var(--color-primary); background: #f0f9ff; }
+        .nav-item.active { color: var(--color-primary); border-bottom-color: #0e7490; }
+
+        .form-section,
+        .card-accordion-item,
+        .calc-result-item,
+        .merchant-list {
+            border: 1px solid var(--color-border);
+            box-shadow: 0 8px 24px rgba(16,42,67,0.055);
+        }
+        .search-form-section { border: 0; box-shadow: none; }
+        .info-text {
+            background: #eaf6fb;
+            border-left-color: #0e7490;
+            color: #164e63;
+            padding: 13px 15px;
+        }
+        label { color: #334155; }
+        input[type="text"], input[type="number"], select {
+            border-color: #cbd5e1;
+            border-radius: 14px;
+            min-height: 52px;
+            color: #172033;
+        }
+        input:focus, select:focus {
+            border-color: #0e7490;
+            box-shadow: 0 0 0 4px rgba(14,116,144,0.13);
+        }
+        .clear-btn { background: #e7eef5; color: #475569; }
+
+        .category-tags { gap: 9px; }
+        .category-tag {
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            background: #fff;
+            border-color: #d7e0ea;
+            color: #475569;
+        }
+        .category-tag:hover { background: #f0f9ff; border-color: #0e7490; }
+        .category-tag.active { background: #155e75; border-color: #155e75; }
+
+        .merchant-list {
+            border-left-width: 5px;
+            border-radius: 16px;
+            padding: 18px;
+        }
+        .merchant-list:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(16,42,67,0.10);
+        }
+        .merchant-name, .card-title-text { color: #172033; }
+        .merchant-type { background: #eef3f8; color: #526275; }
+        .best-rate { letter-spacing: -0.04em; }
+        .best-card-name { color: #64748b; }
+        .scheme-badge { background: #eaf6fb; border-color: #bae6fd; color: #0e5c76; }
+
+        .card-accordion-item { border-radius: 16px; }
+        .accordion-header { padding: 18px 20px; }
+        .accordion-header:hover { background: #f8fbfd; }
+        .benefit-row { padding: 14px 20px; }
+        .benefit-row:not(.no-action):hover { background: #f0f9ff; }
+        .benefit-desc, .calc-detail { color: #5f6f82; }
+
+        .calc-result-item { border-radius: 16px; border-left-width: 5px; }
+        .calc-result-item.winner {
+            border-color: rgba(14,116,144,0.34);
+            background: linear-gradient(135deg, #ffffff 0%, #f0faff 100%);
+            box-shadow: 0 12px 28px rgba(14,116,144,0.13);
+        }
+        .action-btn {
+            min-height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #155e75, #0e7490);
+            box-shadow: 0 10px 20px rgba(14,116,144,0.22);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .action-btn:hover { transform: translateY(-1px); box-shadow: 0 14px 24px rgba(14,116,144,0.28); }
+        .action-btn:focus-visible, .nav-item:focus-visible, .category-tag:focus-visible {
+            outline: 3px solid rgba(14,116,144,0.32);
+            outline-offset: 2px;
+        }
+        .combo-card {
+            border-color: #0e7490;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #fff 0%, #eaf8fb 100%);
+        }
+        .combo-card::before, .combo-step-num { background: #155e75; }
+        .combo-total { color: #0e5c76; }
+        .merchant-condition {
+            margin-top: 10px;
+            max-width: 28rem;
+            color: #526275;
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+        .merchant-condition strong { color: #334155; }
+        .merchant-open-hint {
+            display: block;
+            margin-top: 8px;
+            color: #0e7490;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+        .calc-summary {
+            margin-bottom: 14px;
+            padding: 16px 18px;
+            border: 1px solid #bae6fd;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ecfeff 0%, #f8fbff 100%);
+        }
+        .calc-summary-kicker {
+            color: #0e5c76;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+        }
+        .calc-summary-title {
+            margin: 4px 0 5px;
+            color: #172033;
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+        .calc-summary-note { color: #526275; font-size: 0.85rem; line-height: 1.5; }
+        .owned-cards-panel {
+            margin: 2px 0 16px;
+            padding: 14px;
+            border: 1px solid #d7e7ef;
+            border-radius: 14px;
+            background: #f8fcfe;
+        }
+        .owned-cards-title { color: #334155; font-size: 0.9rem; font-weight: 800; }
+        .owned-cards-help { margin-top: 3px; color: #64748b; font-size: 0.78rem; }
+        .owned-cards-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+        .owned-card-option {
+            display: inline-flex;
+            align-items: center;
+            min-height: 40px;
+            padding: 7px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #fff;
+            color: #475569;
+            cursor: pointer;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+        .owned-card-option:has(input:checked) { border-color: #0e7490; background: #eaf8fb; color: #0e5c76; }
+        .owned-card-option input { width: 16px; height: 16px; margin-right: 7px; accent-color: #0e7490; }
+        .form-help { margin-top: 6px; color: #64748b; font-size: 0.78rem; line-height: 1.45; }
+
+        @media (max-width: 768px) {
+            body { padding: 10px 16px 92px; }
+            .nav-tabs {
+                left: 10px; right: 10px; bottom: 10px;
+                border-radius: 18px;
+                padding: 6px 4px;
+                box-shadow: 0 12px 30px rgba(16,42,67,0.18);
+            }
+            .nav-item { min-height: 52px; border-radius: 12px; }
+            .nav-item.active { background: #eaf6fb !important; }
+            .form-section { padding: 16px; }
+            .merchant-list { padding: 16px; }
+        }
+
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -468,7 +670,12 @@
                         </select>
                     </div>
                 </div>
-                
+                <div class="owned-cards-panel">
+                    <div class="owned-cards-title">只看我持有的卡</div>
+                    <div class="owned-cards-help">不勾選時會顯示全部卡片。</div>
+                    <div class="owned-cards-options" data-owned-cards></div>
+                </div>
+
                 <div style="margin-top: 10px;">
                     <div class="category-tags" id="quickCategoryTags"></div>
                 </div>
@@ -492,6 +699,13 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label>本月該卡已刷金額</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="calcMonthlySpent" placeholder="未填視為 0" min="0" inputmode="numeric">
+                    </div>
+                    <div class="form-help">用於扣除回饋上限；各卡已刷金額不同時，請分別輸入後比較。</div>
+                </div>
+                <div class="form-group">
                     <label>消費通路</label>
                     <div class="input-wrapper">
                         <input type="text" id="calcMerchant" placeholder="輸入通路 (如：蝦皮購物)" autocomplete="off" onfocus="handleCalcSearchInput({target:this})">
@@ -507,6 +721,11 @@
                             <option value="up">Unicard: UP選 (4.5%)</option>
                         </select>
                     </div>
+                </div>
+                <div class="owned-cards-panel">
+                    <div class="owned-cards-title">只看我持有的卡</div>
+                    <div class="owned-cards-help">不勾選時會比較全部卡片。</div>
+                    <div class="owned-cards-options" data-owned-cards></div>
                 </div>
                 <button onclick="calculateRewards()" class="action-btn">開始試算</button>
             </div>
@@ -676,12 +895,40 @@
  
         let globalMerchantDB = {}; // 存放所有商家的搜尋索引
         let activeFilter = null; // 目前選中的分類
+        const ownedCardOptions = [
+            { id: 'richart', label: '台新 Richart' }, { id: 'cube', label: '國泰 CUBE' },
+            { id: 'unicard', label: '玉山 Unicard' }, { id: 'ubear', label: '玉山 UBear' },
+            { id: 'dawho', label: '永豐 DAWHO' }
+        ];
+
+        function getOwnedCardIds() {
+            return new Set([...document.querySelectorAll('input[data-owned-card]:checked')].map(input => input.value));
+        }
+        function renderOwnedCardOptions() {
+            let owned = [];
+            try { owned = JSON.parse(localStorage.getItem('creditCardHelperOwnedCards') || '[]'); } catch (_) {}
+            document.querySelectorAll('[data-owned-cards]').forEach(container => {
+                container.innerHTML = ownedCardOptions.map(card => `<label class="owned-card-option"><input type="checkbox" data-owned-card value="${card.id}" ${owned.includes(card.id) ? 'checked' : ''} onchange="syncOwnedCard('${card.id}', this.checked)">${card.label}</label>`).join('');
+            });
+        }
+        function syncOwnedCard(cardId, checked) {
+            document.querySelectorAll(`input[data-owned-card][value="${cardId}"]`).forEach(input => { input.checked = checked; });
+            try { localStorage.setItem('creditCardHelperOwnedCards', JSON.stringify([...getOwnedCardIds()])); } catch (_) {}
+            const searchValue = document.getElementById('searchMerchant').value.trim();
+            if (searchValue) renderMerchantResult(searchValue);
+            if (document.getElementById('calcAmount').value && document.getElementById('calcMerchant').value.trim()) calculateRewards();
+        }
+        function filterToOwnedCards(cards) {
+            const owned = getOwnedCardIds();
+            return owned.size ? cards.filter(card => owned.has(card.cardId)) : cards;
+        }
  
         // === 程式初始化入口 ===
         function init() {
             generateMerchantDB(); // 建立搜尋資料庫
             renderCardOverview(); // 繪製權益總覽
             renderQuickFilters(); // 繪製分類按鈕
+            renderOwnedCardOptions();
             
             // 綁定搜尋框的事件 (使用 debounce 避免太頻繁搜尋)
             const debouncedSearch = debounce(handleSearchInput, 300);
@@ -705,6 +952,7 @@
             // 金額輸入後自動試算（debounce 500ms）；Enter 鍵也可觸發
             const debouncedCalc = debounce(calculateRewards, 500);
             document.getElementById('calcAmount').addEventListener('input', debouncedCalc);
+            document.getElementById('calcMonthlySpent').addEventListener('input', debouncedCalc);
             document.getElementById('calcAmount').addEventListener('keyup', (e) => { if(e.key === 'Enter') calculateRewards(); });
             document.getElementById('calcMerchant').addEventListener('keyup', (e) => { if(e.key === 'Enter') calculateRewards(); });
             
@@ -935,7 +1183,9 @@
                 cards.push({ cardId: 'richart', cardName: '台新 Richart', rate: 0.003, scheme: '一般消費', note: '0.3%' });
                 cards.push({ cardId: 'cube', cardName: '國泰 CUBE', rate: 0.003, scheme: '一般消費', note: '0.3%' });
             }
-            
+            cards = filterToOwnedCards(cards);
+            if (!cards.length) return '<div class="fallback-notice">請先選擇至少一張持有的卡，或取消篩選以查看全部結果。</div>';
+
             // 排序：回饋率高到低
             cards.sort((a, b) => b.rate - a.rate);
             const best = cards[0];
@@ -945,8 +1195,8 @@
             // 回傳 HTML 字串
             const fallbackHtml = !data ? `<div class="fallback-notice">⚠️ <strong>${name}</strong> 不在特店名單，以下為一般消費回饋排行</div>` : '';
             return fallbackHtml + `
-                <div class="merchant-list ${brandClass}" onclick='openRankingModal(${JSON.stringify(cards)}, "${data ? data.name : name}")'>
-                    <div><div class="merchant-name">${data ? data.name : name}</div>${data ? `<span class="merchant-type">${data.category}</span>` : '<span class="merchant-type">一般消費排行</span>'}</div>
+                <div class="merchant-list ${brandClass}" onclick='openRankingModal(${JSON.stringify(cards)}, "${data ? data.name : name}")' role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); this.click(); }" aria-label="查看 ${data ? data.name : name} 的信用卡回饋條件與排名">
+                    <div><div class="merchant-name">${data ? data.name : name}</div>${data ? `<span class="merchant-type">${data.category}</span>` : '<span class="merchant-type">一般消費排行</span>'}<div class="merchant-condition"><strong>使用條件：</strong>${best.note.replace(/<[^>]*>/g, '')}<span class="merchant-open-hint">點選查看完整排行與條件</span></div></div>
                     <div class="merchant-best-info">
                         <div class="best-rate">${(best.rate * 100).toFixed(1)}%</div>
                         <div class="best-card-name">
@@ -1023,6 +1273,7 @@
         // === 回饋試算核心邏輯 ===
         function calculateRewards() {
             const amount = parseFloat(document.getElementById('calcAmount').value);
+            const monthlySpent = Math.max(0, parseFloat(document.getElementById('calcMonthlySpent').value) || 0);
             const merchantInput = document.getElementById('calcMerchant').value.trim();
             const unicardScheme = document.getElementById('calcUnicardScheme').value;
             const container = document.getElementById('calcResults');
@@ -1053,23 +1304,26 @@
             ensureCardExists('unicard', '玉山 Unicard', 0.01, '一般消費', 'gen');
             ensureCardExists('richart', '台新 Richart', 0.003, '一般消費', 'gen');
             ensureCardExists('cube', '國泰 CUBE', 0.003, '一般消費', 'gen');
- 
+            cards = filterToOwnedCards(cards);
+            if (!cards.length) {
+                container.innerHTML = '<div class="fallback-notice">請先選擇至少一張持有的卡，或取消篩選以查看全部結果。</div>';
+                return;
+            }
+
             // 計算每一張卡的回饋金額
             const computeReward = (c, amount) => {
                 let reward = 0, detailText = '', upgradeTip = '';
+                const remainingCap = cap => Math.max(0, cap - monthlySpent);
                 
                 // Richart 邏輯：30萬以內高回饋，超過變 0.3%
                 if (c.cardId === 'richart') {
                     const limit = 300000;
-                    if (amount <= limit) {
-                        reward = Math.floor(amount * c.rate);
-                        detailText = `${formatMoney(reward)} (${formatRate(c.rate * 100)}%)`;
-                    } else {
-                        const baseReward = Math.floor(limit * c.rate);
-                        const overReward = Math.floor((amount - limit) * 0.003);
-                        reward = baseReward + overReward;
-                        detailText = `${formatMoney(baseReward)} (30萬內) + ${formatMoney(overReward)} (超額0.3%)`;
-                    }
+                    const eligibleAmount = Math.min(amount, remainingCap(limit));
+                    const baseAmount = amount - eligibleAmount;
+                    const bonusReward = Math.floor(eligibleAmount * c.rate);
+                    const baseReward = Math.floor(baseAmount * 0.003);
+                    reward = bonusReward + baseReward;
+                    detailText = baseAmount ? `${formatMoney(bonusReward)} (剩餘優惠額度) + ${formatMoney(baseReward)} (超額0.3%)` : `${formatMoney(reward)} (${formatRate(c.rate * 100)}%)`;
                 } 
                 // CUBE 邏輯：無上限
                 else if (c.cardId === 'cube') {
@@ -1081,18 +1335,12 @@
                     const cap = 16000;
                     let baseRate = (c.tag === 'foreign') ? 0.02 : 0.01;
                     let bonusRate = 0.025;
-                    if (amount <= cap) {
-                        let base = Math.floor(amount * baseRate);
-                        let bonus = Math.floor(amount * bonusRate);
-                        reward = base + bonus;
-                        detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (任務)`;
-                    } else {
-                        let base = Math.floor(amount * baseRate);
-                        let bonus = Math.floor(cap * bonusRate);
-                        reward = base + bonus;
-                        detailText = `${formatMoney(base)} (全額基本) + ${formatMoney(bonus)} (任務上限)`;
-                        upgradeTip = `<div class="cap-warning">⚠️ 超過上限 $16,000，超額部分僅計基本回饋，建議超額改刷 Unicard</div>`;
-                    }
+                    const base = Math.floor(amount * baseRate);
+                    const eligibleAmount = Math.min(amount, remainingCap(cap));
+                    const bonus = Math.floor(eligibleAmount * bonusRate);
+                    reward = base + bonus;
+                    detailText = `${formatMoney(base)} (全額基本) + ${formatMoney(bonus)} (${monthlySpent ? '剩餘' : ''}任務額度)`;
+                    if (amount > eligibleAmount) upgradeTip = `<div class="cap-warning">⚠️ 任務加碼額度不足，超額部分僅計基本回饋，建議改刷其他卡。</div>`;
                 }
                 // UBear 邏輯：網購上限7500，影音上限1000
                 else if (c.cardId === 'ubear') {
@@ -1100,19 +1348,19 @@
                     
                     if (c.tag === 'net') {
                         const bonusCap = 7500;
-                        let bAmount = Math.min(amount, bonusCap);
+                        let bAmount = Math.min(amount, remainingCap(bonusCap));
                         let bonus = Math.floor(bAmount * 0.02);
                         detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (網購)`;
                         reward = base + bonus;
-                        if (amount > bonusCap) upgradeTip = `<div class="cap-warning">⚠️ 超過網購加碼上限 $7,500，超額部分僅計基本 1%，建議超額改刷 DAWHO</div>`;
+                        if (amount > bAmount) upgradeTip = `<div class="cap-warning">⚠️ 網購加碼額度不足，超額部分僅計基本 1%，建議改刷其他卡。</div>`;
                     }
                     else if (c.tag === 'ent') {
                         const bonusCap = 1000;
-                        let bAmount = Math.min(amount, bonusCap);
-                        let totalReward = Math.floor(bAmount * 0.10); 
-                        if (amount > bonusCap) {
-                            totalReward += Math.floor((amount - bonusCap) * 0.01);
-                            detailText = `${formatMoney(Math.floor(bonusCap * 0.1))} (10%上限) + ${formatMoney(Math.floor((amount - bonusCap) * 0.01))} (超額1%)`;
+                        let bAmount = Math.min(amount, remainingCap(bonusCap));
+                        let totalReward = Math.floor(bAmount * 0.10);
+                        if (amount > bAmount) {
+                            totalReward += Math.floor((amount - bAmount) * 0.01);
+                            detailText = `${formatMoney(Math.floor(bAmount * 0.1))} (10%額度) + ${formatMoney(Math.floor((amount - bAmount) * 0.01))} (超額1%)`;
                         } else {
                             detailText = `${formatMoney(totalReward)} (全額10%)`;
                         }
@@ -1132,11 +1380,11 @@
                     let base = Math.floor(amount * baseRate);
                     let bonus = 0;
                     if (c.tag === 'list') {
-                        let bonusAmount = Math.min(amount, cap);
+                        let bonusAmount = Math.min(amount, remainingCap(cap));
                         bonus = Math.floor(bonusAmount * bonusRate);
                         c.scheme = schemeName;
                         detailText = `${formatMoney(base)} (基本) + ${formatMoney(bonus)} (${schemeName})`;
-                        if (unicardScheme !== 'up' && amount > 15000) upgradeTip = '<div class="upgrade-tip">💡 滿 1.5 萬建議訂閱 [UP選]</div>';
+                        if (unicardScheme !== 'up' && amount > Math.min(15000, bonusAmount)) upgradeTip = '<div class="upgrade-tip">💡 可考慮訂閱 [UP選]，提高回饋或增加額度。</div>';
                     } else {
                         detailText = `${formatMoney(base)} (一般1%)`;
                     }
@@ -1205,6 +1453,15 @@
             // 生成結果 HTML
             let html = '';
             
+            const bestCondition = (bestSingle.note || '').replace(/<[^>]*>/g, '');
+            html += `
+                <div class="calc-summary">
+                    <div class="calc-summary-kicker">單張卡最佳選擇</div>
+                    <div class="calc-summary-title">${bestSingle.cardName}・${bestSingle.scheme}，可回饋 ${formatMoney(bestSingle.reward)}</div>
+                    <div class="calc-summary-note">使用前提：${bestCondition || '依頁面顯示方案計算'}${bestCombo ? `。拆單可再多 ${formatMoney(bestCombo.totalReward - bestSingle.reward)}` : ''}</div>
+                </div>
+            `;
+
             // 如果有聰明組合建議，先顯示
             if (bestCombo) {
                 const diff = bestCombo.totalReward - bestSingle.reward;
