@@ -1569,25 +1569,53 @@ const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1FYBb6Mjt5dzRqkPkn
 
 // 解析 CSV 文字，轉成二維陣列
 function parseCSV(text) {
-    const lines = text.trim().split('\n');
-    return lines.map(line => {
-        // 處理逗號在引號內的情況
-        const result = [];
-        let current = '';
-        let inQuotes = false;
-        for (let i = 0; i < line.length; i++) {
-            if (line[i] === '"') {
-                inQuotes = !inQuotes;
-            } else if (line[i] === ',' && !inQuotes) {
-                result.push(current.trim());
-                current = '';
+    // 逐字元掃整份文字，不可先用 split('\n') 切行：
+    // 儲存格內若含換行（在試算表格子裡按 Enter），一筆資料會被切成兩列，
+    // 後半段會被當成新的一張卡，畫面上就多出一張顯示 undefined 的空白卡。
+    const rows = [];
+    let row = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+
+        if (inQuotes) {
+            if (ch === '"') {
+                if (text[i + 1] === '"') {
+                    current += '"';   // 連續兩個引號 = 資料裡的一個引號
+                    i++;
+                } else {
+                    inQuotes = false;
+                }
             } else {
-                current += line[i];
+                current += ch;        // 引號內的逗號與換行都算內容
             }
+            continue;
         }
-        result.push(current.trim());
-        return result;
-    });
+
+        if (ch === '"') {
+            inQuotes = true;
+        } else if (ch === ',') {
+            row.push(current.trim());
+            current = '';
+        } else if (ch === '\r' || ch === '\n') {
+            if (ch === '\r' && text[i + 1] === '\n') i++;   // CRLF 只算一次換行
+            row.push(current.trim());
+            rows.push(row);
+            row = [];
+            current = '';
+        } else {
+            current += ch;
+        }
+    }
+
+    // 收尾最後一列（檔案結尾沒有換行時）
+    row.push(current.trim());
+    rows.push(row);
+
+    // 丟掉整列都空白的列（檔尾空行、試算表中間的空列）
+    return rows.filter(r => r.some(cell => cell !== ''));
 }
 
 // 把 CSV 二維陣列轉換成 cardBenefitsData 格式
